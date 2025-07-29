@@ -30,3 +30,5 @@ a{color:inherit}
   .topNav{flex-wrap:wrap;gap:10px}
   .container{padding:24px 14px}
 }
+/* navbar ve logo hizalama için */
+.topNav .logo{font-weight:700;color:#0ea5e9;text-decoration:none}
