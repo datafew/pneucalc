@@ -1,1 +1,11 @@
+<nav class="topNav">
+  <a href="/index.html" class="logo">🏠 Dashboard</a>
+  <span class="spacer"></span>
 
+  {% for m in site.data.modules %}
+    <a href="/{{ m.file }}"
+       {% if page.module_id == m.id %}class="active"{% endif %}>
+       {{ m.title }}
+    </a>
+  {% endfor %}
+</nav>
