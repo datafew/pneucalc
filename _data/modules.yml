@@ -1,4 +1,15 @@
+# Her modül için: id • başlık • dosya adı • emoji/simge
 - id: pneucalc
   title: Pneumatic Calculator
   file: pneucalc.html
   icon: "🌀"
+
+- id: sheetcalc
+  title: Sheet Weight Calculator
+  file: sheetcalc.html
+  icon: "📄"
+
+- id: bearing
+  title: Bearing Finder
+  file: bearing_finder_final.html
+  icon: "🛞"
