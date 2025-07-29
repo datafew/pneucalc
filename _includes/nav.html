@@ -2,10 +2,10 @@
   <a href="/index.html" class="logo">🏠 Dashboard</a>
   <span class="spacer"></span>
 
-  {% for m in site.data.modules %}
+  {%- for m in site.data.modules -%}
     <a href="/{{ m.file }}"
-       {% if page.module_id == m.id %}class="active"{% endif %}>
+       {%- if page.module_id == m.id -%} class="active" {%- endif -%}>
        {{ m.title }}
     </a>
-  {% endfor %}
+  {%- endfor -%}
 </nav>
