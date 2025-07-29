@@ -1,6 +1,32 @@
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;}
-.card{display:flex;flex-direction:column;align-items:center;padding:20px;background:#fff;
-      border-radius:8px;text-decoration:none;color:#1976d2;box-shadow:0 2px 6px rgba(0,0,0,.08);}
-.card .icon{font-size:2rem;margin-bottom:6px;}
-.card:hover{box-shadow:0 4px 10px rgba(0,0,0,.12);}
+/* --- temel tipografi --------------------------------------------- */
+html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#334155}
+a{color:inherit}
 
+/* --- NAVBAR -------------------------------------------------------- */
+.topNav{display:flex;align-items:center;gap:18px;padding:14px 24px;
+        background:#ffffffcc;backdrop-filter:blur(8px);
+        border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
+.topNav .logo{font-weight:700;color:#0ea5e9;text-decoration:none}
+.topNav .spacer{flex:1}
+.topNav a{font-size:0.9rem;text-decoration:none;color:#475569;font-weight:600}
+.topNav a:hover{color:#0ea5e9}
+.topNav a.active{color:#0ea5e9}
+
+/* --- SAYFA İÇİ ----------------------------------------------------- */
+.container{max-width:1100px;margin:auto;padding:32px 20px}
+
+/* --- MODÜL KART GRID ---------------------------------------------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:18px}
+.card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:22px;background:#fff;
+      border-radius:10px;text-decoration:none;color:#0ea5e9;box-shadow:0 2px 6px rgba(0,0,0,.07);
+      transition:box-shadow .2s,transform .15s}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.12);transform:translateY(-2px)}
+.card .icon{font-size:2rem}
+.card small{font-size:0.8rem;font-weight:600;opacity:.7}
+
+/* --- RESPONSIVE ---------------------------------------------------- */
+@media(max-width:600px){
+  .topNav{flex-wrap:wrap;gap:10px}
+  .container{padding:24px 14px}
+}
