@@ -1,18 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ page.title }}</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="/assets/style.css">
-</head>
-<body>
+<!-- floating buttons -->
+<a href="#searchBox"   class="fab-search" title="Go to search">🔍</a>
+<a href="/index.html"  class="fab-home"   title="Back to dashboard">🏠</a>
 
-  {% include nav.html %}
-
-  <main class="container">
-    {{ content }}
-  </main>
-
-</body>
-</html>
+<style>
+  .fab-home,.fab-search{
+      position:fixed; right:18px;
+      width:46px; height:46px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.35rem; color:#fff; text-decoration:none;
+      box-shadow:0 4px 12px rgba(0,0,0,.15); transition:.2s; z-index:9999;
+  }
+  .fab-home  {bottom:18px;  background:#1976d2;}  /* blue */
+  .fab-search{bottom:72px;  background:#16a34a;}  /* green */
+  .fab-home:hover  {background:#0d47a1;transform:translateY(-2px);}
+  .fab-search:hover{background:#0e7c34;transform:translateY(-2px);}
+  @media (hover:none){
+      .fab-home:hover,.fab-search:hover{transform:none;}
+  }
+</style>
