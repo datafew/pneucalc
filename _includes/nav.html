@@ -1,11 +1,11 @@
 <nav class="topNav">
-  <a href="/index.html" class="logo">🏠 Dashboard</a>
+  <a href="{{ "/"      | relative_url }}" class="logo">🏠 Dashboard</a>
   <span class="spacer"></span>
 
-  {%- for m in site.data.modules -%}
-    <a href="/{{ m.file }}"
-       {%- if page.module_id == m.id -%} class="active" {%- endif -%}>
+  {% for m in site.data.modules %}
+    <a href="{{ m.file | relative_url }}"
+       {% if page.module_id == m.id %}class="active"{% endif %}>
        {{ m.title }}
     </a>
-  {%- endfor -%}
+  {% endfor %}
 </nav>
