@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mechanical Toolbox</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='50' fill='%230ea5e9'/><text x='50%' y='57%' font-size='58' text-anchor='middle' fill='white' dy='.3em'>μ</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<header class="bg-white shadow">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-sky-600">Mechanical&nbsp;Toolbox</h1>
+    <nav class="space-x-4 text-sm hidden sm:block">
+      <a href="#modules" class="hover:text-sky-600">Modules</a>
+      <a href="https://github.com/datafew" class="hover:text-sky-600" target="_blank">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-12 space-y-12">
+
+  <!-- hero -->
+  <section class="text-center space-y-4">
+    <h2 class="text-4xl font-semibold">Simple tools for quick machine‑design calculations.</h2>
+    <p class="text-lg text-slate-600">Interactive calculators, searchable component databases and handy reference tables.</p>
+    <a href="#modules" class="inline-block bg-sky-600 text-white px-6 py-3 rounded-full shadow hover:bg-sky-700 transition">Explore Modules ↓</a>
+  </section>
+
+  <!-- modules grid -->
+  <section id="modules" class="space-y-6">
+    <h3 class="text-2xl font-medium">Modules</h3>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+      <!-- Pneumatic Calculator -->
+      <a href="pneucalc.html" class="group relative bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+        <div class="absolute top-3 right-3 text-xs bg-sky-100 text-sky-600 px-2 py-0.5 rounded">Calculator</div>
+        <svg class="w-10 h-10 text-sky-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 6h10M5 14h14M10 18h4"/></svg>
+        <h4 class="text-lg font-semibold group-hover:text-sky-600">PneuCalc</h4>
+        <p class="text-sm text-slate-600">Quick calculate conveying flow rates.</p>
+      </a>
+
+      <!-- Bearing Finder -->
+      <a href="bearing_finder_final.html" class="group relative bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+        <div class="absolute top-3 right-3 text-xs bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded">Database</div>
+        <svg class="w-10 h-10 text-emerald-600 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+        <h4 class="text-lg font-semibold group-hover:text-emerald-600">Bearing Finder</h4>
+        <p class="text-sm text-slate-600">Search across ball &amp; roller bearing catalogues by size.</p>
+      </a>
+
+      <!-- Placeholder for future modules -->
+      <a href="#" class="group relative bg-white rounded-xl p-6 shadow border-2 border-dashed border-slate-300 hover:shadow-lg transition">
+        <div class="absolute inset-0 flex items-center justify-center opacity-40 group-hover:opacity-60">
+          <span class="text-3xl">+</span>
+        </div>
+        <h4 class="sr-only">New module coming soon</h4>
+      </a>
+
+    </div>
+
+  </section>
+</main>
+
+<footer class="text-center text-xs text-slate-500 py-6">
+  © 2025 Mechanical Toolbox by sipahi – built with Supabase &amp; Tailwind CSS. 
+  <a href="https://github.com/datafew" class="underline hover:text-slate-700">Contribute on GitHub</a>
+</footer>
+
+</body>
+</html>
