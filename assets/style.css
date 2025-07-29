@@ -1,34 +1,79 @@
-/* --- temel tipografi --------------------------------------------- */
-html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#334155}
-a{color:inherit}
+/*──────────────────────────────────────────*/
+/*  Mechanical Toolbox – global stylesheet  */
+/*──────────────────────────────────────────*/
 
-/* --- NAVBAR -------------------------------------------------------- */
-.topNav{display:flex;align-items:center;gap:18px;padding:14px 24px;
-        background:#ffffffcc;backdrop-filter:blur(8px);
-        border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
-.topNav .logo{font-weight:700;color:#0ea5e9;text-decoration:none}
-.topNav .spacer{flex:1}
-.topNav a{font-size:0.9rem;text-decoration:none;color:#475569;font-weight:600}
-.topNav a:hover{color:#0ea5e9}
-.topNav a.active{color:#0ea5e9}
-
-/* --- SAYFA İÇİ ----------------------------------------------------- */
-.container{max-width:1100px;margin:auto;padding:32px 20px}
-
-/* --- MODÜL KART GRID ---------------------------------------------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:18px}
-.card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:22px;background:#fff;
-      border-radius:10px;text-decoration:none;color:#0ea5e9;box-shadow:0 2px 6px rgba(0,0,0,.07);
-      transition:box-shadow .2s,transform .15s}
-.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.12);transform:translateY(-2px)}
-.card .icon{font-size:2rem}
-.card small{font-size:0.8rem;font-weight:600;opacity:.7}
-
-/* --- RESPONSIVE ---------------------------------------------------- */
-@media(max-width:600px){
-  .topNav{flex-wrap:wrap;gap:10px}
-  .container{padding:24px 14px}
+/* 1 | LAYOUT HELPERS
+––––––––––––––––––––––––––––––––––––––––––––*/
+.container{
+  width:100%;
+  max-width:960px;     /* tüm modül sayfaları aynı genişlik sınırı */
+  margin:0 auto;
+  padding:0 16px;
 }
-/* navbar ve logo hizalama için */
-.topNav .logo{font-weight:700;color:#0ea5e9;text-decoration:none}
+
+/* 2 | TOP NAVIGATION
+––––––––––––––––––––––––––––––––––––––––––––*/
+.topNav{
+  position:sticky; top:0; z-index:200;
+  display:flex; align-items:center;
+  background:#fff;
+  border:1px solid #ddd; border-radius:8px;
+  padding:8px 14px; margin-bottom:20px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+
+.nav-links{                       /* bağlantıları sarar */
+  display:flex; gap:16px; flex-wrap:wrap;
+}
+
+.logo{
+  color:#1976d2; text-decoration:none; font-weight:600;
+}
+
+.nav-link{
+  color:#1976d2; text-decoration:none; font-weight:500;
+  padding:4px 8px; border-radius:4px; transition:background .2s;
+}
+.nav-link:hover{background:rgba(25,118,210,.08);}
+.nav-link.active{
+  font-weight:700; color:#0d47a1; background:rgba(0,0,0,.06);
+}
+
+.spacer{flex:1;}
+
+@media(max-width:600px){
+  .topNav{flex-wrap:wrap;}        /* dar ekranda satır kaydır */
+}
+
+/* 3 | DASHBOARD KART IZGARASI
+––––––––––––––––––––––––––––––––––––––––––––*/
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+}
+
+/* kartlar (dashboard’da) */
+.card{
+  display:flex; flex-direction:column; align-items:center;
+  padding:20px; background:#fff; text-decoration:none;
+  color:#1976d2; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+.card .icon{font-size:2rem; margin-bottom:6px;}
+.card:hover{box-shadow:0 4px 10px rgba(0,0,0,.12);}  /* hafif hover gölgesi */
+
+/* 4 | TABLE, BUTTON, HELPER (tüm modüller kullanabilir)
+––––––––––––––––––––––––––––––––––––––––––––*/
+table{width:100%; border-collapse:collapse; font-size:.85rem;}
+th,td{padding:8px; border-bottom:1px solid #e0e0e0; text-align:center;}
+th{background:#f8f9fb;}
+tfoot td{font-weight:600; background:#fafafa;}
+
+button{
+  padding:10px 24px; font-weight:600; border:none; border-radius:4px;
+  cursor:pointer; font-size:.9rem; transition:.2s;
+}
+.btn-primary{background:#2e7d32; color:#fff;}
+.btn-primary:hover{background:#1b5e20;}
+.btn-secondary{background:#ec5757; color:#fff;}
+.btn-secondary:hover{background:#d34141;}
