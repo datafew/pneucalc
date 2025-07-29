@@ -1,1 +1,4 @@
-
+- id: pneucalc
+  title: Pneumatic Calculator
+  file: pneucalc.html
+  icon: "🌀"
