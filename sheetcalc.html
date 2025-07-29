@@ -3,37 +3,14 @@ layout: default
 title: Sheet Weight Calculator
 module_id: sheetcalc
 ---
-<!-- mevcut modül içeriği -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sheet Metal Weight Calculator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
 <style>
 :root{
   --primary:#2e7d32;--primary-dark:#1b5e20;--alert:#ec5757;
   --bg:#f2f5fa;--card:#ffffff;--radius:8px;--shadow:0 2px 6px rgba(0,0,0,.08);}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:"Inter",Arial,Helvetica,sans-serif;background:var(--bg);color:#222;padding:16px;display:flex;justify-content:center;font-size:14px;}
-.container{width:100%;max-width:780px;}
-/* top navigation */
-.topNav{
-  position:sticky; top:0; z-index:200;
-  display:flex; align-items:center; gap:12px;
-  background:#fff; border:1px solid #ddd; border-radius:var(--radius);
-  padding:8px 14px; margin-bottom:20px; box-shadow:var(--shadow);
-}
-.topNav a{color:#1976d2;text-decoration:none;font-weight:500;}
-.topNav a.logo{font-weight:600;}
-.topNav a.active{font-weight:700;color:#0d47a1;}
-.topNav .spacer{flex:1;}
-/* header & cards */
-header{background:linear-gradient(120deg,var(--primary),var(--primary-dark));color:#fff;padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;margin-bottom:24px;}
-h1{font-size:1.6rem;font-weight:600;}
+body{background:var(--bg);}
 .card{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:24px;box-shadow:var(--shadow);}
+header{background:linear-gradient(120deg,var(--primary),var(--primary-dark));color:#fff;padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;margin-bottom:24px;}
 label{font-weight:600;font-size:.9rem;}
 input,select{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:4px;font-size:.9rem;}
 .field{display:flex;align-items:center;gap:18px;margin-bottom:14px;}
@@ -54,22 +31,10 @@ th{background:#f8f9fb;} tfoot td{font-weight:600;background:#fafafa;}
   .field label{width:100%;margin-bottom:4px;}
   #currentGrid{grid-template-columns:1fr;}
   .btn-row{flex-direction:column;gap:12px;}
-  .topNav{flex-wrap:wrap;}
 }
 </style>
-</head>
-<body>
-<div class="container">
 
-<nav class="topNav">
-  <a href="index.html" class="logo">🏠 Dashboard</a>
-  <span class="spacer"></span>
-  <a href="pneucalc.html">PneuCalc</a>
-  <a href="wcalcul_nav.html" class="active">SheetCalc</a>
-  <a href="gearcalc.html">GearCalc</a>
-</nav>
-
-<header><h1>Sheet Metal Weight Calculator</h1></header>
+<header><h1 class="text-xl font-semibold">Sheet Metal Weight Calculator</h1></header>
 
 <div class="card">
 <form id="calcForm">
@@ -79,7 +44,10 @@ th{background:#f8f9fb;} tfoot td{font-weight:600;background:#fafafa;}
   <div class="field"><label>Length B (mm)</label><input id="inpLen" type="number" step="0.01" required></div>
   <div class="field"><label>Thickness t (mm)</label><input id="inpThk" type="number" step="0.01" required></div>
   <div class="field"><label>Quantity</label><input id="inpQty" type="number" value="1" min="1" step="1"></div>
-  <div class="field"><label>Price (USD / kg) <span style="font-weight:400;color:#666">(optional)</span></label><input id="inpPrice" type="number" step="0.01" placeholder="e.g. 2.50"></div>
+  <div class="field">
+    <label>Price (USD / kg) <span style="font-weight:400;color:#666">(optional)</span></label>
+    <input id="inpPrice" type="number" step="0.01" placeholder="e.g. 2.50">
+  </div>
 
   <div class="btn-row">
     <button class="btn-primary" type="submit">Calculate & Add</button>
@@ -89,7 +57,7 @@ th{background:#f8f9fb;} tfoot td{font-weight:600;background:#fafafa;}
 </div>
 
 <div class="card">
-  <h3 style="font-size:1rem;margin-bottom:12px;text-align:center;">Current Entry</h3>
+  <h2 style="font-size:1rem;margin-bottom:12px;text-align:center;">Current Entry</h2>
   <div id="currentGrid">
     <div>Weight<br><span id="curWeight">0.000 kg</span></div>
     <div>Volume<br><span id="curVol">0.000 m³</span></div>
@@ -107,22 +75,73 @@ th{background:#f8f9fb;} tfoot td{font-weight:600;background:#fafafa;}
   </table>
 </div>
 
-<footer style="text-align:center;font-size:.75rem;color:#888;margin-top:10px;">© 2025 misipahi</footer>
-</div>
-
 <script>
-const materials=[{name:'AISI 304 Stainless Steel',density:7.93},{name:'AISI 316 Stainless Steel',density:7.98},{name:'AISI 1010 Carbon Steel',density:7.87},{name:'Galvanized Steel',density:7.85},{name:'Aluminium 6061‑T6',density:2.70},{name:'Aluminium 5083',density:2.66},{name:'C110 Copper',density:8.96},{name:'C260 Brass',density:8.44},{name:'Grade 2 Titanium',density:4.51},{name:'AISI 430 Stainless Steel',density:7.70}];
-const matSel=document.getElementById('matSel');materials.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m.name;matSel.appendChild(o);});
-const densInput=document.getElementById('density');const setDensity=()=>densInput.value=materials[matSel.value].density;setDensity();matSel.onchange=setDensity;
+const materials=[
+  {name:'AISI 304 Stainless Steel',density:7.93},
+  {name:'AISI 316 Stainless Steel',density:7.98},
+  {name:'AISI 1010 Carbon Steel', density:7.87},
+  {name:'Galvanized Steel',       density:7.85},
+  {name:'Aluminium 6061‑T6',      density:2.70},
+  {name:'Aluminium 5083',         density:2.66},
+  {name:'C110 Copper',            density:8.96},
+  {name:'C260 Brass',             density:8.44},
+  {name:'Grade 2 Titanium',       density:4.51},
+  {name:'AISI 430 Stainless Steel',density:7.70}
+];
+
+const matSel=document.getElementById('matSel');
+materials.forEach((m,i)=>matSel
+  .insertAdjacentHTML('beforeend',`<option value="${i}">${m.name}</option>`));
+const densInput=document.getElementById('density');
+matSel.onchange=()=>densInput.value=materials[matSel.value].density;
+matSel.dispatchEvent(new Event('change'));
+
 const tbody=document.querySelector('#histTable tbody'),totWeightEl=document.getElementById('totWeight');
-const curW=document.getElementById('curWeight'),curV=document.getElementById('curVol'),curA=document.getElementById('curArea'),curCost=document.getElementById('curCost'),costBox=document.getElementById('costBox');
-let totalWeight=0;const fmt=x=>(+x).toFixed(3);
-function addRow(o){const tr=document.createElement('tr');tr.innerHTML=`<td class="row-del">×</td><td>${o.mat}</td><td>${o.dim}</td><td>${o.q}</td><td>${fmt(o.area)}</td><td>${fmt(o.vol)}</td><td>${fmt(o.weight)}</td><td>${o.cost?fmt(o.cost):'-'}</td>`;tr.querySelector('.row-del').onclick=()=>{totalWeight-=o.weight;totWeightEl.textContent=fmt(totalWeight);tr.remove();};tbody.appendChild(tr);}
-document.getElementById('calcForm').onsubmit=e=>{e.preventDefault();const m=materials[matSel.value];const A=parseFloat(inpWidth.value),B=parseFloat(inpLen.value),t=parseFloat(inpThk.value),q=parseInt(inpQty.value||1), price=parseFloat(inpPrice.value);
-if([A,B,t,q].some(isNaN)){alert('Fill numeric fields');return;}const area=A*B/1e6,vol=A*B*t/1e9,weight=vol*m.density*1000*q;curW.textContent=fmt(weight)+' kg';curV.textContent=fmt(vol)+' m³';curA.textContent=fmt(area)+' m²';
-let cost=null;if(!isNaN(price)&&price>0){cost=weight*price;curCost.textContent=fmt(cost)+' USD';costBox.style.display='block';}else{costBox.style.display='none';}
-addRow({mat:m.name,dim:`${A}×${B}×${t}`,q,area,vol,weight,cost});totalWeight+=weight;totWeightEl.textContent=fmt(totalWeight);};
-document.getElementById('clearAll').onclick=()=>{tbody.innerHTML='';totalWeight=0;totWeightEl.textContent='0.000';curW.textContent='0.000 kg';curV.textContent='0.000 m³';curA.textContent='0.000 m²';costBox.style.display='none';};
+const curW=document.getElementById('curWeight'),
+      curV=document.getElementById('curVol'),
+      curA=document.getElementById('curArea'),
+      curCost=document.getElementById('curCost'),
+      costBox=document.getElementById('costBox');
+let totalWeight=0;
+const fmt=x=>(+x).toFixed(3);
+
+function addRow(o){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td class="row-del">×</td>
+    <td>${o.mat}</td><td>${o.dim}</td><td>${o.q}</td>
+    <td>${fmt(o.area)}</td><td>${fmt(o.vol)}</td><td>${fmt(o.weight)}</td>
+    <td>${o.cost?fmt(o.cost):'-'}</td>`;
+  tr.querySelector('.row-del').onclick=()=>{
+    totalWeight-=o.weight; totWeightEl.textContent=fmt(totalWeight); tr.remove();
+  };
+  tbody.appendChild(tr);
+}
+
+document.getElementById('calcForm').onsubmit=e=>{
+  e.preventDefault();
+  const m=materials[matSel.value];
+  const A=+inpWidth.value, B=+inpLen.value, t=+inpThk.value, q=+inpQty.value||1,
+        price=+inpPrice.value;
+  if([A,B,t,q].some(isNaN)){alert('Fill numeric fields');return;}
+  const area=A*B/1e6, vol=A*B*t/1e9, weight=vol*m.density*1000*q;
+  curW.textContent=fmt(weight)+' kg';
+  curV.textContent=fmt(vol)+' m³';
+  curA.textContent=fmt(area)+' m²';
+  let cost=null;
+  if(!isNaN(price)&&price>0){
+    cost=weight*price;
+    curCost.textContent=fmt(cost)+' USD';
+    costBox.style.display='block';
+  }else costBox.style.display='none';
+
+  addRow({mat:m.name,dim:`${A}×${B}×${t}`,q,area,vol,weight,cost});
+  totalWeight+=weight; totWeightEl.textContent=fmt(totalWeight);
+};
+
+document.getElementById('clearAll').onclick=()=>{
+  tbody.innerHTML=''; totalWeight=0; totWeightEl.textContent='0.000';
+  curW.textContent='0.000 kg'; curV.textContent='0.000 m³'; curA.textContent='0.000 m²';
+  costBox.style.display='none';
+};
 </script>
-</body>
-</html>
