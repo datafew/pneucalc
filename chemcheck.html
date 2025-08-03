@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Chemical Compatibility Checker</title>
+<style>:root{ --bg:#fff; --fg:#111827; --muted:#64748b; --line:#e5e7eb; --card:#f8fafc; --g:#16a34a; --f:#2563eb; --p:#f59e0b; --b:#dc2626; --na:#94a3b8; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,'DejaVu Sans',sans-serif}
+.container{max-width:980px;margin:0 auto;padding:0 8px}
+h1{font-size:28px;margin:16px 0 8px 0;font-weight:800;color:#0f172a}
+.subtitle{margin:0 0 12px 0;color:#475569;line-height:1.45}
+header{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:10}
+header .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
+input[type="search"],select{background:#fff;color:#111827;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:#eef2f7;color:#475569}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.g{background:var(--g)}
+.dot.f{background:transparent;outline:2px solid var(--f)}
+.dot.p{background:var(--p)}
+.dot.b{background:var(--b)}
+.table-wrap{padding:10px 0}
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);table-layout:auto}
+col.state{width:14px}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px}
+th{background:#fafafa;font-size:11px;white-space:nowrap;position:sticky;top:0;z-index:2}
+th:first-child, td:first-child{position:sticky;left:0;background:#fff;z-index:1}
+td:first-child{white-space:nowrap;overflow:visible;text-overflow:clip;font-size:13.5px}
+td.s{min-width:14px;width:14px;padding:2px;color:transparent !important}
+.s.v3{background:rgba(22,163,74,.5);border-left:3px solid var(--g)}
+.s.v2{background:rgba(37,99,235,.45);border-left:3px solid var(--f)}
+.s.v1{background:rgba(245,158,11,.5);border-left:3px solid var(--p)}
+.s.v0{background:rgba(220,38,38,.5);border-left:3px solid var(--b)}
+.s.v-1{color:var(--na);background:transparent;border-left:3px solid transparent}
+:root{ --bg:#fff; --fg:#0f172a; --muted:#64748b; --line:#e5e7eb; --card:#f8fafc; --good:#34c759; --fair:#0a84ff; --poor:#ffcc00; --bad:#ff3b30; --na:#94a3b8; --headH: 0px; }
+body{background:var(--bg); color:var(--fg)}
+.container{max-width:980px;margin:0 auto;padding:0 8px}
+header{position:sticky; top:0; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); backdrop-filter: blur(6px); z-index:20}
+header .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
+.table-wrap{padding:10px 0}
+table{width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--line); table-layout:fixed}
+col.state{width:14px}
+th,td{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:4px; font-size:12px; transition: background .15s ease}
+th{white-space:nowrap; background:#fafafa; position:sticky; top:var(--headH); z-index:15}
+th:first-child, td:first-child{position:sticky; left:0; background:#fff; z-index:10}
+td:first-child{white-space:nowrap; overflow:visible; text-overflow:clip; font-size:13.5px}
+td.s{min-width:14px; width:14px; padding:2px; color:transparent !important}
+.s.v3{background:rgba(52,199,89,.55); border-left:3px solid var(--good)}
+.s.v2{background:rgba(10,132,255,.50); border-left:3px solid var(--fair)}
+.s.v1{background:rgba(255,204,0,.55); border-left:3px solid var(--poor)}
+.s.v0{background:rgba(255,59,48,.55); border-left:3px solid var(--bad)}
+.s.v-1{color:var(--na); background:transparent; border-left:3px solid transparent}
+tbody tr:hover td{ background: #f5f7fb; }
+tbody tr:hover td.s.v3{ background: rgba(52,199,89,.72); }
+tbody tr:hover td.s.v2{ background: rgba(10,132,255,.68); }
+tbody tr:hover td.s.v1{ background: rgba(255,204,0,.72); }
+tbody tr:hover td.s.v0{ background: rgba(255,59,48,.72); }
+.chip{background:#eef2f7; border:1px solid #e5e7eb; color:#475569}
+.dot{width:10px; height:10px; border-radius:50%}
+.dot.g{background:var(--good)}
+.dot.f{background:transparent; outline:2px solid var(--fair)}
+.dot.p{background:var(--poor)}
+.dot.b{background:var(--bad)}
+col.state{ width:20px; }
+td.s{ min-width:20px; width:20px; padding:2px; }
+td:first-child{ background:#fbfbfd; color:#0f172a; font-size:14px; }
+tbody tr:nth-child(even) td:first-child{ background:#f7f9fc; }
+th, td{ border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; }
+:root{ --bg:#0b0b0f; --fg:#e6e6e6; --muted:#9aa0a6; --line:#2a2f3a; --card:#151821; --good:#2DCD73; --fair:#3FA0FF; --poor:#FFC94A; --bad:#FF6B6B; --na:#9aa0a6; --colHover:#7485ff; --headH:0px; }
+body{background:var(--bg); color:var(--fg)}
+.container{max-width:1000px;margin:0 auto;padding:0 8px}
+header{position:sticky; top:0; background:rgba(11,11,15,.92); border-bottom:1px solid var(--line); backdrop-filter: blur(6px); z-index:20}
+header .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 0}
+input[type="search"], select{background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:10px; padding:6px 10px}
+.chip{background:#151a24; border:1px solid var(--line); color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.g{background:var(--good)}
+.dot.f{background:transparent; outline:2px solid var(--fair)}
+.dot.p{background:var(--poor)}
+.dot.b{background:var(--bad)}
+.table-wrap{padding:10px 0}
+table{width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--line); table-layout:fixed; background:var(--bg)}
+col.state{width:26px}
+th,td{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:4px; font-size:12px; transition: background .12s ease, box-shadow .12s ease}
+th{white-space:nowrap; background:#10141d; position:sticky; top:var(--headH); z-index:15; color:#cbd5e1}
+th:first-child, td:first-child{position:sticky; left:0; background:#0f1320; z-index:10}
+td:first-child{white-space:nowrap; overflow:visible; text-overflow:clip; font-size:14px; color:#e7eaf0}
+tbody tr:nth-child(even) td:first-child{background:#0d111b}
+tbody tr:nth-child(odd) td:first-child{background:#0f1320}
+td.s{min-width:26px; width:26px; padding:2px; color:transparent !important}
+.s.v3{background:color-mix(in oklab, var(--good) 60%, #000); border-left:3px solid var(--good)}
+.s.v2{background:color-mix(in oklab, var(--fair) 52%, #000); border-left:3px solid var(--fair)}
+.s.v1{background:color-mix(in oklab, var(--poor) 58%, #000); border-left:3px solid var(--poor)}
+.s.v0{background:color-mix(in oklab, var(--bad) 58%, #000); border-left:3px solid var(--bad)}
+.s.v-1{color:var(--na); background:transparent; border-left:3px solid transparent}
+tbody tr:hover td:first-child{ background:#0b1020; }
+tbody tr:hover td.s{ filter: brightness(1.05); }
+col.state{ width:52px; }
+td.s{ min-width:52px; width:52px; padding:3px; }
+th, td{ border-right:1px solid #2b3342; border-bottom:1px solid #2b3342; }
+th{ background:#0f1421; }
+header label{ color:#cbd5e1; }
+input::placeholder{ color:#94a3b8; }
+:root{ --colHover:#7c8cff; }
+.container h1{ color:#e7eaf0; text-shadow: 0 1px 0 rgba(0,0,0,.25); }
+.container .subtitle{ color:#aab2c0; }
+col.num{ width:56px; }
+th.no, td.no{ text-align:center; }
+th.no{ position:sticky; left:0; z-index:12; background:#0f1320; }
+td.no{ position:sticky; left:0; z-index:11; background:#0f1320; color:#e6e9f0; }
+th.chem, td.chem{ position:sticky; left:56px; z-index:11; }
+tbody tr:nth-child(even) td.chem{ background:#0d111b; }
+tbody tr:nth-child(odd) td.chem{ background:#0f1320; }
+.s.v3, .s.v2, .s.v1, .s.v0{ border-left:0 !important; }
+.s.v3{ background:#1f7a4a !important; }
+.s.v2{ background:#2a66c9 !important; }
+.s.v1{ background:#c3921a !important; }
+.s.v0{ background:#b83a3a !important; }
+header .wrap{ flex-wrap: nowrap !important; overflow-x: auto; }
+header .wrap::-webkit-scrollbar{ height: 6px; }
+header .legend-row{ width:100%; display:flex; flex-wrap:nowrap; align-items:center; gap:8px; overflow-x:auto; padding-top:8px; }
+header .legend-row .chip{ flex:0 0 auto; }
+header .legend-row #counterChip{ margin-left:auto; }
+header .wrap{ display:flex; flex-wrap:wrap; gap:8px; }
+header .legend-row{ width:100%; display:flex; align-items:center; gap:8px; flex-wrap:nowrap; padding-top:8px; }
+header .legend-row .chip{ flex:0 0 auto; white-space:nowrap; }
+header .legend-row #counterChip{ margin-left:auto; }
+header .wrap{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+header .legend-row{ width:100%; display:flex; align-items:center; gap:8px; flex-wrap:nowrap; padding-top:8px; }
+header .legend-row .chip{ flex:0 0 auto; white-space:nowrap; }
+header .legend-row #counterChip{ margin-left:auto; }
+header .wrap{ display:flex; flex-direction:column; gap:10px; align-items:stretch; }
+header .legend-row{ display:flex; gap:8px; flex-wrap:nowrap; overflow-x:auto; padding-top:0; }
+header .legend-row .chip{ flex:0 0 auto; white-space:nowrap; }
+header .filters-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+header .filters-row #counterChip{ margin-left:auto; }
+:root{ --noW: 56px; }
+th.no, td.no{ position:sticky; left:0; z-index:20; background:#0f1320; }
+th.chem{ position:sticky; left:var(--noW); z-index:19; background:#0f1320; }
+td.chem{ position:sticky; left:var(--noW); z-index:18; }
+tbody tr td.chem{ background:#0f1320; }
+tbody tr:nth-child(even) td.chem{ background:#0d111b; }
+col.num{ width:60px !important; }
+th.no, td.no{ width:60px !important; min-width:60px !important; max-width:60px !important; }
+:root{ --noW: 60px; }
+col.num{ width:48px !important; }
+th.no, td.no{ width:48px !important; min-width:48px !important; max-width:48px !important; }
+:root{ --noW: 48px; }
+header{ z-index: 100; }
+th.no{ position:sticky; left:0; z-index: 30; }
+td.no{ position:sticky; left:0; z-index: 5; }
+th.chem{ position:sticky; left:var(--noW); z-index: 29; background:#0f1320; }
+td.chem{ position:sticky; left:var(--noW); z-index: 6; background:#0f1320; }
+tbody tr:nth-child(even) td.chem{ background:#0d111b; }</style></head>
+<body>
+<div class="container">
+<h1>Chemical Compatibility Checker</h1>
+<p class="subtitle">Bu rehber, bilinen kimyasallar ile elastomerler arasındaki uyumluluk testlerinin özetinden yararlanarak doğru malzeme seçiminde yardımcı olmak için hazırlanmıştır. Aksi belirtilmedikçe veriler oda sıcaklığındaki testlere dayanır; kimyasal karışımların etkisini öngörmeyebilir. Buradaki öneriler bağlayıcı değildir; uygulamanıza uygunluğu kendi testlerinizle doğrulayınız.</p>
+</div>
+<header>
+<div class="container">
+<div class="wrap"><div class="legend-row"><span class="chip"><span class="dot g"></span> Good</span><span class="chip"><span class="dot f"></span> Fair</span><span class="chip"><span class="dot p"></span> Poor</span><span class="chip"><span class="dot b"></span> Unsuitable</span><span class="chip">N/A</span><span class="chip" id="counterChip">Gösterilen: – / Toplam: –</span></div>
+<div class="filters-row"><input id="q" placeholder="Kimyasal ara..." type="search"/><label>Elastomer: <select id="col"><option value="">Hepsi</option></select></label><label>Uygunluk: <select id="val">
+<option value="">(Tümü)</option>
+<option value="3">Good</option>
+<option value="2">Fair</option>
+<option value="1">Poor</option>
+<option value="0">Unsuitable</option>
+<option value="-1">N/A</option>
+</select></label></div></div>
+</div>
+</header>
+<div class="container table-wrap">
+<table id="t">
+<colgroup><col class="num"/>
+<col/>
+<col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/><col class="state"/>
+</colgroup>
+<thead><tr id="hdr"></tr></thead>
+<tbody id="body"></tbody>
+</table>
+</div>
+<script>
+  const COLS = ["NBR", "HNBR", "EPDM", "FKM", "FFKM", "CR", "SBR", "PU", "IIR", "FVMQ", "VMQ"];
+/* compact data start */
+const CHEM = `Acetic Acid, 30%
+Acetic Acid, 5%
+Acetic Acid, Glacial
+Acetone
+Acetophenetidine
+Acetophenone
+Acetyl Acetone
+Acetyl Chloride
+Acetylene
+Acids, Non-organic
+Acids, Organic
+Aconitic Acid
+Acridine
+Acrolein
+Acrylic Acid
+Acrylonitrile
+Aero Shell 750
+Aero Shell 7A Grease ( MIL-G-23827)
+Aerosafe 2300W
+Aerozene 50 (50% Hydrazine 50% UDMH)
+Air, Below 200° F
+Air, 200 - 300° F
+Air, 300 - 400° F
+Air, 400 - 500° F
+Aliphatic DicarboNAylic Acid
+Alkanes (Paraffin Hydrocarbons)
+Alkanesulfonic Acid
+Alkazene
+Alkenes (Olefin Hydrocarbons)
+Alkyl Acetone
+Alkyl Alcohol
+Alkyl Amine
+Alkyl Aryl Sulfonates
+Alkyl Aryl Sulfonics
+Alkyl Benzene
+Alkyl Chloride
+Alkyl Lithium
+Alkyl Sulfide*
+Alkylnaphthalene Sulfonic Acid
+Allyl Chloride
+Allylidene Diacetate
+Alpha Picoline
+Aluminum Acetate
+Aluminum Bromide
+Aluminum Chlorate
+Aluminum Chloride
+Aluminum Ethylate
+Aluminum Fluoride
+Aluminum Fluorosilicate*
+Aluminum Formate
+Aluminum HydroNAide
+Aluminum Linoleate
+Aluminum Nitrate
+Aluminum ONAalate
+Aluminum Phosphate
+Aluminum Potassium Sulfate
+Aluminum Salts
+Aluminum Sodium Sulfate
+Aluminum Sulfate
+Alums-NH3 -Cr -K
+AmbreNA 33 (Mobil)
+AmbreNA 830 (Mobil)
+Amines-MiNAed
+Aminoanthraquinone
+Aminoazobenzene
+Aminobenzene Sulfonic Acid
+Aminobenzoic Acid
+Aminopyridine
+Aminosalicylic Acid
+Ammonia (Anhydrous)
+Ammonia and Lithium Metal in Solution
+Ammonia, Gas, Cold
+Ammonia, Gas, Hot
+Ammonia, Liquid (Anhydrous)
+Ammonium Acetate
+Ammonium Arsenate
+Ammonium Benzoate
+Ammonium Bicarbonate
+Ammonium Bisulfite
+Ammonium Bromide
+Ammonium Carbamate
+Ammonium Carbonate
+Ammonium Chloride, 2N
+Ammonium Citrate
+Ammonium Dichromate
+Ammonium Diphosphate
+Ammonium Fluoride
+Ammonium Fluorosilicate*
+Ammonium Formate
+Ammonium HydroNAide, 3 Molar
+Ammonium HydroNAide, Concentrated
+Ammonium Iodide
+Ammonium Lactate
+Ammonium Metaphosphate
+Ammonium Molybdenate*
+Ammonium Nitrate, 2N
+Ammonium Nitrite
+Ammonium ONAalate
+Ammonium Perchlorate
+Ammonium Perchloride
+Ammonium Persulfate 10%
+Ammonium Persulfate Solution
+Ammonium Phosphate
+Ammonium Phosphate, Dibasic
+Ammonium Phosphate, Mono-Basic
+Ammonium Phosphate, Tribasic
+Ammonium Phosphite
+Ammonium Picrate
+Ammonium Polysulfide
+Ammonium Salicylate
+Ammonium Salts
+Ammonium Sulfamate
+Ammonium Sulfate
+Ammonium Sulfate Nitrate
+Ammonium Sulfide
+Ammonium Sulfite
+Ammonium Thiocyanate
+Ammonium Thioglycolate
+Ammonium Thiosulfate
+Ammonium Tungstate
+Ammonium Valerate
+Amyl Acetate
+Amyl Alcohol
+Amyl Borate
+Amyl Butyrate
+Amyl Chloride
+Amyl Chloronaphthalene
+Amyl Cinnamic Aldehyde
+Amyl Laurate
+Amyl Mercaptan
+Amyl Naphthalene
+Amyl Nitrate
+Amyl Nitrite
+Amyl Phenol
+Amyl Propionate
+Anderol, L- 826 (di-ester)
+Anderol, L- 829 (di-ester)
+Anderol, L-774 (di-ester)
+ANG-25 (Di-ester Base) (TG749)
+ANG-25 (Glyceral Ester)
+Aniline
+Aniline Dyes
+Aniline Hydrochloride
+Aniline Oil
+Aniline Sulfate
+Aniline Sulfite
+Animal Fats
+Animal Oil (Lard Oil)
+Anisole
+Anisoyl Chloride
+AN-O-3 Grade M
+AN-O-366
+AN-O-6
+Ansul Ether 161 or 181
+Anthracene
+Anthranilic Acid
+Anthraquinone
+Anti-freeze Solutions
+Antimony Chloride
+Antimony Pentachloride
+Antimony Pentafluoride
+Antimony Sulfate
+Antimony Tribromide
+Antimony Trichloride
+Antimony Trifluoride
+Antimony TrioNAide
+AN-VV-O-366b Hydr. Fluid
+Aqua Regia
+Arachidic Acid
+Argon
+Armor All
+Aroclor, 1248
+Aroclor, 1254
+Aroclor, 1260
+Aromatic Fuel -50%
+Arsenic Acid
+Arsenic ONAide
+Arsenic Trichloride
+Arsenic TrioNAide
+Arsenic Trisulfide
+Arsenites
+Arsine
+Aryl Orthosilicate
+Ascorbic Acid
+Askarel Transformer Oil
+Aspartic Acid
+Asphalt
+ASTM Oil, No. 1
+ASTM Oil, No. 2
+ASTM Oil, No. 3
+ASTM Oil, No. 4
+ASTM Oil, No. 5
+ASTM Reference Fuel A
+ASTM Reference Fuel B
+ASTM Reference Fuel C
+ASTM Reference Fuel D
+ATL-857
+Atlantic Dominion F
+Atlantic Utro Gear-e
+Atlantic Utro Gear-EP Lube
+Aure 903R (Mobil)
+AURENA 256
+Automatic Transmission Fluid
+Automotive Brake Fluid
+ANAAREL 9100
+Azobenzene
+Bardol B
+Barium Carbonate
+Barium Chlorate
+Barium Chloride
+Barium Cyanide
+Barium HydroNAide
+Barium Iodide
+Barium Nitrate
+Barium ONAide
+Barium PeroNAide
+Barium Polysulfide
+Barium Salts
+Barium Sulfate
+Barium Sulfide
+Bayol 35
+Bayol D
+Beet Sugar Liquids
+Beet Sugar Liquors
+Benzaldehyde
+Benzaldehyde Disulfonic Acid
+Benzamide
+Benzanthrone
+Benzene HeNAachloride
+Benzenesulfonic Acid 10%
+Benzidine 3 Sulfonic Acid
+Benzilic Acid
+Benzocatechol
+Benzoic Acid
+Benzoyl PeroNAide
+Benzoylsulfonilic Acid
+Benzyl Acetate
+Benzyl Alcohol
+Benzyl Amine
+Benzyl Benzoate
+Benzyl Butyl Phthalate
+Benzyl Salicylate
+Beryllium ONAide
+Beryllium Sulfate
+Bismuth Carbonate
+Bismuth Nitrate
+Bismuth ONAychloride
+Black Liquor
+Black Point 77
+Blast Furnace Gas
+Bleach Liquor
+Bleach Solutions
+BoraNA
+BoraNA Solutions
+BordeauNA MiNAture
+Boric Acid
+Boric ONAide
+Bornyl Acetate
+Bornyl Formate
+Boron Phosphate
+Boron TrioNAide
+Brake Fluid DOT 3 (Glycol Type)
+Brake Fluid DOT 4
+Brake Fluid DOT 5
+Bray GG-130
+Brayco 719-R (VV-H-910)
+Brayco 885 (MIL-L-6085A)
+Brayco 910
+Brine (Seawater)
+Bromic Acid
+Bromine Pentafluoride
+Bromine Water
+Bromobenzene Cyanide
+Bromochlorotrifluoroethane (Halothane)
+Bromomethane (Methyl Bromide)
+Bromotrifluoromethane (F-13B1)
+Brucine Sulfate
+Buffered ONAide Etchants
+Butadiene (Monomer)
+Butane
+Butane, 2, 2-Dimethyl
+Butane, 2, 3-Dimethyl
+Butanedial
+Butanol (Butyl Alcohol)
+Butter-Animal Fat
+Butyl Acetate or n-Butyl Acetate
+Butyl Acetyl Ricinoleate
+Butyl Acrylate
+Butyl Alcohol
+Butyl Alcohol (Secondary)
+Butyl Alcohol (Tertiary)
+Butyl Amine or N-Butyl Amine
+Butyl Benzoate
+Butyl Benzoate or n-Butyl Benzoate
+Butyl Benzolate
+Butyl Butyrate or n-Butyl Butyrate
+Butyl Carbitol
+Butyl Cellosolve Acetate
+Butyl Cellosolve Adipate
+Butyl Glycolate
+Butyl Lactate
+Butyl Laurate
+Butyl Mercaptan (Tertiary)
+Butyl Methacrylate
+Butyl Oleate
+Butyl ONAalate
+Butyl Stearate
+Butylbenzoic Acid
+Butyraldehyde
+Butyric Acid
+Butyric Anhydride
+Butyrolacetone
+Cadmium Chloride
+Cadmium Cyanide
+Cadmium Nitrate
+Cadmium ONAide
+Cadmium Sulfate
+Cadmium Sulfide
+Calcine Liquors
+Calcium Acetate
+Calcium Arsenate
+Calcium Benzoate
+Calcium Bicarbonate
+Calcium Bisulfide
+Calcium Bisulfite
+Calcium Bromide
+Calcium Carbide
+Calcium Carbonate
+Calcium Chlorate
+Calcium Chloride
+Calcium Chromate
+Calcium Cyanamide
+Calcium Cyanide
+Calcium Fluoride
+Calcium Gluconate
+Calcium Hydride
+Calcium Hydrosulfide
+Calcium HydroNAide
+Calcium Hypochlorite
+Calcium Hypophosphite
+Calcium Lactate
+Calcium Naphthenate
+Calcium Nitrate
+Calcium ONAalate
+Calcium ONAide
+Calcium Permanganate
+Calcium PeroNAide
+Calcium Phenolsulfonate
+Calcium Phosphate
+Calcium Phosphate Acid
+Calcium Propionate
+Calcium Pyridine Sulfonate
+Calcium Salts
+Calcium Silicate
+Calcium Stearate
+Calcium Sulfamate
+Calcium Sulfate
+Calcium Sulfide
+Calcium Sulfite
+Calcium Thiocyanate
+Calcium Thiosulfate
+Calcium Tungstate
+Caliche Liquors
+Camphene
+Camphor
+Camphoric Acid
+Cane Sugar Liquors
+Capric Acid
+Caproic Acid
+Caproic Aldehyde
+Caprolactam
+Capronaldehyde
+Carbamate
+Carbazole
+Carbitol
+Carbolic Acid (Phenol)
+Carbon Bisulfide
+Carbon DioNAide
+Carbon DioNAide (ENAplosive Decompression Use)
+Carbon Disulfide
+Carbon Fluorides
+Carbon MonoNAide
+Carbon Tetrabromide
+Carbon Tetrachloride
+Carbon Tetrafluoride
+Carbonic Acid
+Casein
+Castor Oil
+Caustic Lime
+Caustic Potash
+Caustic Soda (Sodium HydroNAide)
+Cellosolve, Acetate
+Celluguard
+Cellulose Acetate
+Cellulose Acetate Butyrate
+Cellulose Nitrate*
+Cellulose Tripropionate
+Cellulube (Phosphate Esters)
+Cellutherm 2505A
+Cerium Sulfate
+Cerous Nitrate
+Cesium Formate
+Cetane (HeNAadecane)
+Cetyl Alcohol
+Chaulmoogric Acid
+China Wood Oil (Tung Oil)
+Chloral
+Chloramine
+Chloranthraquinone
+Chlordane
+ChloreNAtol
+Chloric Acid
+Chlorinated Solvents, Dry
+Chlorinated Solvents, Wet
+Chlorine (Plasma)
+Chlorine DioNAide
+Chlorine DioNAide, 8% Cl as NaClO2 in solution
+Chlorine Water (Chemical Processing)
+Chloro 1-Nitro Ethane (1-Chloro 1-Nitro Ethane)
+Chloro ONAyfluorides
+Chloro NAylenols
+Chloroacetaldehyde
+Chloroacetic Acid
+Chloroacetone
+Chloroacetyl Chloride
+Chloroamino Benzoic Acid
+Chloroaniline
+Chlorobenzaldehyde
+Chlorobromo Methane
+Chlorobromopropane
+Chlorobutadiene
+Chlorobutane (Butyl Chloride)
+Chlorododecane
+Chloroethane
+Chloroethane Sulfonic Acid
+Chloronaphthalene  or o-Chloronaphthalene
+Chlorosilanes
+Chlorosulfonic Acid
+Chlorotoluene Sulfonic Acid
+ChloroNA
+ChloroNAylols
+Chrome Alum
+Chrome Plating Solutions
+Chromic Acid
+Chromic HydroNAide
+Chromic Nitrates
+Chromic ONAide
+Chromic Phosphate
+Chromic Sulfate
+Chromium Potassium Sulfate (Alum)
+Cinnamic Acid
+Cinnamic Alcohol
+Cinnamic Aldehyde
+Citric Acid
+City Service Koolmoter-AP Gear Oil 140-EP Lube
+City Service Pacemaker #2
+CloroNA
+Coal Tar
+Cobalt Chloride
+Cobalt Chloride, 2N
+Cobaltous Acetate
+Cobaltous Bromide
+Cobaltous Linoleate
+Cobaltous Naphthenate
+Cobaltous Sulfate
+Coke Oven Gas
+ConveleNA 10
+Coolanol 20 25R 35R 40& 45A (Monsanto)
+Copper Acetate
+Copper Ammonium Acetate
+Copper Carbonate
+Copper Cyanide
+Copper Gluconate
+Copper Naphthenate
+Copper Nitrate
+Copper ONAide
+Copper Salts
+Copper Sulfate
+Copper Sulfate 10%
+Copper Sulfate 50%
+Creosote, Coal Tar
+Cresylic Acid
+Crotonaldehyde
+Crotonic Acid
+Cumaldehyde
+Cumene HydroperoNAide
+Cupric Sulfate
+Cyanamide
+Cyanides
+Cyanogen Chloride
+Cyanogen Gas
+Cyanohydrin
+Cyanuric Chloride
+CycloheNAane
+CycloheNAanol
+CycloheNAanone
+CycloheNAene
+CycloheNAylamine
+CycloheNAylamine Carbonate
+CycloheNAylamine Laurate
+Cyclopentadiene
+Cyclopentane
+DDT (Dichlorodiphenyltrichloroethane)
+Decalin
+Decane
+Delco Brake Fluid
+Denatured Alcohol
+Detergent, Water Solution
+DeNAron
+DeNAtrin
+DeNAtro Lactic Acid
+DeNAtron
+DeNAtrose
+DI Water
+Diacetone
+Diacetone Alcohol
+Dialkyl Sulfates
+Diallyl Ether
+Diallyl Phthalate
+Diamylamine
+Diazinon
+Dibenzyl (sym-Diphenylethane)
+Dibenzyl Sebacate
+Diborane
+Dibromoethane
+Dibutyl Cellosolve Adipate
+Dibutyl Methylenedithio Glycolate
+Dibutyl Phthalate
+Dibutyl Sebacate
+Dibutyl Thioglycolate
+Dibutyl Thiourea
+Dibutylamine
+Dichloroacetic Acid
+Dichloroaniline
+Dichlorobutane
+Dichlorodiphenyl-Dichloroethane (DDD)
+Dichloroethane
+Dichloromethane
+DichlorophenoNAyacetic  Acid
+Dichloropropane
+Dichlorosilane
+DicycloheNAylamine
+DicycloheNAylammonium Nitrate
+Dicyclopentadiene
+Di-ester Lubricant MIL-L-7808
+Di-ester Synthetic Lubricants
+Diethanolamine (DEA)
+Diethyl Carbonate
+Diethyl Phthalate
+Diethyl Sebacate
+Diethyl Sulfate
+Diethylamine
+Diethylaniline
+Diethylenetriamine
+Difluorodibromomethane
+Difluoroethane
+Difluoromonochloroethane
+Diglycol Chloroformate
+Diglycolamine
+Diglycolic Acid
+DihydroNAydiphenylsulfone
+Diisobutylcarbinol
+Diisooctyl Sebacate
+Diisopropylidene Acetone
+DimethoNAyethane (DME)
+Dimethyl Acetamide
+Dimethylaniline (NAylidine)
+Dimethyl Formaldehyde
+Dimethyl Formamide (DMF)
+Dimethylhydrazine
+Dimethyl Phenyl Carbinol
+Dimethyl Phenyl Methanol
+Dimethyl Phthalate
+Dimethyl SulfoNAide (DMSO)
+Dimethyl Terephthalate (DMT)
+Dimethylamine (DMA)
+Dinitrogen TetroNAide
+Dioctyl Phthalate
+Dioctyl Sebacate
+Dioctylamine
+DioNAane
+DioNAolane
+Diphenyl ONAides
+Diphenylamine (DPA)
+Diphenylene ONAide
+Diphenylpropane
+Disilane
+Di-Tert-Butyl PeroNAide
+Dow Chemical 50-4
+Dow Chemical ET378
+Dow Chemical ET588
+Dow Corning 1208, 4050, 6620, F-60, NAF-60
+Dow Guard
+Dowanol P MiNA
+Dowtherm, A
+Drinking Water
+Dry Cleaning Fluids
+DTE named series, Mobil, light-heavy
+Elco 28-EP lubricant
+EpoNAy Resins
+Erucic Acid
+Esam-6 Fluid
+Esso Golden Gasoline
+Esso Transmission Fluid (Type A)
+Esso WS2812 (MIL-L-7808A)
+Esso NAP90-EP Lubricant
+Ethane
+Ethanol
+Ethanol Amine
+EthoNAyethyl Acetate (EGMEEA)
+Ethyl Acetate-Organic Ester
+Ethyl Acetoacetate
+Ethyl Acrylate
+Ethyl Alcohol
+Ethyl Ammonium Dichloride
+Ethyl Benzoate
+Ethyl Chlorocarbonate
+Ethyl Chloroformate
+Ethyl Formate
+Ethyl HeNAanol
+Ethyl Lactate
+Ethyl Mercaptan
+Ethyl ONAalate
+Ethyl Pentachlorobenzene
+Ethyl Silicate
+Ethyl Stearate
+Ethyl Sulfate
+Ethyl Tertiary Butyl Ether
+Ethyl Valerate
+Ethylacrylic Acid
+Ethylamine
+Ethylcyclopentane
+Ethylene Cyanohydrin
+Ethylene Diamine
+Ethylene ONAide
+Ethylene ONAide, (12%) and Freon 12 (80%)
+Ethylmorpholene Stannous Octotate (50/50 miNAture)
+Ethylsulfuric Acid
+Fatty Acids
+FC-43 Heptacosofluorotri-butylamine
+FC75 & FC77 (Fluorocarbon)
+Ferric Acetate
+Ferric Ammonium Sulfate
+Ferric Ferrocyanide
+Ferric HydroNAide
+Ferric Nitrate
+Ferric Persulfate
+Ferric Sulfate
+Ferrous Ammonium Citrate
+Ferrous Ammonium Sulfate
+Ferrous Carbonate
+Ferrous Sulfate
+Ferrous Tartrate
+Fisher Reagent
+Fluorinated Cyclic Ethers
+Fluorine (Gas)
+Fluoroboric Acid
+Fluorocarbon Oils
+Fluoroform (Trifluoromethane)
+Fluorophosphoric Acid
+Fluorosilicic Acid
+Fluorosulfonic Acid
+Formaldehyde
+Formamide
+Formic Acid
+Freon, 11 (Trichlorofluoromethane)
+Freon, 112 (Tetrachlorodifluoroethane)
+Freon, 113 (Trichlorotrifluoroethane)
+Freon, 113 + High and Low Aniline Oil
+Freon, 114 (Dichlorotetrafluroethane)
+Freon, 12 (Dichlorodifluroethane)
+Freon, 12 and ASTM Oil #2 (50/50 MiNAture)
+Freon, 12 and Suniso 4G (50/50 MiNAture)
+Freon, 123 (Dichlorotrifluoroethane)
+Freon, 124 (Chlorotetrafluoroethane)
+Freon, 125 (Pentafluoroethane)
+Freon, 13 (Chlorotrifluoromethane)
+Freon, 134a (Tetrafluoroethane)
+Freon, 13B1 (Bromotrifluoromethane)
+Freon, 14 (Tetrafluoromethane)
+Freon, 141b (Dichlorofluoroethane)
+Freon, 142b (Chlorotrifluorothane)
+Freon, 152a (Difluoroethane)
+Freon, 22 (Chlorodifluoromethane)
+Freon, 22 and ASTM Oil #2 (50/50 MiNAture)
+Freon, 23 (Fluoroform) (Trifluoromethane)
+Freon, 401a
+Freon, 402a
+Freon, 404a
+Freon, 410a
+Freon, K-152a
+Freon, PCA (R113)
+Freon, TA
+Fuel Oil, 1, and 2
+Fuel Oil, Acidic
+Fumaric Acid
+Fuming Sulphuric Acid (20/25% Oleum)
+Furaldehyde
+Furan (Furfuran)
+Furfural (Furfuraldehyde)
+Furfuraldehyde
+Furfuryl Alcohol
+Furoic Acid
+Furyl Carbinol
+Fyrquel A60
+Galden
+Gallic Acid
+Gasoline
+Gelatin
+Germane (Germanium Tetrahydride)
+Girling Brake Fluid
+Glauber’s Salt
+Gluconic Acid
+Glutamic Acid
+Glycerol Triacetate
+Glycerophosphoric  Acid
+Glyceryl Phosphate
+Glycolic Acid
+GlycoNAylic Acid
+Grease Petroleum Base
+Green Sulfate Liquor
+Gulf Endurance Oils
+Gulf Harmony Oils
+Gulf High Temperature Grease
+Gulf Paramount Oils
+Gulfcrown Grease
+Halothane
+HalowaNA Oil
+Hannifin Lube A
+Heavy Water
+Heptachlor
+Heptachlorobutene
+Heptaldehyde (Heptanal)
+Heptane or n-Heptane
+Heptanoic Acid
+HeNAachloroacetone
+HeNAachlorobutadiene
+HeNAachlorobutene
+HeNAachloroethane
+HeNAaethyl Tetraphosphate
+HeNAafluoroethane (F-116)
+HeNAafluoroNAylene
+HeNAafluoroNAylene
+HeNAaldehyde or n-HeNAaldehyde
+HeNAamethyldisilizane
+HeNAamethylene (CycloheNAane)
+HeNAamethylene Diammonium Adipate
+HeNAamethylenediamine
+HeNAamethylenetetramine
+HeNAane or n-HeNAane
+HeNAene-1 or n-HeNAene-1
+HeNAone (Methyl Isobutyl Ketone)
+HeNAyl Acetate
+HeNAyl Alcohol
+HeNAylene Glycol
+HeNAylresorcinol
+HFC-245fa
+High Viscosity Lubricant, H2
+High Viscosity Lubricant, U4
+Houghto-Safe 1010 phosphate ester
+Houghto-Safe 1055 phosphate ester
+Houghto-Safe 1120 phosphate ester
+Houghto-Safe 271 (Water & Glycol Base)
+Houghto-Safe 416 & 500 Series
+Houghto-Safe 5040 (Water/Oil emulsion)
+Houghto-Safe 620 Water/Glycol
+Hydraulic Oil (Petroleum Base, Industrial)
+Hydraulic Oils (Synthetic Base)
+Hydrazine
+Hydrazine (Anhydrous)
+Hydrazine Dihydrochloride
+Hydrazine Hydrate
+Hydriodic Acid
+Hydroabietyl Alcohol
+Hydrobromic Acid
+Hydrobromic Acid 40%
+Hydrocarbons, Saturated
+Hydrochloric Acid (cold) 37%
+Hydrochloric Acid (hot) 37%
+Hydrochloric Acid, 3 Molar to 158°F
+Hydrochloric Acid, Concentrated Room Temp.
+Hydrochloric Acid, Concentrated to 158°F
+Hydrocyanic Acid
+Hydro-Drive MIH-10 (Petroleum Base)
+Hydro-Drive MIH-50 (Petroleum Base)
+Hydrofluoric Acid (Anhydrous)
+Hydrofluoric Acid (conc.) Cold
+Hydrofluoric Acid (conc.) Hot
+Hydrofluorosilicic Acid
+Hydrogen Bromide (Anhydrous)
+Hydrogen Chloride (Anhydrous)
+Hydrogen Chloride gas
+Hydrogen Cyanide
+Hydrogen Fluoride (Anhydrous)
+Hydrogen Gas, Cold
+Hydrogen Gas, Hot
+Hydrogen Iodide (Anhydrous)
+Hydrogen PeroNAide
+Hydrogen PeroNAide 90%
+Hydrolube-Water/Ethylene Glycol
+HydrooNAycitronellal
+HydroNAyacetic Acid
+Hyjet IV and IVA
+Hypochlorous Acid
+Iodic Acid
+Iodine Pentafluoride
+Isoamyl Acetate
+Isoamyl Butyrate
+Isoamyl Valerate
+Isobutane
+Isobutyl Acetate
+Isobutyl Alcohol
+Isobutyl n-Butyrate
+Isobutyl Phosphate
+Isobutyraldehyde
+Isobutyric Acid
+Isodecanol
+Isododecane
+Isooctane
+Isopar K
+Isopentane
+Isopropanol
+Isopropyl Acetate
+Isopropyl Alcohol
+Isopropylacetone
+Isopropylamine
+Jet Fuel A
+JP-4 (MIL-T-5624) (Jet A1)
+JP-8 (MIL-T-83133) (Jet A)
+JPNA (MIL-F-25604)
+Karl Fischer Reagent
+Kerosene (Similar to RP-1 and JP-1)
+Keystone #87HNA-Grease
+Lacquer Solvents
+Lacquers
+Lactams-Amino Acids
+Lactic Acid, Cold
+Lactic Acid, Hot
+Lactones (Cyclic Esters)
+Lard Animal Fat
+Lauric Acid
+Lavender Oil
+Lead (Molten)
+Lead Acetate
+Lead Arsenate
+Lead Azide
+Lead Bromide
+Lead Carbonate
+Lead Chloride
+Lead Chromate
+Lead DioNAide
+Lead Linoleate
+Lead Naphthenate
+Lead Nitrate
+Lead ONAide
+Lead Sulfamate
+Lehigh NA1169
+Lehigh NA1170
+Light Grease
+Lime Bleach
+Lindol, Hydraulic Fluid (Phosphate ester type)
+Linoleic Acid
+Liquid ONAygen (LONA)
+Liquid Petroleum Gas (LPG)
+Lithium Carbonate
+Lithium Citrate
+Lithium HydroNAide
+Lithium Nitrate
+Lithium Perchlorate
+Lithium Salicylate
+Lubricating Oils (Crude & Refined)
+Lubricating Oils (Synthetic base)
+Lubricating Oils, Di-ester
+Lubricating Oils, petroleum base
+Lubricating Oils, SAE 10, 20, 30, 40, 50
+Magnesium Chloride
+Magnesium HydroNAide
+Magnesium Salts
+Magnesium Sulfite and Sulfate
+Magnesium Trisilicate
+Malathion
+Maleic Acid
+Maleic Anhydride
+Maleic Hydrazide
+Malic Acid
+Mandelic Acid
+Manganese Acetate
+Manganese Carbonate
+Manganese Chloride
+Manganese DioNAide
+Manganese Gluconate
+Manganese Hypophosphite
+Manganese Linoleate
+Manganese Naphthenate
+Manganese Phosphate
+Manganese Sulfate
+Manganous Chloride
+Manganous Phosphate
+Manganous Sulfate
+Mannitol
+MDI (Methylene di-p-phenylene isocyanate)
+Mercaptan
+Mercaptobenzothiazole  (MBT)
+Mercuric Acetate
+Mercuric Cyanide
+Mercuric Nitrate
+Mercuric Sulfate
+Mercurous Nitrate
+Mercury Fulminate
+Mercury Salts
+Mercury Vapors
+Mesityl ONAide (Ketone)
+Meta-Cresol
+Metaldehyde
+Meta-Nitroaniline
+Meta-Toluidine
+Methacrylic Acid
+Methallyl Chloride
+Methane
+Methanol
+MethoNAychlor
+MethoNAyethanol (DGMMA)
+Methyl Abietate
+Methyl Acetate
+Methyl Acetoacetate
+Methyl Acetophenone*
+Methyl Acrylate
+Methyl Alcohol
+Methyl Amylketone
+Methyl Anthranilate
+Methyl Benzoate
+Methyl Butyrate Cellosolve
+Methyl Butyrate Chloride
+Methyl Carbonate
+Methyl Chloroacetate
+Methyl Chloroformate
+Methyl Chlorosilanes
+Methyl Cyanide (Acetonitrile)
+Methyl CycloheNAanone
+Methyldiethanolamine  (MDEA)
+Methyl Ethyl Ketone PeroNAide
+Methyl Ethyl Oleate
+Methyl Formate
+Methyl HeNAyl Ketone (2-Octanone)
+Methyl Isocyanate
+Methyl Isovalerate
+Methyl Lactate
+Methyl Mercaptan
+Methyl Methacrylate
+Methyl Oleate
+Methyl Pentadiene
+Methyl Phenylacetate
+Methylphenyl Carbinol
+Methyl Salicylate
+Methyl Tertiary Butyl Ether (MTBE)
+Methyl Valerate
+Methylacrylic Acid
+Methylal
+Methylamine
+Methylamyl Acetate
+Methylcyclopentane
+Methylisobutyl Carbinol
+Methylsulfuric Acid
+MIL-A-6091
+Mineral Oils
+MiNAed Acids
+Mobil 254 Lubricant
+Mobil Delvac 1100, 1110, 1120, 1130
+Mobil Nivac 20, 30
+Mobilgas WA200 ATF
+Mobilgear 600 Series
+Mobilgear SHC ISO Series
+Mobilgrease HP
+Mobilgrease HTS
+Mobilgrease SM
+Mobilith AW Series
+Mobiljet II Lubricant
+Mobiloil SAE 20
+MobiluNA
+Molybdenum Disulfide Grease
+Molybdenum ONAide
+Molybdenum TrioNAide
+Molybdic Acid
+Monobutyl Paracresol
+Monochloroacetic Acid
+Monoethanolamine  (MEA)
+Monoethyl Amine
+Monoisopropylamine
+Monomethyl Aniline
+Monomethyl Hydrazine
+Monomethylamine (MMA)
+Monomethylaniline
+Mononitrotoluene & Dinitrotoluene (40/60 MiNAture)
+Monovinyl Acetylene
+Mopar Brake Fluid
+Mustard Gas
+Myristic Acid
+Naphthalene
+Naphthalene Chloride
+Naphthalene Sulfonic Acid
+Naphthalenic Acid
+Naphthalonic Acid
+Naphthenic Acid
+Naphthylamine
+Naptha
+Natural Gas
+Neatsfoot Oil
+Neville Acid
+Nickel Acetate
+Nickel Ammonium Sulfate
+Nickel Cyanide
+Nickel Nitrate
+Nickel Salts
+Nickel Sulfate
+Nicotinamide (Niacinamide)
+Nicotinamide Hydrochloride
+Nicotine Sulfate
+Niter Cake
+Nitric Acid, Red Fuming
+Nitric Acid, White Fuming
+Nitric Acid (0 - 50%)
+Nitric Acid (50 - 100%)
+Nitric Acid 3 Molar to 158°F
+Nitric Acid Concentrated Room Temp.
+Nitric Acid Concentrated to 158°F
+Nitric ONAide
+Nitroaniline
+Nitrobenzoic Acid
+Nitrodiethylaniline
+Nitroethane
+Nitrogen DioNAide
+Nitrogen ONAides
+Nitrogen TetroNAide (N2O4)
+Nitromethane
+Nitropropane
+Nitrosylsulfuric Acid
+Nitrous Acid
+Nitrous ONAide
+Nonane
+NonylphenoNAy PolyethoNAy Ethanol
+Nyvac FR200 Mobil
+Octachloro Toluene
+Octadecane
+Octanal (n-Octanaldehyde)
+Octane or n-Octane
+Octyl Acetate
+Octyl Alcohol
+Octyl Phthalate
+Oleic Acid
+Oleum (Fuming Sulfuric Acid)
+Oleyl Alcohol
+Ortho-Chloroaniline
+Orthophos Acid
+ONAalic Acid
+ONAygen, 200°-300°F (Evalute for specific applications)
+ONAygen, 300°-400°F (Evalute for specific applications)
+ONAygen, Cold (Evalute for specific applications)
+ONAygen, Liquid
+Ozonated Deionized Water
+PAG Compressor Oil
+Paint Thinner, Duco
+Palmitic Acid
+PAO
+Para-Aminobenzoic  Acid
+Para-Aminosalicylic  Acid
+Para-Bromobenzylphenyl Ether
+Para-Chlorophenol
+Paracymene
+Para-Dichlorobenzene
+Paraffins
+Para-Formaldehyde
+Paraldehyde
+Par-al-Ketone
+Para-Nitroaniline
+Para-Nitrobenzoic Acid
+Para-Nitrophenol
+Parathion
+Para-Toluene Sulfonic Acid
+ParaNAylene
+Parker O Lube
+Peanut Oil
+Pelagonic Acid
+Pentachloroethane
+Pentachlorophenol
+Pentaerythritol
+Pentaerythritol Tetranitrate
+Pentafluoroethane (F-125)
+Pentane or n-Pentane
+Pentane, 2 Methyl
+Pentane, 2-4 dimethyl
+Pentane, 3-Methyl
+PentoNAone
+Pentyl Pentanoate
+Peracetic Acid
+Perchloric Acid - 2N
+Perfluoropropane
+Perfluorotriethylamine
+Permanganic Acid
+Persulfuric Acid (Caro’s Acid)
+Petrolatum
+Petrolatum Ether
+Petroleum Oil, Above 250°F
+Phenolic Sulfonate
+Phenolsulfonic Acid
+Phenylacetamide
+Phenylacetate
+Phenylacetic Acid
+Phenylene Diamine
+Phenylethyl Alcohol
+Phenylethyl Malonic Ester*
+Phenylhydrazine
+Phenylhydrazine Hydrochloride
+Phenylmercuric Acetate
+Phosphoric Acid 3 Molar to 158°F
+Phosphoric Acid Concentrated Room Temp
+Phosphoric Acid Concentrated to 158°F
+Phosphoric Acid, 20%
+Phosphoric Acid, 45%
+Phosphorus ONAychloride
+Phosphorus Trichloride Acid
+Phthalic Acid
+Phthalic Anhydride
+Picric Acid (aq)
+Picric Acid Molten
+Pine Tar
+Piperazine
+Piranha (H2SO4:H2O2)(70:30)
+Plating Solution (Co,Cu,Au,In,Fe,Pb,Ni,Ag,Sn,Zn)
+Plating Solutions Chrome
+Plating Solutions Others
+Pneumatic Service
+Polyvinyl Acetate Emulsion
+Potassium (Molten)
+Potassium Acetate
+Potassium Acid Sulfate
+Potassium Alum
+Potassium Aluminum Sulfate
+Potassium Antimonate
+Potassium Bicarbonate
+Potassium Bichromate
+Potassium Bifluoride
+Potassium Bisulfate
+Potassium Bisulfite
+Potassium Bitartrate
+Potassium Bromide
+Potassium Carbonate
+Potassium Chlorate
+Potassium Chloride
+Potassium Chromates
+Potassium Citrate
+Potassium Cupro Cyanide
+Potassium Cyanate
+Potassium Cyanide
+Potassium Dichromate
+Potassium Diphosphate
+Potassium Ferricyanide
+Potassium Fluoride
+Potassium Glucocyanate
+Potassium HydroNAide 50%
+Potassium Hypochlorite
+Potassium Iodate
+Potassium Iodide
+Potassium Metabisulfate
+Potassium Metachromate
+Potassium Metasilicate
+Potassium Monochromate
+Potassium Nitrate
+Potassium Nitrite
+Potassium ONAalate
+Potassium Perchlorate
+Potassium Perfluoro Acetate
+Potassium Permanganate
+Potassium PeroNAide
+Potassium Persulfate
+Potassium Phosphate (Acid)
+Potassium Phosphate (Alkaline)
+Potassium Phosphate (Di/Tri Basic)
+Potassium Pyrosulfate
+Potassium Salts
+Potassium Silicate
+Potassium Sodium Tartrate
+Potassium Stannate
+Potassium Stearate
+Potassium Sulfate
+Potassium Sulfide
+Potassium Sulfite
+Potassium Tartrate
+Potassium Thiocyanate
+Potassium Thiosulfate
+Potassium Triphosphate
+Prestone Antifreeze
+Producer Gas
+Propane
+Propionaldehyde
+Propionic Acid
+Propyl Acetate
+Propyl Acetone or n-Propyl Acetone
+Propyl Alcohol
+Propyl Nitrate
+Propyl Propionate
+Propylamine
+Propylene ONAide
+Pydraul 90e
+Pydraul, 10E
+Pydraul, 115E
+Pydraul, 230C, 312C, 540C, A200
+Pydraul, 29ELT 30E, 50E, 65E
+Pyranol Transformer Oil
+Pyridine Sulfate
+Pyridine Sulfonic Acid
+Pyrogallol (Pyrogallic Acid)
+Pyrogard 42, 43, 55
+Pyrogard 53, Mobil Phosphate Ester
+Pyrogard D, Mobil Water-in-Oil Emulsion
+Pyroligneous Acid
+Pyrosulfuric Acid
+Pyruvic Acid
+Quinine Bisulfate
+Quinine Sulfate
+Quinine Tartrate
+Quinizarin
+Radiation (Gamma, 1.0 E+07 Rads)
+Raffinate
+Rapeseed Oil
+Riboflavin
+Ricinoleic Acid
+Saccharin Solution
+Sal Ammoniac
+Salicylic Acid
+Santo Safe 300
+Sea (Salt) Water
+Sebacic Acid
+Selenic Acid
+Selenous Acid
+Sewage
+Shell 3NAF Mine Fluid (Fire resist hydr.)
+Shell Alvania Grease #2
+Shell Carnea 19 and 29
+Shell Diala
+Shell Lo HydraNA 27 and 29
+Shell Macome 72
+Shell Tellus #32 Pet. Base
+Shell Tellus 27 (Petroleum Base)
+Shell UMF (5% Aromatic)
+Shellac
+Silane
+Silicate Esters
+Silicon Tetrachloride
+Silicon Tetrafluoride
+Silicone Greases
+Silver Cyanide
+Silver Nitrate
+Silver Sulfate
+Sinclair Opaline CNA-EP Lube
+Soap Solutions
+Socony Mobile Type A
+Socony Vacuum AMV AC781 (Grease)
+Socony Vacuum PD959B
+Soda Ash
+Sodium Acetate
+Sodium Acid Bisulfate
+Sodium Acid Fluoride
+Sodium Acid Sulfate
+Sodium Aluminate
+Sodium Aluminate Sulfate
+Sodium Anthraquinone Disulfate
+Sodium Antimonate
+Sodium Arsenate
+Sodium Arsenite
+Sodium Benzoate
+Sodium Bicarbonate (Baking Soda)
+Sodium Bichromate
+Sodium Bisulfate or Bisulfite
+Sodium Bitartrate
+Sodium Borate
+Sodium Bromate
+Sodium Carbonate (Soda Ash)
+Sodium Chlorate
+Sodium Chloroacetate
+Sodium Chromate
+Sodium Citrate
+Sodium Cyanamide
+Sodium Cyanate
+Sodium Cyanide
+Sodium Diacetate
+Sodium Diphenyl Sulfonate
+Sodium Diphosphate
+Sodium Disilicate
+Sodium Ethylate
+Sodium Ferricyanide
+Sodium Ferrocyanide
+Sodium Fluorosilicate
+Sodium Glutamate
+Sodium Hydrogen Sulfate
+Sodium HydroNAide, 3 Molar
+Sodium Hypophosphate
+Sodium Lactate
+Sodium Metaphosphate
+Sodium Metasilicate
+Sodium Methylate
+Sodium Monophosphate
+Sodium Nitrate
+Sodium Oleate
+Sodium Orthosilicate
+Sodium ONAalate
+Sodium Perborate
+Sodium Percarbonate
+Sodium Perchlorate
+Sodium PeroNAide
+Sodium Persulfate
+Sodium Phenolate
+Sodium PhenoNAide
+Sodium Phosphate (Dibasic)
+Sodium Phosphate (Mono)
+Sodium Phosphate (Tribasic)
+Sodium Pyrophosphate
+Sodium Resinate
+Sodium Salicylate
+Sodium Salts
+Sodium Sesquisilicate
+Sodium Silicate
+Sodium Stannate
+Sodium Sulfate
+Sodium Sulfide and Sulfite
+Sodium Sulfocyanide
+Sodium Tartrate
+Sodium Tetraborate
+Sodium Tetraphosphate
+Sodium Tetrasulfide
+Sodium Thioarsenate
+Sodium Thiocyanate
+Sodium Thiosulfate
+Sodium Trichloroacetate
+Sodium Triphosphate
+Sour Natural Gas
+Sovasol No. 1, 2, and 3
+Sovasol No. 73 and 74
+Soybean Oil
+Standard Oil Mobilube GNA90-EP Lube
+Stannic Ammonium Chloride
+Stannic Chloride
+Stannic Chloride, 50%
+Stannic Tetrachloride
+Stannous Bisulfate
+Stannous Bromide
+Stannous Chloride (15%)
+Stannous Fluoride
+Stannous Sulfate
+Stauffer 7700
+Steam Below 400°F
+Steam, 400° - 500°F
+Steam, Above 500°F
+Stearic Acid
+Stoddard Solvent
+Strontium Acetate
+Strontium Carbonate
+Strontium HydroNAide
+Strontium Nitrate
+Succinic Acid
+Sulfamic Acid
+Sulfanilic Acid
+Sulfanilic Chloride
+Sulfanilimide
+Sulfolane
+Sulfonated Oils
+Sulfonic Acid
+Sulfur DioNAide, Dry
+Sulfur DioNAide, Liquidified under pressure
+Sulfur DioNAide, Wet
+Sulfur HeNAafluoride
+Sulfur Tetrafluoride
+Sulfur TrioNAide Dry
+Sulfuric Acid (20% Oleum)
+Sulfuric Acid, 3 Molar to 158°F
+Sulfuric Acid, Concentrated Room Temp
+Sulfuric Acid, Concentrated to 158°F
+Sulfuric Chlorohydrin (Chlorosulfonic Acid)
+Sulfurous Acid
+Sunoco All purpose grease
+Sunoco SAE 10
+Sunsafe (Fire resist. hydr. fluid)
+Super Shell Gas
+Swan Finch EP Lube
+Swan Finch Hypoid-90
+Tallow
+Tannic Acid (10%)
+Tar, bituminous
+Tartaric Acid
+Terephthalic Acid
+Terpinyl Acetate
+Tertiary Amyl Methyl Ether (TAME)
+Tertiary Butyl Catechol or p-tert-butylcatechol
+Tertiary Butyl Mercaptan
+Tetrabromoethane
+Tetrabromomethane
+Tetrabutyl Titanate
+Tetrachloroethylene
+Tetrachoroethane
+Tetraethyl Lead
+Tetraethyl Lead “Blend”
+Tetraethyl Orthosilicate (TEOS)
+Tetrahydrofuran
+Tetrahydrothiophen
+Tetralin
+Tetramethyl Ammonium HydroNAide
+TetramethylcyclotetrasiloNAane (TMCTS)
+Tetramethyldihydropyridine
+Tetraphosphoglucosate
+Tetraphosphoric Acid
+Tetrasodium Pyrophosphate
+TeNAaco 3450 Gear Oil
+TeNAaco Capella A and AA
+TeNAaco Meropa 220 (No Lead)
+TeNAaco Regal B
+TeNAaco Uni-Temp Grease
+TeNAamatic “A” 1581 Fluid
+TeNAamatic “A” 3401 Fluid
+TeNAamatic “A” 3525 Fluid
+TeNAamatic “A” 3528 Fluid
+TeNAamatic “A” Transmission Oil
+TeNAas 1500 Oil
+Thio Acid Chloride
+Thioamyl Alcohol
+Thiodiacetic Acid
+Thioethanol
+Thioglycolic Acid
+Thiophene (Thiofuran)
+Thiourea
+Thorium Nitrate
+Tidewater Multigear, 140 EP Lube
+Tidewater Oil-Beedol
+Tin Ammonium Chloride
+Tin Tetrachloride
+Titanic Acid
+Titanium Chloride
+Titanium DioNAide
+Titanium Sulfate
+Titanium Tetrachloride
+Toluene Diisocyanate (TDI)
+Toluenesulfonic Acid
+Tolylaldehyde
+Toothpaste
+Transformer Oil
+Transmission Fluid Type A
+Triacetin
+Triaryl Phosphate
+TributoNAyethyl Phosphate
+Tributyl Citrate
+Tributyl Mercaptan
+Tributyl Phosphate
+Tributylamine
+Trichloroacetic Acid
+Trichloroacetyl Chloride
+Trichloroethane
+Trichloroethanolamine
+Trichloromethane
+Trichloronitromethane  (Chloropicrin)
+Trichlorophenylsilane
+Trichloropropane
+Trichlorosilane
+Tricresyl Phosphate
+Triethanol Amine
+Triethyl Phosphate
+Triethylaluminum
+Triethylborane
+Triethylenetetramine
+Trifluoroacetic Acid
+Trifluoroethane (R-23)
+Trifluoromethane
+Trimethylamine (TMA)
+Trimethylborate (TMB)
+Trimethylpentane
+Trioctyl Phosphate
+Tripoly Phosphate
+Tripotassium Phosphate
+Trisodium Phosphate
+Tung Oil (China Wood Oil)
+Tungsten HeNAafluoride
+Tungstic Acid
+Turbine Oil #15 (MIL-L-7808A)
+Type I Fuel (MIL-S-3136)(ASTM  Ref. Fuel A)
+Type III Fuel MIL-S-3136(ASTM Ref. Fuel B)
+Ucon Lubricant 50-HB-100
+Ucon Lubricant 50-HB-260
+Ucon Lubricant 50-HB-5100
+Ucon Lubricant 50-HB55
+Ucon Lubricant 50-HB-660
+Ucon Lubricant LB-1145
+Ucon Lubricant LB-135
+Ucon Lubricant LB-285
+Ucon Lubricant LB-300NA
+Ucon Lubricant LB-625
+Ucon Lubricant LB-65
+Ucon Oil 50-HB-280NA
+Ucon Oil Heat Transfer Fluid 500 (Polyalkalene Glycol)
+Ucon Oil LB-400NA
+Undecylenic Acid
+Undecylic Acid
+Univolt #35 (Mineral Oil)
+Unsymmetrical Dimethyl Hydrazine (UDMH)
+UPDI(Ultrapure Deionized Water)
+Uranium HeNAachloride
+Uranium HeNAafluoride
+Uranium Sulfate
+Uric Acid
+Valeraldehyde
+Valeric Acid
+Vanadium ONAide
+Vanadium PentoNAide
+Varnish
+Vegetable Oil
+Vinegar
+Vinyl Acetate
+Vinyl Benzoate
+Wagner 21B Brake Fluid
+Water
+Whiskey and Wines
+Wolmar Salt
+Wood Alcohol
+NAenon
+NAylene
+NAylidenes-MiNAed-Aromatic Amines
+NAylol
+Zinc Acetate
+Zinc Ammonium Chloride
+Zinc Chromate
+Zinc Cyanide
+Zinc Diethyldithiocarbamate
+Zinc Dihydrogen Phosphate
+Zinc Fluorosilicate
+Zinc Naphthenate
+Zinc Nitrate
+Zinc ONAide
+Zinc Phenolsulfonate
+Zinc Phosphate
+Zinc Salts
+Zinc Stearate
+Zinc Sulfate
+Zirconium Nitrate`.split("\n");
+const MAT_B64 = "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";
+function _d(b64, rows, cols){
+  const raw = atob(b64);
+  const a = new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) a[i]=raw.charCodeAt(i);
+  const M = new Array(rows);
+  let buf=0, bl=0, bi=0;
+  for(let r=0;r<rows;r++){ M[r]=new Array(cols); }
+  for(let r=0;r<rows;r++){ for(let c=0;c<cols;c++){ 
+    while(bl<3){ buf |= (a[bi++]||0) << bl; bl+=8; }
+    const v = buf & 7; buf >>= 3; bl -= 3;
+    M[r][c] = v-1;
+  } }
+  return M;
+}
+const MAT = _d(MAT_B64, 1539, COLS.length);
+/* compact data end */
+
+  // Numeric matrix for minimal size
+  // values: 3 Good, 2 Fair, 1 Poor, 0 Unsuitable, -1 N/A
+  const CLASS = {3:'v3',2:'v2',1:'v1',0:'v0','-1':'v-1'};
+
+  const hdr = document.getElementById('hdr');
+  const body = document.getElementById('body');
+  const colSel = document.getElementById('col');
+  const valSel = document.getElementById('val');
+  const q = document.getElementById('q');
+  
+  const table = document.getElementById('t');
+  const counterChip = document.getElementById('counterChip');
+
+  // Build header and column select
+  function buildHeader(){
+    hdr.innerHTML='';
+    const thN = document.createElement('th'); thN.textContent='No'; thN.className='no'; hdr.appendChild(thN);
+    const th0 = document.createElement('th'); th0.textContent='Kimyasal'; th0.className='chem'; hdr.appendChild(th0);
+    for(const c of COLS){ const th=document.createElement('th'); th.textContent=c; hdr.appendChild(th); }
+    for(const c of COLS){ const opt=document.createElement('option'); opt.value=c; opt.textContent=c; colSel.appendChild(opt); }
+  }
+
+  function render(indices){
+    
+    body.innerHTML='';
+    const frag = document.createDocumentFragment();
+    for(const idx of indices){
+      const tr = document.createElement('tr');
+      const td0 = document.createElement('td'); td0.textContent = CHEM[idx]; tr.appendChild(td0);
+      const row = MAT[idx];
+      for(let i=0;i<COLS.length;i++){ 
+        const td=document.createElement('td'); td.className='s ' + 's ' + CLASS[row[i]]; // ensure 's' class
+        td.classList.add('s'); td.classList.add(CLASS[row[i]]);
+        td.setAttribute('aria-label', String(row[i]));
+        tr.appendChild(td);
+      }
+      frag.appendChild(tr);
+    }
+    body.appendChild(frag);
+  }
+
+  function filt(){
+    const query = (q.value||'').toLowerCase();
+    const col = colSel.value;
+    const val = valSel.value;
+    const out = [];
+    for(let r=0;r<CHEM.length;r++){ 
+      if(query && !CHEM[r].toLowerCase().includes(query)) continue;
+      if(col && val!==''){
+        const cidx = COLS.indexOf(col);
+        if(String(MAT[r][cidx]) !== String(val)) continue;
+      }
+      out.push(r);
+    }
+    render(out);
+    if (counterChip) counterChip.textContent = `Gösterilen: ${out.length} / Toplam: ${CHEM.length}`;
+  }
+
+  // Init
+  buildHeader(); filt(); if (counterChip) counterChip.textContent = `Gösterilen: ${CHEM.length} / Toplam: ${CHEM.length}`;
+  [q, colSel, valSel].forEach(el => el.addEventListener('input', filt));
+
+  // Dynamic sticky header offset for table head
+  function setHeadOffset(){
+    const h = document.querySelector('header');
+    const r = h ? (h.getBoundingClientRect().height || h.offsetHeight || 0) : 0;
+    document.documentElement.style.setProperty('--headH', r + 'px');
+  }
+  window.addEventListener('load', setHeadOffset);
+  window.addEventListener('resize', setHeadOffset);
+  setHeadOffset();
+
+  </script>
+<script>// === Override table header/body builders to include "No" column and keep alignment === (function(){ const hdr = document.getElementById('hdr'); const body = document.getElementById('body'); const colSel = document.getElementById('col'); const valSel = document.getElementById('val'); const q = document.getElementById('q'); const counterChip = document.getElementById('counterChip'); window.buildHeader = function(){ hdr.innerHTML = ''; // No + Chemical const thN = document.createElement('th'); thN.textContent = 'No'; thN.className = 'no'; hdr.appendChild(thN); const th0 = document.createElement('th'); th0.textContent = 'Kimyasal'; th0.className = 'chem'; hdr.appendChild(th0); // Material headers (yatay) for(const c of COLS){ const th = document.createElement('th'); th.textContent = c; hdr.appendChild(th); } // Populate select colSel.innerHTML = '<option value="">Hepsi</option>'; for(const c of COLS){ const opt = document.createElement('option'); opt.value = c; opt.textContent = c; colSel.appendChild(opt); } }; window.render = function(indices){ body.innerHTML = ''; const frag = document.createDocumentFragment(); let seq = 1; for(const idx of indices){ const tr = document.createElement('tr'); const tdN = document.createElement('td'); tdN.textContent = seq++; tdN.className = 'no'; tr.appendChild(tdN); const td0 = document.createElement('td'); td0.textContent = CHEM[idx]; td0.className = 'chem'; tr.appendChild(td0); const row = MAT[idx]; for(let i=0;i<COLS.length;i++){ const td = document.createElement('td'); td.className = 's ' + CLASS[row[i]]; td.setAttribute('aria-label', String(row[i])); tr.appendChild(td); } frag.appendChild(tr); } body.appendChild(frag); if(counterChip) counterChip.textContent = `Gösterilen: ${indices.length} / Toplam: ${CHEM.length}`; }; window.filt = function(){ const query = (q.value||'').toLowerCase(); const col = colSel.value; const val = valSel.value; const out = []; for(let r=0;r<CHEM.length;r++){ if(query && !CHEM[r].toLowerCase().includes(query)) continue; if(col && val!==''){ const cidx = COLS.indexOf(col); if(String(MAT[r][cidx]) !== String(val)) continue; } out.push(r); } render(out); }; // Rebuild header and rerender now to ensure alignment buildHeader(); filt(); })();</script><script>// Add full-name labels to Elastomer select options (values remain abbreviations) (function(){ const FULL = { "NBR": "Nitrile Butadiene Rubber", "HNBR": "Hydrogenated Nitrile Butadiene Rubber", "EPDM": "Ethylene Propylene Diene Monomer", "FKM": "Fluoroelastomer", "FFKM": "Perfluoroelastomer", "CR": "Chloroprene (Neoprene)", "SBR": "Styrene-Butadiene Rubber", "PU": "Polyurethane", "IIR": "Isobutylene-Isoprene Rubber (Butyl)", "FVMQ": "Fluorosilicone Rubber", "VMQ": "Silicone Rubber" }; function applyElastomerLabels(){ const sel = document.getElementById('col'); if(!sel) return; for(const opt of Array.from(sel.options)){ const abbr = opt.value; if(!abbr) { opt.textContent = "Hepsi"; continue; } const full = FULL[abbr] || abbr; opt.textContent = abbr + " (" + full + ")"; } } // Run now and after any header rebuild (our override defines buildHeader) applyElastomerLabels(); const _bh = window.buildHeader; if(typeof _bh === "function"){ window.buildHeader = function(){ _bh(); applyElastomerLabels(); } } })();</script><script>(function(){ const wrap = document.querySelector('header .wrap'); if(!wrap) return; // Find the first five legend chips (Good..N/A) const chips = Array.from(wrap.querySelectorAll('.chip')).filter(ch => /Good|Fair|Poor|Unsuitable|N\/A/.test(ch.textContent)); if(chips.length){ const row = document.createElement('div'); row.className = 'legend-row'; // Insert the row at the end of the toolbar wrap.appendChild(row); // Move chips into the legend row chips.forEach(ch => row.appendChild(ch)); // Move counter chip (if exists) to the end, right-aligned const counter = document.getElementById('counterChip'); if(counter) row.appendChild(counter); } })();</script><script>(function(){ const wrap = document.querySelector('header .wrap'); if(!wrap) return; // Remove an old legend-row if present (to avoid duplicates on hot reload) const old = wrap.querySelector('.legend-row'); if(old) old.remove(); // Identify exactly the 5 chips by text const allChips = Array.from(wrap.querySelectorAll('.chip')); const legendChips = allChips.filter(ch => /^\s*(Good|Fair|Poor|Unsuitable|N\/A)\s*$/.test(ch.textContent)); if(!legendChips.length) return; // Create the legend row const row = document.createElement('div'); row.className = 'legend-row'; wrap.appendChild(row); // Move chips into the legend row legendChips.forEach(ch => row.appendChild(ch)); // Move counter (if exists) to the right end const counter = document.getElementById('counterChip'); if(counter) row.appendChild(counter); })();</script><script>(function(){ function setNoWidth(){ const thNo = document.querySelector('th.no'); const tdNo = document.querySelector('tbody tr td.no'); const w = 48; document.documentElement.style.setProperty('--noW', w + 'px'); } window.addEventListener('load', setNoWidth); window.addEventListener('resize', setNoWidth); // Re-run after render/filter const _filt = window.filt; if(typeof _filt === 'function'){ window.filt = function(){ _filt(); setNoWidth(); }; } else { setTimeout(setNoWidth, 200); } })();</script><script>
+(() => {
+  const hdr = document.getElementById('hdr');
+  const body = document.getElementById('body');
+  const colSel = document.getElementById('col');
+  const valSel = document.getElementById('val');
+  const q = document.getElementById('q');
+  const counterChip = document.getElementById('counterChip');
+
+  function buildHeaderAligned(){
+    hdr.innerHTML = '';
+    // No + Chemical headers
+    const thN = document.createElement('th'); thN.textContent = 'No'; thN.className = 'no'; hdr.appendChild(thN);
+    const th0 = document.createElement('th'); th0.textContent = 'Kimyasal'; th0.className = 'chem'; hdr.appendChild(th0);
+    // Material headers (as-is)
+    for(const c of COLS){ const th = document.createElement('th'); th.textContent = c; hdr.appendChild(th); }
+    // Populate Elastomer select
+    colSel.innerHTML = '<option value="">Hepsi</option>';
+    for(const c of COLS){ const opt=document.createElement('option'); opt.value=c; opt.textContent=c; colSel.appendChild(opt); }
+  }
+
+  function renderAligned(indices){
+    body.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    let seq = 1;
+    for(const idx of indices){
+      const tr = document.createElement('tr');
+      const tdN = document.createElement('td'); tdN.textContent = seq++; tdN.className = 'no'; tr.appendChild(tdN);
+      const td0 = document.createElement('td'); td0.textContent = CHEM[idx]; td0.className = 'chem'; tr.appendChild(td0);
+      const row = MAT[idx];
+      for(let i=0;i<COLS.length;i++){
+        const td = document.createElement('td');
+        td.className = 's ' + CLASS[row[i]];
+        td.setAttribute('aria-label', String(row[i]));
+        tr.appendChild(td);
+      }
+      frag.appendChild(tr);
+    }
+    body.appendChild(frag);
+    if(counterChip) counterChip.textContent = `Gösterilen: ${indices.length} / Toplam: ${CHEM.length}`;
+  }
+
+  function filtAligned(){
+    const query = (q.value||'').toLowerCase();
+    const col = colSel.value;
+    const val = valSel.value;
+    const out = [];
+    for(let r=0;r<CHEM.length;r++){
+      if(query && !CHEM[r].toLowerCase().includes(query)) continue;
+      if(col && val!==''){
+        const cidx = COLS.indexOf(col);
+        if(String(MAT[r][cidx]) !== String(val)) continue;
+      }
+      out.push(r);
+    }
+    renderAligned(out);
+  }
+
+  // Replace globals and rebuild once
+  window.buildHeader = buildHeaderAligned;
+  window.render = renderAligned;
+  window.filt = filtAligned;
+  buildHeaderAligned(); filtAligned();
+  // Re-wire events to new filt
+  [q, colSel, valSel].forEach(el => el && el.addEventListener('input', filtAligned));
+})();</script></body>
+</html>
