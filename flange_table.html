@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>EN 1092‑1 Type 01 Flanş — Filterable Table + Synoptic</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  table { border-collapse: separate; border-spacing: 0; }
+  thead th { position: sticky; top: 0; z-index: 10; background: #0f172a; color: #e2e8f0; }
+  tbody tr:nth-child(odd) td { background: #0b1222; }
+  tbody tr:nth-child(even) td { background: #0d1426; }
+  td, th { white-space: nowrap; }
+  .chip { border:1px solid rgba(148,163,184,.3); background:rgba(148,163,184,.15); }
+  .num { width:56px; text-align:center; position: sticky; left: 0; z-index: 11; background:#0f172a; color:#e2e8f0; }
+  .dn  { position: sticky; left: 56px; z-index: 11; background:#0f172a; color:#e2e8f0; }
+  .cell { padding:6px 10px; border-bottom:1px solid rgba(148,163,184,.15); border-right:1px solid rgba(148,163,184,.08); }
+  .thead-cell { padding:8px 10px; border-bottom:1px solid rgba(148,163,184,.35); border-right:1px solid rgba(148,163,184,.18); }
+  .badge { font-size: 11px; padding:2px 6px; border-radius: 999px; }
+  .badge-en{ background: rgba(16,185,129,.15); color:#34d399; border:1px solid rgba(16,185,129,.35); }
+  .badge-pn{ background: rgba(139,92,246,.15); color:#c4b5fd; border:1px solid rgba(139,92,246,.35); }
+
+.badge-pn6{background:rgba(234,179,8,.18); color:#fde68a; border:1px solid rgba(234,179,8,.45);}
+.badge-pn10{background:rgba(34,211,238,.18); color:#a5f3fc; border:1px solid rgba(34,211,238,.45);}
+.badge-pn16{background:rgba(16,185,129,.18); color:#86efac; border:1px solid rgba(16,185,129,.45);}
+.badge-pn25{background:rgba(245,158,11,.22); color:#fde68a; border:1px solid rgba(245,158,11,.5);}
+.badge-pn40{background:rgba(59,130,246,.18); color:#93c5fd; border:1px solid rgba(59,130,246,.45);}
+.badge-pn63{background:rgba(236,72,153,.18); color:#f9a8d4; border:1px solid rgba(236,72,153,.45);}
+.badge-pn100{background:rgba(168,85,247,.18); color:#d8b4fe; border:1px solid rgba(168,85,247,.45);}
+
+.chip.active{ outline:2px solid rgba(148,163,184,.6); background:rgba(148,163,184,.25); }
+th[data-sort-key]{ cursor:pointer; user-select:none; }
+th[data-sort-key] .sort-indicator{ font-size: 0.8em; }
+th[data-sort-key].asc .sort-indicator{ content:'↑'; }
+th[data-sort-key].desc .sort-indicator{ content:'↓'; }
+
+
+/* synoptic colors */
+.synoptic-table .tag{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #374151;background:#111827;color:#cbd5e1;font-size:11px}
+.synoptic-table .tagA{border-color:rgba(234,179,8,.55);color:#fde68a}
+.synoptic-table .tagB{border-color:rgba(16,185,129,.55);color:#86efac}
+.synoptic-table .tagC{border-color:rgba(59,130,246,.55);color:#93c5fd}
+.synoptic-table .tagD{border-color:rgba(168,85,247,.55);color:#d8b4fe}
+.synoptic-table .x{color:#a5b4fc}
+.synoptic-table .bandA{background:rgba(234,179,8,.18);border:1px dashed rgba(234,179,8,.45);color:#fde68a;border-radius:6px}
+.synoptic-table .bandB{background:rgba(16,185,129,.14);border:1px dashed rgba(16,185,129,.45);color:#86efac;border-radius:6px}
+.synoptic-table .bandC{background:rgba(59,130,246,.14);border:1px dashed rgba(59,130,246,.45);color:#93c5fd;border-radius:6px}
+.synoptic-table .bandD{background:rgba(168,85,247,.14);border:1px dashed rgba(168,85,247,.45);color:#d8b4fe;border-radius:6px}
+.synoptic-table th, .synoptic-table td{ padding:6px 8px; white-space:nowrap; border-bottom:1px solid rgba(148,163,184,.15); border-right:1px solid rgba(148,163,184,.08); text-align:center }
+.synoptic-table thead th{ position: sticky; top: 0; z-index: 5; background: #0f172a; color:#e2e8f0; }
+.synoptic-table tr:nth-child(even) td{ background:#0d1426 }
+
+
+/* synoptic left-tag PN classes aligned with badges */
+.synoptic-table .tag-pn10{border-color:rgba(34,211,238,.55); color:#a5f3fc;}
+.synoptic-table .tag-pn25{border-color:rgba(245,158,11,.6); color:#fde68a;}
+.synoptic-table .tag-pn63{border-color:rgba(236,72,153,.6); color:#f9a8d4;}
+</style>
+</head>
+<body class="bg-slate-900 text-slate-200">
+<header class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur border-b border-slate-800">
+<div class="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+<h1 class="text-xl font-semibold">EN 1092‑1 — Plate (Type 01) Flat Flanges</h1>
+<div class="text-xs text-slate-400">PN6–PN100 • RF &amp; FF • Filterable</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+<!-- Legend -->
+<section class="rounded border border-slate-800 p-4 bg-slate-800/40" id="synoptic"><h2 class="text-sm font-semibold mb-2 text-slate-100">EN 1092‑1 Type 01 Flanş — Synoptic (Özet) — DN ≤ 1000</h2><p class="text-sm text-slate-300 mb-3">Bu matris EN 1092‑1 Type 01 flanş standardına uygundur. “X” ilgili DN–PN kombinasyonunun tabloda yer aldığını, renkli bantlar ise belirli DN aralıklarında PN’lerin aynı ölçülere (≡) sahip olduğunu gösterir.</p><div class="overflow-auto rounded border border-slate-700/60"><table class="synoptic-table"><thead><tr><th>PN \ DN</th><th>10</th><th>15</th><th>20</th><th>25</th><th>32</th><th>40</th><th>50</th><th>65</th><th>80</th><th>100</th><th>125</th><th>150</th><th>200</th><th>250</th><th>300</th><th>350</th><th>400</th><th>450</th><th>500</th><th>600</th><th>700</th><th>800</th><th>900</th><th>1000</th></tr></thead><tbody>
+<tr><td><span class="tag tagA">PN 2,5</span></td><td class="bandA" colspan="24">≡ PN 6</td></tr>
+<tr><td><span class="tag tagA">PN 6</span></td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td></tr>
+<tr><td><span class="tag tag-pn10">PN 10</span></td><td class="bandC" colspan="6">≡ PN 40</td><td class="bandB" colspan="6">≡ PN 16</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td></tr>
+<tr><td><span class="tag tagB">PN 16</span></td><td class="bandC" colspan="6">≡ PN 40</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td></tr>
+<tr><td><span class="tag tag-pn25">PN 25</span></td><td class="bandC" colspan="12">≡ PN 40</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td></td><td></td></tr>
+<tr><td><span class="tag tagC">PN 40</span></td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td><span class="tag tag-pn63">PN 63</span></td><td class="bandD" colspan="7">≡ PN 100</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td><span class="tag tagD">PN 100</span></td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td class="x">X</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table></div><div class="mt-2 text-xs text-slate-400 flex gap-3 flex-wrap"><span>X = tabloda mevcut</span><span>≡ PN 6 (sarı), ≡ PN 16 (yeşil), ≡ PN 40 (mavi), ≡ PN 100 (mor) — eşdeğer ölçüler</span></div></section><section class="rounded border border-slate-800 p-4 bg-slate-800/40">
+<h2 class="text-sm font-semibold mb-2 text-slate-100">Legend (Boyut Tanımları)</h2>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1 text-sm text-slate-300"><div><b>DN</b> — Nominal size</div><div><b>A</b> — Pipe OD</div><div><b>B</b> — Bore diameter</div><div><b>D</b> — Outside diameter (flange OD)</div><div><b>K</b> — Bolt circle diameter (PCD)</div><div><b>L</b> — Bolt hole diameter</div><div><b>n</b> — Number of bolts</div><div><b>Size of Bolt</b> — e.g., M16</div><div><b>C</b> — Flange thickness</div><div><b>d</b> — Raised face diameter</div><div><b>f₁</b> — Raised face height (RF)</div></div>
+</section>
+<!-- Filters -->
+<section class="flex flex-wrap items-center gap-2"><div class="flex items-center gap-2 text-sm">
+<span class="text-slate-400 mr-1">PN:</span>
+<button class="px-2 py-1 rounded chip hover:bg-slate-700/40" data-pn="">All</button>
+<button class="px-2 py-1 rounded chip badge-pn6" data-pn="PN6">PN6</button>
+<button class="px-2 py-1 rounded chip badge-pn10" data-pn="PN10">PN10</button>
+<button class="px-2 py-1 rounded chip badge-pn16" data-pn="PN16">PN16</button>
+<button class="px-2 py-1 rounded chip badge-pn25" data-pn="PN25">PN25</button>
+<button class="px-2 py-1 rounded chip badge-pn40" data-pn="PN40">PN40</button>
+<button class="px-2 py-1 rounded chip badge-pn63" data-pn="PN63">PN63</button>
+<button class="px-2 py-1 rounded chip badge-pn100" data-pn="PN100">PN100</button>
+</div>
+<div class="ml-auto">
+<button class="px-3 py-1.5 rounded border border-slate-700 hover:bg-slate-800/60 text-sm" id="btnClear">Clear Filters</button>
+</div>
+</section><section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+<div>
+<label class="block text-xs text-slate-400 mb-1">Standard</label>
+<select class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-2" id="stdSel">
+<option value="EN 1092-1">EN 1092-1</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">Series (PN)</label>
+<select class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-2" id="seriesSel">
+<option value="">Hepsi</option>
+<option>PN6</option><option>PN10</option><option>PN16</option><option>PN25</option><option>PN40</option><option>PN64</option><option>PN100</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">Face</label>
+<select class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-2" id="faceSel">
+<option value="">Hepsi</option>
+<option>RF</option>
+<option>FF</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">DN</label>
+<select class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-2" id="dnSel"><option value="">Hepsi</option></select></div>
+<div class="sm:col-span-2 lg:col-span-2">
+<label class="block text-xs text-slate-400 mb-1">Serbest Arama</label>
+<input class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-2" id="q" placeholder="civata, D, k, b, M16 vb."/>
+</div>
+</section>
+<!-- Counters -->
+<section class="flex items-center gap-3 text-sm">
+<div class="chip rounded px-2 py-1" id="countChip">Shown: 0</div>
+<div class="text-slate-400 text-xs">Kaynak: EN 1092‑1 tabloları (çapraz doğrulanmış)</div>
+</section>
+<!-- Table -->
+<section class="overflow-auto rounded border border-slate-800 shadow">
+<table class="w-full text-sm">
+<thead>
+<tr><th class="thead-cell num">#</th><th class="thead-cell dn" title="Nominal size">DN</th><th class="thead-cell">Standard</th><th class="thead-cell">PN</th><th class="thead-cell">Face</th><th class="thead-cell" title="Pipe OD">A</th><th class="thead-cell" title="Bore diameter">B</th><th class="thead-cell" data-sort-key="D" title="Outside diameter">D<span class="sort-indicator opacity-60 pl-1">↕</span></th><th class="thead-cell" data-sort-key="K" title="Bolt circle diameter (PCD)">K<span class="sort-indicator opacity-60 pl-1">↕</span></th><th class="thead-cell" data-sort-key="L" title="Bolt hole diameter">L<span class="sort-indicator opacity-60 pl-1">↕</span></th><th class="thead-cell" data-sort-key="n" title="Number of bolts">n<span class="sort-indicator opacity-60 pl-1">↕</span></th><th class="thead-cell" title="e.g., M16">Size of Bolt</th><th class="thead-cell" data-sort-key="C" title="Flange thickness">C<span class="sort-indicator opacity-60 pl-1">↕</span></th><th class="thead-cell" title="Raised face diameter">d</th><th class="thead-cell" title="Raised face height (RF)">f₁</th></tr>
+</thead>
+<tbody id="body"></tbody>
+</table>
+</section>
+</main>
+<script>
+/* ===== EN 1092‑1 DATA =====
+ * Şema:
+ * {std:'EN 1092-1', series:'PN6|PN10|...|PN100', face:'RF|FF', dn:'DN..',
+ *  d1,D,k,b,d3,f,d2, bolt_dia:'M..', n, kg}
+ */
+const DATA=[]; // ← tam veri burada gömülü olacak
+
+function uniq(arr){ return [...new Set(arr)].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})); }
+const stdSel = document.getElementById('stdSel');
+const seriesSel = document.getElementById('seriesSel');
+const faceSel = document.getElementById('faceSel');
+const dnSel = document.getElementById('dnSel');
+const q = document.getElementById('q');
+const body = document.getElementById('body');
+const pnChips = document.querySelectorAll('button[data-pn]');
+const btnClear = document.getElementById('btnClear');
+let sortState = {key:null, dir:1};
+const countChip = document.getElementById('countChip');
+
+
+function fillDNOptions(){
+  const series = seriesSel.value || null;
+  const face = faceSel.value || null;
+  const set = new Set();
+  for(const d of DATA){
+    if(series && d.series!==series) continue;
+    if(face && d.face!==face) continue;
+    if(d.dn) set.add(d.dn);
+  }
+  const items = Array.from(set).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+  dnSel.innerHTML = '<option value=\"\">Hepsi</option>' + items.map(v=>`<option>${v}</option>`).join('');
+}
+
+function matches(d){
+  const sOk = d.std==='EN 1092-1';
+  const pOk = !seriesSel.value || d.series===seriesSel.value;
+  const fOk = !faceSel.value || d.face===faceSel.value;
+  const dnOk = !dnSel.value || d.dn===dnSel.value;
+  const txt = (d.dn+' '+d.series+' '+(d.face||'')+' '+(d.A??'')+' '+(d.B??'')+' '+(d.D??'')+' '+(d.K??'')+' '+(d.L??'')+' '+(d.bolt_dia||'')).toLowerCase();
+  const qOk = !q.value || txt.includes(q.value.toLowerCase());
+  return sOk && pOk && fOk && dnOk && qOk;
+}
+
+function render(){
+  body.innerHTML='';
+  let rows = DATA.filter(matches);
+  if(sortState.key){
+    const key = sortState.key; const dir = sortState.dir;
+    rows.sort((a,b)=>{
+      const va=(a[key]??0), vb=(b[key]??0);
+      const na = (typeof va==='string')? parseFloat(String(va).replace(',','.')):va;
+      const nb = (typeof vb==='string')? parseFloat(String(vb).replace(',','.')):vb;
+      return (na-nb)*dir;
+    });
+  }
+  let i=1;
+  for(const d of rows){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="cell num">${i++}</td>
+      <td class="cell dn">${d.dn||''}</td>
+      <td class="cell"><span class="badge badge-en">EN 1092‑1</span></td>
+      <td class="cell"><span class="${(d.series||'').toLowerCase()==='pn6'?'badge badge-pn6':
+                                      (d.series||'').toLowerCase()==='pn10'?'badge badge-pn10':
+                                      (d.series||'').toLowerCase()==='pn16'?'badge badge-pn16':
+                                      (d.series||'').toLowerCase()==='pn25'?'badge badge-pn25':
+                                      (d.series||'').toLowerCase()==='pn40'?'badge badge-pn40':
+                                      (d.series||'').toLowerCase()==='pn63'?'badge badge-pn63':'badge badge-pn100'}">${d.series||''}</span></td>
+      <td class="cell">${d.face||''}</td>
+      <td class="cell">${d.A??''}</td>
+      <td class="cell">${d.B??''}</td>
+      <td class="cell">${d.D??''}</td>
+      <td class="cell">${d.K??''}</td>
+      <td class="cell">${d.L??''}</td>
+      <td class="cell">${d.n??''}</td>
+      <td class="cell">${d.bolt_dia||''}</td>
+      <td class="cell">${d.C??''}</td>
+      <td class="cell">${d.d??''}</td>
+      <td class="cell">${(faceSel.value==='FF')?0:(d.f1??'')}</td>
+`;
+    body.appendChild(tr);
+  }
+  countChip.textContent = `Shown: ${rows.length} / ${DATA.length}`;
+  pnChips.forEach(c=>{
+    const isActive = (seriesSel.value||'')===c.getAttribute('data-pn');
+    c.classList.toggle('active', isActive);
+  });
+}
+
+// wire events
+['input','change'].forEach(ev=>{
+  seriesSel.addEventListener(ev, ()=>{ fillDNOptions(); fillDNOptions(); render(); });
+  faceSel.addEventListener(ev, ()=>{ fillDNOptions(); fillDNOptions(); render(); });
+  dnSel.addEventListener(ev, render);
+  q.addEventListener(ev, render);
+});
+
+// initial render (empty until DATA is filled)
+fillDNOptions(); render();
+
+/* ===== Loader (ben veriyi gömeceğim) =====
+ * window.loadFlanges(arr) ile tabloyu doldurma.
+ */
+window.loadFlanges = function(arr){
+  DATA.length = 0;
+  for(const d of arr) DATA.push(d);
+  fillDNOptions(); fillDNOptions(); render();
+};
+</script>
+<script>
+// PN chips -> set series select
+document.querySelectorAll('button[data-pn]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const val = btn.getAttribute('data-pn')||'';
+    const sel = document.getElementById('seriesSel');
+    sel.value = val;
+    if(typeof fillDNOptions==='function') fillDNOptions();
+    if(typeof render==='function') render();
+  });
+});
+
+// Clear filters
+document.getElementById('btnClear').addEventListener('click', ()=>{
+  document.getElementById('seriesSel').value='';
+  document.getElementById('faceSel').value='';
+  const dnSel = document.getElementById('dnSel'); if(dnSel){ dnSel.value=''; }
+  const q = document.getElementById('q'); if(q){ q.value=''; }
+  if(typeof fillDNOptions==='function') fillDNOptions();
+  if(typeof render==='function') render();
+  // Clear PN chip active state
+  document.querySelectorAll('button[data-pn]').forEach(b=>b.classList.remove('active'));
+});
+
+// Sortable headers
+(function(){
+  const ths = document.querySelectorAll('thead th[data-sort-key]');
+  ths.forEach(th=>{
+    th.addEventListener('click', ()=>{
+      const key = th.getAttribute('data-sort-key');
+      // toggle direction
+      if(window.sortState && window.sortState.key===key){
+        window.sortState.dir *= -1;
+      }else{
+        window.sortState = {key, dir:1};
+      }
+      // update visual state
+      ths.forEach(x=>x.classList.remove('asc','desc'));
+      th.classList.add(window.sortState.dir===1?'asc':'desc');
+      if(typeof render==='function') render();
+    });
+  });
+})();
+</script></body>
+</html>
