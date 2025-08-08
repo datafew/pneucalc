@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CNC / Torna Devir & İlerleme Hesaplayıcı — Sipahi</title>
+<meta name="description" content="Malzeme, işlem, takım ve soğutmaya göre önerilen Vc, rpm ve ilerleme hesaplayan tek dosya hesap makinesi." />
+<style>
+  :root{
+    --bg:#0b1022; --text:#e5e7eb; --muted:#94a3b8;
+    --card:#0f172a; --border:#1f2937;
+    /* palette for colorful cards */
+    --c1:#0ea5e9; --c1-ink:#03131b;
+    --c2:#22c55e; --c2-ink:#03140a;
+    --c3:#a78bfa; --c3-ink:#140a1c;
+    --c4:#f59e0b; --c4-ink:#1a1303;
+    --chip:#1f2937;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+    radial-gradient(1200px 600px at 10% -10%, #16213a 0%, transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, #141f34 0%, transparent 60%),
+    linear-gradient(180deg,#0b1022 0%, #0f172a 70%); 
+    font:500 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;color:var(--text)}
+  .wrap{max-width:1100px;margin:auto;padding:16px 16px 84px}
+  h1{font-size:22px;margin:8px 0 6px}
+  .subtitle{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .grid{display:grid;gap:12px}
+  @media(min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+  .card{border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .card h2{font-size:16px;margin:0 0 10px}
+  /* colorful variants */
+  .card.blue{background:linear-gradient(180deg,rgba(14,165,233,.15), rgba(2,132,199,.06)); border-color:rgba(14,165,233,.35)}
+  .card.green{background:linear-gradient(180deg,rgba(34,197,94,.14), rgba(21,128,61,.06)); border-color:rgba(34,197,94,.35)}
+  .card.purple{background:linear-gradient(180deg,rgba(167,139,250,.16), rgba(124,58,237,.07)); border-color:rgba(167,139,250,.35)}
+  .card.amber{background:linear-gradient(180deg,rgba(245,158,11,.16), rgba(217,119,6,.07)); border-color:rgba(245,158,11,.35)}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+  select,input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #243244;background:#0b1020;color:var(--text);outline:none}
+  input[type="range"]{padding:0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--chip);border:1px solid #283349;color:#cbd5e1;padding:6px 10px;border-radius:999px;font-size:12px;margin:4px 6px 0 0}
+  .pill b{color:#fff}
+  .out{display:grid;gap:10px}
+  .kpi{border-radius:14px;padding:12px;border:1px dashed rgba(148,163,184,.35)}
+  .kpi .v{font-size:22px;font-weight:800}
+  .kpi .u{font-size:11px;color:var(--muted)}
+  .tag{font-size:11px;color:#c7d2fe}
+  .hint{font-size:12px;color:var(--muted)}
+  .warn{color:#f59e0b}.ok{color:#34d399}.err{color:#ef4444}
+  .chips{margin-top:6px}
+  .footer{margin-top:10px;font-size:11px;color:var(--muted)}
+  .flex{display:flex;gap:10px;flex-wrap:wrap}
+  .badge{background:#0b2033;border:1px solid #16324a;border-radius:10px;padding:6px 10px;font-size:12px}
+  .tiny{font-size:11px;color:var(--muted)}
+  .divider{height:1px;background:#1f2937;margin:8px 0}
+  .right{float:right}
+  .btn{cursor:pointer;user-select:none;background:var(--c1);border:0;padding:10px 14px;border-radius:12px;color:var(--c1-ink);font-weight:800}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  /* sticky signature footer */
+  .signature{
+    position:fixed;left:0;right:0;bottom:0;
+    background:linear-gradient(90deg, rgba(14,165,233,.25), rgba(34,197,94,.25), rgba(167,139,250,.25));
+    border-top:1px solid rgba(148,163,184,.25);
+    padding:10px 16px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    backdrop-filter: blur(6px);
+  }
+  .sign-left{font-size:12px;color:#d1d5db}
+  .sign-right{font-family: "Brush Script MT", "Segoe Script", cursive; font-size:18px; letter-spacing:0.5px; color:#e5e7eb}
+  .sign-right .stroke{
+    text-shadow: 0 0 2px rgba(0,0,0,.6), 0 0 10px rgba(2,132,199,.25);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Renkli Kartlar — CNC / Torna Devir & İlerleme</h1>
+    <div class="subtitle">Malzeme + işlem + takım + soğutma seç; çap ve (freze için) ağız sayısını gir. Kaydırgaçtan <b>konservatif → agresif</b> profilini belirle.</div>
+
+    <div class="grid">
+      <!-- Inputs -->
+      <div class="card blue" id="inputs">
+        <h2>Girdiler</h2>
+
+        <label>İşlem</label>
+        <select id="op">
+          <option value="milling">Frezeleme</option>
+          <option value="turning">Tornalama</option>
+          <option value="drilling">Delme</option>
+        </select>
+
+        <label>Malzeme</label>
+        <select id="mat"></select>
+
+        <label>Takım Tipi</label>
+        <select id="tool">
+          <option value="carbide">Karbür</option>
+          <option value="hss">HSS</option>
+        </select>
+
+        <label>Soğutma</label>
+        <select id="coolant">
+          <option value="dry">Kuru</option>
+          <option value="emulsion">Emülsiyon</option>
+          <option value="mql">MQL</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label>Çap D (mm)</label>
+            <input id="diam" type="number" min="0.1" step="0.1" placeholder="örn. 20" />
+          </div>
+          <div id="teethBox">
+            <label>Ağız sayısı z (freze)</label>
+            <input id="teeth" type="number" min="1" step="1" value="4" />
+          </div>
+        </div>
+
+        <label>Çalışma Profili <span class="right tiny" id="profLbl">Normal</span></label>
+        <input id="aggr" type="range" min="0" max="100" value="50" />
+        <div class="chips" id="chips"></div>
+
+        <div class="divider"></div>
+        <div class="flex">
+          <button class="btn" id="reset">Sıfırla</button>
+          <div class="badge tiny">Formüller: n = 1000·Vc/(π·D) | F<sub>freze</sub>=fz·z·n | F<sub>torna</sub>=f·n | F<sub>delme</sub>=f<sub>rev</sub>·n</div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="card green">
+        <h2>Öneri & Sonuçlar</h2>
+        <div class="out">
+          <div class="kpi">
+            <div class="tag">Önerilen Kesme Hızı (Vc)</div>
+            <div class="v"><span id="vcVal">—</span> <span class="u">m/dak</span></div>
+            <div class="hint">Soğutma ve profil etkisi dahil.</div>
+          </div>
+          <div class="kpi">
+            <div class="tag">Devir (n)</div>
+            <div class="v"><span id="rpmVal">—</span> <span class="u">rpm</span></div>
+          </div>
+          <div class="kpi" id="chipRow">
+            <div class="tag">Diş başına ilerleme (f<sub>z</sub>)</div>
+            <div class="v"><span id="fzVal">—</span> <span class="u">mm/diş</span></div>
+          </div>
+          <div class="kpi" id="fperrevRow" style="display:none">
+            <div class="tag">Devir başına ilerleme (f<sub>rev</sub> / f)</div>
+            <div class="v"><span id="fperrevVal">—</span> <span class="u">mm/dev</span></div>
+          </div>
+          <div class="kpi purple">
+            <div class="tag">İlerleme Hızı (F)</div>
+            <div class="v"><span id="feedVal">—</span> <span class="u">mm/dak</span></div>
+            <div class="hint" id="feedHint">—</div>
+          </div>
+          <div class="kpi amber">
+            <div class="tag">Notlar</div>
+            <div class="hint" id="notes">Malzeme/işlem seçimine göre öneriler burada görünecek.</div>
+          </div>
+        </div>
+        <div class="footer">⚠️ Değerler kılavuz niteliğindedir. Takım üreticisi katalogları ve makine limitleri önceliklidir.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature footer -->
+  <div class="signature" aria-label="Sipahi imzası">
+    <div class="sign-left">CNC Hesaplayıcı • v1.1 • Renkli Kartlar • <span id="today"></span></div>
+    <div class="sign-right"><span class="stroke">— sipahi</span></div>
+  </div>
+
+<script>
+/* --- Veri Tabanı (düzenlenebilir) --------------------------------------- */
+const DB = {
+  materials: {
+    "C45 (ISO P, ~200HB)": {
+      notes:"Orta karbonlu çelik. Genel amaç. Kuru işleme mümkün; emülsiyon yüzey/ömür iyileştirir.",
+      milling: { carbide: { Vc:[180,260], fz:[0.04,0.12] }, hss: { Vc:[ 45, 70], fz:[0.03,0.08] } },
+      turning: { carbide: { Vc:[150,240], fperrev:[0.10,0.30] }, hss: { Vc:[ 30, 60], fperrev:[0.05,0.20] } },
+      drilling:{ carbide: { Vc:[110,160], fperrev:[0.08,0.22] }, hss: { Vc:[ 20, 35], fperrev:[0.05,0.16] } }
+    },
+    "42CrMo4 (ISO P, ~280HB)": {
+      notes:"Islah çeliği. Dar talaş, keskin takım ve yeterli soğutma önerilir.",
+      milling:{carbide:{Vc:[160,220], fz:[0.04,0.10]}, hss:{Vc:[35,60], fz:[0.03,0.07]}},
+      turning:{carbide:{Vc:[140,220], fperrev:[0.08,0.28]}, hss:{Vc:[25,50], fperrev:[0.05,0.18]}},
+      drilling:{carbide:{Vc:[90,140], fperrev:[0.07,0.20]}, hss:{Vc:[18,32], fperrev:[0.05,0.14]}}
+    },
+    "AISI 304 (ISO M)": {
+      notes:"Östenitik paslanmaz. Yapışma eğilimi yüksek; emülsiyon/MQL tercih.",
+      milling:{carbide:{Vc:[120,180], fz:[0.03,0.08]}, hss:{Vc:[30,50], fz:[0.02,0.06]}},
+      turning:{carbide:{Vc:[120,180], fperrev:[0.08,0.25]}, hss:{Vc:[22,38], fperrev:[0.05,0.16]}},
+      drilling:{carbide:{Vc:[70,110], fperrev:[0.06,0.18]}, hss:{Vc:[12,25], fperrev:[0.05,0.14]}}
+    },
+    "AISI 316L (ISO M)": {
+      notes:"Östenitik paslanmaz. Isı birikimine dikkat; keskin kenar, bol emülsiyon.",
+      milling:{carbide:{Vc:[100,160], fz:[0.03,0.07]}, hss:{Vc:[25,45], fz:[0.02,0.05]}},
+      turning:{carbide:{Vc:[100,160], fperrev:[0.08,0.22]}, hss:{Vc:[20,35], fperrev:[0.05,0.14]}},
+      drilling:{carbide:{Vc:[60,90], fperrev:[0.06,0.14]}, hss:{Vc:[10,22], fperrev:[0.05,0.12]}}
+    },
+    "GG25 GJL-250 (ISO K)": {
+      notes:"Lamel dökme demir. Kuru freze çoğu zaman uygundur.",
+      milling:{carbide:{Vc:[150,220], fz:[0.05,0.12]}, hss:{Vc:[35,60], fz:[0.04,0.10]}},
+      turning:{carbide:{Vc:[140,220], fperrev:[0.10,0.30]}, hss:{Vc:[25,50], fperrev:[0.06,0.20]}},
+      drilling:{carbide:{Vc:[90,140], fperrev:[0.06,0.20]}, hss:{Vc:[20,35], fperrev:[0.06,0.16]}}
+    },
+    "GGG40 GJS-400 (ISO K)": {
+      notes:"Küresel grafitli dökme demir. Talaş kırıcı önemli.",
+      milling:{carbide:{Vc:[140,210], fz:[0.05,0.11]}, hss:{Vc:[32,55], fz:[0.04,0.09]}},
+      turning:{carbide:{Vc:[130,210], fperrev:[0.10,0.28]}, hss:{Vc:[22,45], fperrev:[0.06,0.18]}},
+      drilling:{carbide:{Vc:[80,130], fperrev:[0.06,0.18]}, hss:{Vc:[18,32], fperrev:[0.06,0.14]}}
+    },
+    "Al 6061 (ISO N)": {
+      notes:"Yapışma eğilimi düşük; yüksek Vc mümkün. Keskin kenar.",
+      milling:{carbide:{Vc:[350,650], fz:[0.05,0.14]}, hss:{Vc:[90,180], fz:[0.04,0.10]}},
+      turning:{carbide:{Vc:[250,450], fperrev:[0.10,0.40]}, hss:{Vc:[80,160], fperrev:[0.08,0.30]}},
+      drilling:{carbide:{Vc:[180,300], fperrev:[0.08,0.24]}, hss:{Vc:[60,120], fperrev:[0.08,0.20]}}
+    },
+    "Al 7075 (ISO N)": {
+      notes:"Yüksek dayanımlı Al. Yüksek Vc; takım kaplaması avantajlı.",
+      milling:{carbide:{Vc:[300,500], fz:[0.05,0.16]}, hss:{Vc:[80,150], fz:[0.04,0.10]}},
+      turning:{carbide:{Vc:[220,400], fperrev:[0.10,0.38]}, hss:{Vc:[70,140], fperrev:[0.08,0.28]}},
+      drilling:{carbide:{Vc:[160,260], fperrev:[0.08,0.22]}, hss:{Vc:[55,110], fperrev:[0.08,0.18]}}
+    },
+    "CuSn12 Bronz": {
+      notes:"Bakır alaşımı; yapışma riski. Keskin kenar, MQL/Emülsiyon.",
+      milling:{carbide:{Vc:[120,220], fz:[0.04,0.10]}, hss:{Vc:[35,70], fz:[0.03,0.08]}},
+      turning:{carbide:{Vc:[120,220], fperrev:[0.08,0.28]}, hss:{Vc:[30,60], fperrev:[0.05,0.20]}},
+      drilling:{carbide:{Vc:[80,150], fperrev:[0.06,0.20]}, hss:{Vc:[20,40], fperrev:[0.05,0.16]}}
+    },
+    "Inconel 718 (ISO S)": {
+      notes:"Isıya dayanıklı süperalaşım. Düşük Vc, pozitif geometri, bol soğutma.",
+      milling:{carbide:{Vc:[30,60], fz:[0.02,0.06]}, hss:{Vc:[10,18], fz:[0.01,0.03]}},
+      turning:{carbide:{Vc:[20,40], fperrev:[0.05,0.15]}, hss:{Vc:[ 6,12], fperrev:[0.03,0.08]}},
+      drilling:{carbide:{Vc:[12,25], fperrev:[0.03,0.10]}, hss:{Vc:[ 4, 8], fperrev:[0.02,0.06]}}
+    }
+  },
+  coolantFactor(materialKey, op, coolant){
+    const base = {dry:1.00, emulsion:1.10, mql:1.05}[coolant] || 1.0;
+    const isSensitive = /AISI 304|316L|ISO S|Inconel/i.test(materialKey);
+    const penalty = (coolant==='dry' && isSensitive) ? 0.92 : 1.0;
+    return base * penalty;
+  }
+};
+
+/* --- UI doldurma -------------------------------------------------------- */
+const matSel = document.getElementById('mat');
+Object.keys(DB.materials).forEach(k=>{
+  const o=document.createElement('option'); o.value=k; o.textContent=k; matSel.appendChild(o);
+});
+
+/* --- Yardımcılar -------------------------------------------------------- */
+const $ = id => document.getElementById(id);
+const fmt = (x,dec=0)=> isFinite(x)? (x>=1000? Math.round(x).toLocaleString('tr-TR') : x.toFixed(dec)) : '—';
+function lerpRange([a,b], t){ return a + t*(b-a); }
+
+/* --- Hesap -------------------------------------------------------------- */
+function compute(){
+  const op = $('op').value;
+  const matKey = $('mat').value;
+  const tool = $('tool').value;
+  const coolant = $('coolant').value;
+  const D = parseFloat($('diam').value);
+  const z = parseInt($('teeth').value || '1',10);
+  const aggr = parseInt($('aggr').value,10);
+  $('teethBox').style.display = (op==='milling')?'block':'none';
+  $('chipRow').style.display = (op==='milling')?'block':'none';
+  $('fperrevRow').style.display = (op==='milling')?'none':'block';
+
+  const chips = $('chips'); chips.innerHTML='';
+  const p = document.createElement('span');
+  p.className='pill'; p.innerHTML = `<b>Profil:</b> ${aggr<=33?'Konservatif':aggr>=67?'Agresif':'Normal'}`;
+  chips.appendChild(p);
+  const c = document.createElement('span');
+  c.className='pill'; c.innerHTML = `<b>Soğutma:</b> ${$('coolant').selectedOptions[0].textContent}`;
+  chips.appendChild(c);
+
+  // doğrulama
+  let err = '';
+  if(!D || D<=0) err = 'Çap giriniz (D > 0).';
+  if(op==='milling' && (!z || z<1)) err = 'Freze için ağız sayısı (z) ≥ 1 olmalı.';
+  if(err){
+    $('vcVal').textContent='—'; $('rpmVal').textContent='—'; $('feedVal').textContent='—';
+    $('fzVal').textContent='—'; $('fperrevVal').textContent='—';
+    $('feedHint').textContent = err; $('feedHint').className='hint err';
+    $('notes').textContent = DB.materials[matKey]?.notes || '';
+    return;
+  }
+
+  const rec = DB.materials[matKey]?.[op]?.[tool];
+  if(!rec){
+    $('feedHint').textContent = 'Bu kombinasyon için veri yok.'; $('feedHint').className='hint err';
+    return;
+  }
+
+  // profil & soğutma etkisi
+  const t = aggr/100;
+  const cf = DB.coolantFactor(matKey, op, coolant);
+  let Vc = lerpRange(rec.Vc, t) * cf;
+
+  // rpm
+  const rpm = (1000*Vc)/(Math.PI*D);
+
+  // feed
+  let fz = null, fperrev = null, Feed = null, hint='';
+  if(op==='milling'){
+    fz = lerpRange(rec.fz, t);
+    Feed = fz * (z>0?z:1) * rpm;
+    hint = `F = fz·z·n = ${fmt(fz,3)}×${z}×${fmt(rpm)} ≈ ${fmt(Feed)} mm/dak`;
+  }else if(op==='turning'){
+    fperrev = lerpRange(rec.fperrev, t);
+    Feed = fperrev * rpm;
+    hint = `F = f·n = ${fmt(fperrev,3)}×${fmt(rpm)} ≈ ${fmt(Feed)} mm/dak`;
+  }else{ // drilling
+    fperrev = lerpRange(rec.fperrev, t);
+    Feed = fperrev * rpm;
+    hint = `F = f_rev·n = ${fmt(fperrev,3)}×${fmt(rpm)} ≈ ${fmt(Feed)} mm/dak`;
+  }
+
+  // UI
+  $('vcVal').textContent = fmt(Vc,0);
+  $('rpmVal').textContent = isFinite(rpm)? fmt(rpm) : '—';
+  $('feedVal').textContent = isFinite(Feed)? fmt(Feed) : '—';
+  $('feedHint').textContent = hint; $('feedHint').className='hint';
+  $('fzVal').textContent = fz!=null? fmt(fz,3) : '—';
+  $('fperrevVal').textContent = fperrev!=null? fmt(fperrev,3) : '—';
+
+  // notlar
+  let extra='';
+  if(/AISI 304|316L|Inconel/.test(matKey) && coolant==='dry')
+    extra='Paslanmaz/süperalaşımlarda kuru işleme önerilmez; emülsiyon/MQL tercih edin. ';
+  if(op==='drilling' && D>12 && tool==='hss')
+    extra+='HSS ile büyük çap delmede düşük Vc ve bol soğutma kullanın. ';
+  if(op==='milling' && D<6 && tool==='carbide')
+    extra+='Küçük çap karbür frezede devri makine limitlerinize göre sınırlandırın. ';
+  $('notes').textContent = (DB.materials[matKey]?.notes||'') + (extra?(' '+extra):'');
+}
+
+['op','mat','tool','coolant','diam','teeth','aggr'].forEach(id=>{
+  $(id).addEventListener('input', ()=>{
+    $('profLbl').textContent = (parseInt($('aggr').value,10)<=33?'Konservatif':parseInt($('aggr').value,10)>=67?'Agresif':'Normal');
+    compute();
+  });
+});
+
+$('reset').addEventListener('click', ()=>{
+  $('op').value='milling';
+  $('mat').selectedIndex=0;
+  $('tool').value='carbide';
+  $('coolant').value='emulsion';
+  $('diam').value='';
+  $('teeth').value='4';
+  $('aggr').value='50';
+  $('profLbl').textContent='Normal';
+  compute();
+});
+
+// init
+window.addEventListener('DOMContentLoaded',()=>{
+  const idx = [...document.getElementById('mat').options].findIndex(o=>/^C45 /.test(o.value));
+  if(idx>=0) document.getElementById('mat').selectedIndex = idx;
+  compute();
+  // signature date
+  const d = new Date();
+  const fmt2 = (n)=> String(n).padStart(2,'0');
+  document.getElementById('today').textContent = `${fmt2(d.getDate())}.${fmt2(d.getMonth()+1)}.${d.getFullYear()}`;
+});
+</script>
+</body>
+</html>
