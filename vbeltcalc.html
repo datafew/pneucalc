@@ -9,60 +9,124 @@
       --bg:#0b1020; --text:#e6eefc; --muted:#9bb0cc; --border:#26345e;
       --shadow: 0 10px 28px rgba(0,0,0,.35); --radius:16px;
       --ok:#2dd4bf; --warn:#f59e0b; --bad:#ef4444;
+      --blue1:#16264c; --blue2:#0f1938; --green1:#0f2f24; --green2:#0b241c;
+      --purple1:#331a3b; --purple2:#26132d; --amber1:#3a2a12; --amber2:#241808;
+      --accent:#7dd3fc;
+      --footer1:#6EE7F9; --footer2:#A78BFA; --footer3:#F472B6;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:radial-gradient(1000px 600px at 10% -10%,#142043,transparent 60%),radial-gradient(1000px 600px at 110% -10%,#0f1a33,transparent 60%),var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    .page{max-width:980px;margin:0 auto;padding:0 clamp(14px,3.5vw,28px)}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1000px 600px at 10% -10%,#142043,transparent 60%),
+        radial-gradient(1000px 600px at 110% -10%,#0f1a33,transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display:flex; flex-direction:column;
+    }
+    .page{max-width: 980px; margin: 0 auto; padding: 0 clamp(14px,3.5vw,28px); width:100%; flex:1}
     header{padding:18px 0 6px}
-    h1{margin:0 0 8px 0;font-size:clamp(20px,3.2vw,28px)}
-    .lead{color:var(--muted);margin:0 0 6px 0}
-    .container{padding:12px 0 26px;display:flex;flex-direction:column;gap:12px}
-    .card{border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;background:#121a35}
-    .card .hd{display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:600;font-size:16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.04),transparent)}
+    h1{margin:0 0 8px 0; font-size:clamp(20px,3.2vw,28px)}
+    .lead{color:var(--muted); margin:0 0 6px 0;}
+    .container{padding:12px 0 26px; display:flex; flex-direction:column; gap:12px}
+    .card{border:1px solid var(--border); border-radius:var(--radius); box-shadow: var(--shadow); overflow:hidden; background:#121a35}
+    .card .hd{display:flex; align-items:center; gap:10px; padding:12px 14px; font-weight:600; font-size:16px; border-bottom:1px solid var(--border); background:linear-gradient(180deg,rgba(255,255,255,.04),transparent)}
     .card .content{padding:12px 14px}
     .card.compact .content{padding:10px 12px}
-    .theme-blue{background:linear-gradient(180deg,#16264c,#0f1938)}
-    .theme-green{background:linear-gradient(180deg,#0f2f24,#0b241c)}
-    .theme-purple{background:linear-gradient(180deg,#331a3b,#26132d)}
-    .theme-amber{background:linear-gradient(180deg,#3a2a12,#241808)}
-    .pill{padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted);font-size:12px;background:rgba(255,255,255,.04)}
-    .grid{display:grid;gap:10px;grid-template-columns:repeat(12,1fr);align-items:end}
-    .col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-3{grid-column:span 3}.col-12{grid-column:1 / -1}
-    @media (max-width:740px){.col-6,.col-4,.col-3,.col-12{grid-column:1 / -1}}
-    label{display:block;color:var(--muted);font-size:12.5px;margin:0 0 6px}
-    select,input{width:100%;padding:9px 11px;border-radius:12px;color:var(--text);border:1px solid var(--border);background:#0e152c;outline:none}
-    input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    .theme-blue{background:linear-gradient(180deg,var(--blue1),var(--blue2))}
+    .theme-green{background:linear-gradient(180deg,var(--green1),var(--green2))}
+    .theme-purple{background:linear-gradient(180deg,var(--purple1),var(--purple2))}
+    .theme-amber{background:linear-gradient(180deg,var(--amber1),var(--amber2))}
+    .pill{padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); font-size:12px; background:rgba(255,255,255,.04)}
+    .grid{display:grid; gap:10px; grid-template-columns: repeat(12,1fr); align-items:end}
+    .col-6{grid-column: span 6}.col-4{grid-column: span 4}.col-3{grid-column: span 3}.col-12{grid-column: 1 / -1}
+    @media (max-width:740px){ .col-6,.col-4,.col-3,.col-12{grid-column: 1 / -1} }
+    label{display:block; color:var(--muted); font-size:12.5px; margin:0 0 6px}
+    select,input{width:100%; padding:9px 11px; border-radius:12px; color:var(--text); border:1px solid var(--border); background:#0e152c; outline:none}
+    input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
     .muted{color:var(--muted)} .value{font-weight:600}
-    .kv{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--border)}
+    .kv{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px dashed var(--border)}
     .kv:last-child{border-bottom:0}
-    .big{font-size:clamp(18px,4vw,26px);font-weight:800;color:var(--ok)}
+    .big{font-size: clamp(18px, 4vw, 26px); font-weight:800; color:var(--ok)}
     .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
-    .note{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);font-size:14px;color:var(--muted)}
-    .tbl{width:100%;border-collapse:collapse}
-    .tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:left;font-size:13.5px}
-    .tbl th{color:var(--muted);font-weight:600}
-    .legend{display:grid;gap:10px;grid-template-columns:1fr}
-    @media(min-width:560px){.legend{grid-template-columns:repeat(2,1fr)}}
-    @media(min-width:900px){.legend{grid-template-columns:repeat(3,1fr)}}
-    .lg{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);min-height:42px}
-    .tag{min-width:44px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:.2px;border:1px solid var(--border);padding:0 8px;white-space:nowrap}
-    .t-blue{background:#163462}.t-green{background:#0f3a2d}.t-purple{background:#4b2355}.t-amber{background:#5a3c14}.t-red{background:#5a1f22}.t-cyan{background:#0e3b52}
-    footer{padding:10px 0 26px;color:var(--muted);font-size:12.5px}
-    .sr{position:absolute;clip:rect(0 0 0 0);width:1px;height:1px;margin:-1px;overflow:hidden}
+    .note{display:flex; gap:8px; align-items:flex-start; padding:9px 10px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.03); font-size:14px; color:var(--muted)}
+    .tbl{width:100%; border-collapse:collapse}
+    .tbl th,.tbl td{padding:8px 6px; border-bottom:1px solid var(--border); text-align:left; font-size:13.5px}
+    .tbl th{color:var(--muted); font-weight:600}
+    .legend{display:grid; gap:10px; grid-template-columns: 1fr}
+    @media(min-width:560px){ .legend{ grid-template-columns: repeat(2, 1fr)} }
+    @media(min-width:900px){ .legend{ grid-template-columns: repeat(3, 1fr)} }
+    .lg{display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.04); min-height:42px}
+    .tag{min-width:44px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800; letter-spacing:.2px; border:1px solid var(--border); padding:0 8px; white-space:nowrap}
+    .t-blue{background:#163462} .t-green{background:#0f3a2d} .t-purple{background:#4b2355} .t-amber{background:#5a3c14} .t-red{background:#5a1f22} .t-cyan{background:#0e3b52}
+    .sr{position:absolute; clip:rect(0 0 0 0); width:1px; height:1px; margin:-1px; overflow:hidden}
     .nowrap{white-space:nowrap}
     sub, sup {font-size: 75%; line-height: 0; position: relative; vertical-align: baseline;}
     sub { bottom: -0.25em; } sup { top: -0.5em; }
+
+    /* —— Neon/Lighting imza footer —— */
+    .brand-footer{
+      position:relative;
+      width:100%;
+      display:flex; justify-content:center; align-items:center;
+      padding:14px 16px;
+      background: rgba(255,255,255,0.03);
+      border-top:1px solid rgba(125,211,252,.25);
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .brand-chip{
+      position:relative;
+      display:inline-flex; align-items:center; gap:.6rem;
+      padding:.55rem .9rem;
+      border-radius:999px;
+      backdrop-filter: blur(6px);
+      background: radial-gradient(120% 120% at 10% 10%, rgba(110,231,249,.18), transparent 40%) , rgba(14, 23, 44, .45);
+      border:1px solid rgba(125,211,252,.35);
+      box-shadow:
+        0 0 0 1px rgba(99,102,241,.25) inset,
+        0 8px 26px rgba(0,0,0,.35),
+        0 0 22px rgba(125,211,252,.25);
+      color:#dbeafe; font-weight:700; letter-spacing:.2px;
+    }
+    .brand-chip .gear{font-size:1.05rem; filter: drop-shadow(0 0 6px rgba(125,211,252,.65));}
+    .brand-chip .text{font-size:.95rem}
+    /* Hareketli ışık şeridi */
+    .brand-footer::before{
+      content:"";
+      position:absolute; inset:auto -20% 0 -20%; height:2px;
+      background:linear-gradient(90deg, var(--footer1), var(--footer2), var(--footer3), var(--footer1));
+      filter: blur(6px); opacity:.7;
+      animation: glide 6s linear infinite;
+      transform: translateX(-30%);
+    }
+    @keyframes glide { from{transform: translateX(-30%)} to{transform: translateX(30%)} }
+    /* Parıltı noktaları */
+    .brand-footer::after{
+      content:""; position:absolute; width:220px; height:220px; bottom:-160px; left:50%;
+      transform: translateX(-50%);
+      background: radial-gradient(closest-side, rgba(167,139,250,.25), transparent 60%);
+      filter: blur(8px); pointer-events:none;
+    }
+    @media (prefers-reduced-motion: reduce){
+      .brand-footer::before{animation:none}
+    }
   </style>
 </head>
 <body>
   <div class="page">
     <header>
       <h1>Kayış ve Kasnak Hesaplayıcı</h1>
-      <p class="lead">Dar V-kayışlı (SPZ/SPA/SPB/SPC) kasnak tahriklerinde ölçü seçimi için hızlı yardımcı. ISO&nbsp;4184 kapsamında <strong>datum/hatve uzunluğu</strong> referansı esas alınır. Alanları değiştirin; sonuçlar anında güncellenir.</p>
+      <p class="lead">
+        Dar V-kayışlı (SPZ/SPA/SPB/SPC) kasnak tahriklerinde ölçü seçimi için hızlı yardımcı. ISO&nbsp;4184 kapsamında
+        <strong>datum/hatve uzunluğu</strong> referansı esas alınır. Alanları değiştirin; sonuçlar anında güncellenir.
+      </p>
     </header>
 
     <main class="container" id="app">
+      <!-- GİRDİLER -->
       <section class="card theme-green compact">
         <div class="hd">Girdiler</div>
         <div class="content">
@@ -77,31 +141,39 @@
               </select>
               <div id="profileHelp" class="sr">Kayış profilini seçiniz.</div>
             </div>
+
             <div class="col-4">
               <label for="d1">Küçük kasnak hatve çapı d₁ (mm)</label>
               <select id="d1"></select>
             </div>
+
             <div class="col-4">
               <label for="d2">Büyük kasnak hatve çapı d₂ (mm)</label>
               <select id="d2"></select>
             </div>
+
             <div class="col-4">
               <label for="A">Eksen mesafesi A (mm)</label>
               <input id="A" type="number" inputmode="decimal" placeholder="Örn. 380" min="1" step="1" />
             </div>
+
             <div class="col-4">
               <label for="n1">Giriş devri n₁ (d/dak)</label>
-              <input id="n1" type="number" inputmode="decimal" placeholder="Örn. 1450" min="1" step="1" />
+              <input id="n1" type="number" inputmode="decimal" placeholder="Örn. 1500" min="1" step="1" />
             </div>
+
             <div class="col-4">
               <label for="wrapMin">Asgari sarma açısı (°)</label>
               <input id="wrapMin" type="number" value="120" min="90" max="180" step="1" />
             </div>
           </div>
-          <div class="note" id="inputNote" style="margin-top:8px">İpucu: Profil → kasnak çapları → A → n₁ sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.</div>
+          <div class="note" id="inputNote" style="margin-top:8px">
+            İpucu: Profil → kasnak çapları → A → n₁ sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.
+          </div>
         </div>
       </section>
 
+      <!-- SONUÇLAR -->
       <section class="card theme-blue compact" aria-live="polite">
         <div class="hd">Sonuçlar</div>
         <div class="content">
@@ -110,17 +182,17 @@
           <div class="kv"><span class="muted">İç uzunluk L<sub>i</sub> (mm)</span><span class="value" id="Li">—</span></div>
           <div class="kv"><span class="muted">Dış/çevre uzunluğu L<sub>a</sub> (mm)</span><span class="value" id="La">—</span></div>
           <div class="kv"><span class="muted">Datum/hatve uzunluğu L<sub>d</sub> (mm)</span><span class="value" id="Ld">—</span></div>
-          <div class="kv"><span class="muted">Çıkış devri n<sub>2</sub> (d/dak)</span><span class="value" id="n2">—</span></div>
+          <div class="kv"><span class="muted">Çıkış devri n₂ (d/dak)</span><span class="value" id="n2">—</span></div>
 
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px">
             <span class="pill" id="wrapInfo">Sarma açısı: —</span>
-            <span class="pill" id="ratioInfo">Oran i=n₁/n₂=d₂/d₁: —</span>
+            <span class="pill" id="ratioInfo">Oran i = d₂/d₁: —</span>
             <span class="pill" id="minAinfo">Önerilen A(min): —</span>
           </div>
 
           <div id="warnArea" style="margin-top:10px"></div>
 
-          <h3 style="margin:16px 0 6px;font-size:15px;color:var(--muted)">Standart kayış adayları (en yakın 5)</h3>
+          <h3 style="margin:16px 0 6px; font-size:15px; color:var(--muted)">Standart kayış adayları (en yakın 5)</h3>
           <table class="tbl" id="candTable">
             <thead>
               <tr>
@@ -137,6 +209,7 @@
         </div>
       </section>
 
+      <!-- LEGEND -->
       <section class="card theme-purple compact">
         <div class="hd">Kısaltma Legend (standart kullanımlar)</div>
         <div class="content">
@@ -154,63 +227,208 @@
         </div>
       </section>
 
+      <!-- KONTROLLER -->
       <section class="card theme-amber compact">
         <div class="hd">Kontroller</div>
         <div class="content">
-          <ul style="margin:0 0 4px 18px;padding:0;color:var(--muted)">
+          <ul style="margin:0 0 4px 18px; padding:0; color:var(--muted)">
             <li>Formül: <code>L = 2A + (π/2)(d₁+d₂) + (d₂−d₁)² / (4A)</code> (hatve/Datum çapları ile).</li>
             <li>Sarma açısı (küçük kasnak): <code>α₁ = 180° − 57.3°·(d₂−d₁)/A</code>.</li>
             <li>Pratik öneri: <code>A ≥ 0.5·(d₂−d₁) + 1.5·d₂</code> rahat montaj/sarma için.</li>
-            <li>Hız oranı (kayıpsız varsayım): <code>i = n₁/n₂ = d₂/d₁</code>, <code>n₂ = n₁·(d₁/d₂)</code>.</li>
           </ul>
         </div>
       </section>
     </main>
-
-    <footer><span class="muted">Tek dosya (HTML+CSS+JS). Hatalı/boş girişlerde uyarılar gösterilir. Değerler değiştikçe sonuçlar anında güncellenir.</span></footer>
   </div>
 
+  <!-- Neon/lighting imzalı footer -->
+  <footer class="brand-footer">
+    <div class="brand-chip" aria-label="Mechanical Toolbox by Sipahi">
+      <span class="gear">⚙</span>
+      <span class="text">Mechanical&nbsp;Toolbox&nbsp;by&nbsp;Sipahi</span>
+    </div>
+  </footer>
+
   <script>
-    const PULLEY_PD={SPZ:[63,67,71,75,80,85,90,95,100,106,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,265,280],SPA:[80,85,90,95,100,106,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,265,280,300,315,335,355,375,400],SPB:[125,132,140,150,160,170,180,190,200,212,224,236,250,265,280,300,315,335,355,375,400,425,450,475,500],SPC:[200,212,224,236,250,265,280,300,315,335,355,375,400,425,450,475,500,530,560,600]};
-    const BELT_SERIES={SPZ:(()=>{const l=[587,600,612,630,650,670,687,700,710,730,750,762,775,800,812,825,837,850,875,900,912,937,950,962,975,1000];for(let L=1025;L<=2000;L+=25)l.push(L);for(let L=2050;L<=3550;L+=50)l.push(L);return l;})(),SPA:(()=>{const l=[750,762,775,800,812,825,837,850,875,900,912,937,950,962,975,1000,1016,1030,1050];for(let L=1075;L<=2500;L+=25)l.push(L);for(let L=2550;L<=5000;L+=50)l.push(L);return l;})(),SPB:(()=>{const l=[1250,1270,1287,1300,1320,1340,1350,1370,1400,1420,1450];for(let L=1475;L<=3200;L+=25)l.push(L);for(let L=3250;L<=6300;L+=50)l.push(L);return l;})(),SPC:(()=>{const l=[2000,2030,2060,2120,2240];for(let L=2300;L<=4000;L+=25)l.push(L);for(let L=4050;L<=10000;L+=50)l.push(L);return l;})()};
-    const OFFSETS={SPZ:{Li_from_Lp:L=>L-13,La_from_Lp:L=>L+8},SPA:{Li_from_Lp:L=>L-18,La_from_Lp:L=>L+10},SPB:{Li_from_Lp:L=>L-22,La_from_Lp:L=>L+12},SPC:{Li_from_Lp:L=>L-30,La_from_Lp:L=>L+18}};
-    const $=s=>document.querySelector(s),fmt=n=>Number.isFinite(n)?Math.round(n)+" mm":"—",deltaSign=v=>v>0?"+":v<0?"−":"±";
-    function axisFromLength(L,d1,d2){const C=(Math.PI/2)*(d1+d2);const X=L-C,disc=X*X-2*(d2-d1)*(d2-d1);if(disc<0)return NaN;return (X+Math.sqrt(disc))/4;}
-    const profileEl=$('#profile'),d1El=$('#d1'),d2El=$('#d2'),AEl=$('#A'),wrapMinEl=$('#wrapMin'),n1El=$('#n1');
-    const LpShow=$('#LpShow'),stdLp=$('#stdLp'),LiEl=$('#Li'),LaEl=$('#La'),LdEl=$('#Ld'),n2El=$('#n2');
-    const warnArea=$('#warnArea'),wrapInfo=$('#wrapInfo'),ratioInfo=$('#ratioInfo'),minAinfo=$('#minAinfo');
-    function populatePulleys(){const pr=profileEl.value,list=PULLEY_PD[pr]||[];d1El.innerHTML=list.map(v=>`<option value="${v}">${v}</option>`).join('');d2El.innerHTML=list.map(v=>`<option value="${v}">${v}</option>`).join('');if(list.length){const mid=Math.floor(list.length/2);d1El.value=list[Math.max(0,mid-2)];d2El.value=list[Math.min(list.length-1,mid+2)];}compute();}
-    function compute(){
-      warnArea.innerHTML='';
-      const pr=profileEl.value,d1=parseFloat(d1El.value),d2=parseFloat(d2El.value),A=parseFloat(AEl.value),wrapMin=parseFloat(wrapMinEl.value),n1=parseFloat(n1El.value);
-      const errors=[];
-      if(!pr||!BELT_SERIES[pr])errors.push('Lütfen geçerli bir kayış profili seçin.');
-      if(!Number.isFinite(d1))errors.push('Küçük kasnak d₁ seçilmedi.');
-      if(!Number.isFinite(d2))errors.push('Büyük kasnak d₂ seçilmedi.');
-      if(Number.isFinite(d1)&&Number.isFinite(d2)&&d2<d1)errors.push('d₂ ≥ d₁ olmalıdır.');
-      if(!Number.isFinite(A))errors.push('Eksen mesafesi A sayısal olmalıdır.');
-      if(Number.isFinite(A)&&A<=0)errors.push('Eksen mesafesi A > 0 olmalıdır.');
-      if(!Number.isFinite(wrapMin)||wrapMin<90||wrapMin>180)errors.push('Asgari sarma açısı 90°–180° arasında olmalıdır.');
-      if(Number.isFinite(n1) && n1<=0) errors.push('Giriş devri n₁ > 0 olmalıdır.');
-      if(errors.length){warnArea.innerHTML=errors.map(t=>`<div class="note"><span class="bad">⚠</span><div>${t}</div></div>`).join('');LpShow.textContent='—';stdLp.textContent='—';LiEl.textContent='—';LaEl.textContent='—';LdEl.textContent='—';n2El.textContent='—';wrapInfo.textContent='Sarma açısı: —';ratioInfo.textContent='Oran i=n₁/n₂=d₂/d₁: —';minAinfo.textContent='Önerilen A(min): —';document.querySelector('#candTable tbody').innerHTML='';return;}
-      const alpha1=180-57.3*((d2-d1)/A);wrapInfo.textContent=`Sarma açısı: ${alpha1.toFixed(1)}°`;if(alpha1<wrapMin)addWarn(`Sarma açısı yetersiz: α₁ = ${alpha1.toFixed(1)}°. En az ${wrapMin.toFixed(0)}° önerilir.`,'warn');
-      const Arec=0.5*(d2-d1)+1.5*d2;minAinfo.textContent=`Önerilen A(min): ${Math.round(Arec)} mm`;if(A<Arec)addWarn(`Eksen mesafesi düşük olabilir: A = ${Math.round(A)} mm. Öneri ≥ ${Math.round(Arec)} mm.`,'warn');
-      const Aphys=0.5*(d2-d1)+10;if(A<Aphys)addWarn(`A çok küçük: A ≥ ${(Aphys).toFixed(0)} mm olmalıdır (geometrik sınır).`,'bad');
-      const ratio=(d2/d1);ratioInfo.textContent=`Oran i=n₁/n₂=d₂/d₁: ${ratio.toFixed(3)}`;
-      const Lp=2*A+(Math.PI/2)*(d1+d2)+Math.pow((d2-d1),2)/(4*A);LpShow.textContent=fmt(Lp);LdEl.textContent=fmt(Lp);
-      const series=BELT_SERIES[pr];const nearest=nearestInSeries(Lp,series);if(nearest!==null){stdLp.textContent=`${nearest} mm (${deltaSign(nearest-Lp)}${Math.abs(Math.round(nearest-Lp))} mm)`;}else{stdLp.textContent='—';}
-      const li=OFFSETS[pr].Li_from_Lp(Lp),la=OFFSETS[pr].La_from_Lp(Lp);LiEl.textContent=fmt(li);LaEl.textContent=fmt(la);
-      // n2 hesapla (n2 = n1 * d1/d2) - sadece n1 geçerliyse göster
-      if(Number.isFinite(n1) && n1>0){ const n2 = n1*(d1/d2); n2El.textContent = Number.isFinite(n2)? Math.round(n2) + " d/dak" : "—"; } else { n2El.textContent = '—'; }
-      const top5=nearestN(Lp,series,5);const tbody=document.querySelector('#candTable tbody');
-      tbody.innerHTML=top5.map(L=>{const Li_c=OFFSETS[pr].Li_from_Lp(L);const La_c=OFFSETS[pr].La_from_Lp(L);const d=Math.round(L-Lp);const cls=d===0?'ok':(Math.abs(d)<=10?'warn':'');const Anew=axisFromLength(L,d1,d2);const AnewTxt=Number.isFinite(Anew)?Math.round(Anew):'—';return `<tr><td>${pr}</td><td><span class="${cls}">${L}</span></td><td>${deltaSign(d)}${Math.abs(d)}</td><td>${AnewTxt}</td><td>${Math.round(Li_c)}</td><td>${Math.round(La_c)}</td></tr>`;}).join('');
-      if(nearest!==null&&Math.abs(nearest-Lp)>20){addWarn(`Hesaplanan L<sub>p</sub> ile en yakın standart arasında fark büyük: Δ = ${Math.abs(Math.round(nearest-Lp))} mm. Kasnak çaplarını veya A değerini revize edin.`,'warn');}
+    const PULLEY_PD = {
+      SPZ: [63,67,71,75,80,85,90,95,100,106,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,265,280],
+      SPA: [80,85,90,95,100,106,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,265,280,300,315,335,355,375,400],
+      SPB: [125,132,140,150,160,170,180,190,200,212,224,236,250,265,280,300,315,335,355,375,400,425,450,475,500],
+      SPC: [200,212,224,236,250,265,280,300,315,335,355,375,400,425,450,475,500,530,560,600]
+    };
+    const BELT_SERIES = {
+      SPZ: (() => { const list = [587,600,612,630,650,670,687,700,710,730,750,762,775,800,812,825,837,850,875,900,912,937,950,962,975,1000]; for(let L=1025; L<=2000; L+=25) list.push(L); for(let L=2050; L<=3550; L+=50) list.push(L); return list; })(),
+      SPA: (() => { const list = [750,762,775,800,812,825,837,850,875,900,912,937,950,962,975,1000,1016,1030,1050]; for(let L=1075; L<=2500; L+=25) list.push(L); for(let L=2550; L<=5000; L+=50) list.push(L); return list; })(),
+      SPB: (() => { const list = [1250,1270,1287,1300,1320,1340,1350,1370,1400,1420,1450]; for(let L=1475; L<=3200; L+=25) list.push(L); for(let L=3250; L<=6300; L+=50) list.push(L); return list; })(),
+      SPC: (() => { const list = [2000,2030,2060,2120,2240]; for(let L=2300; L<=4000; L+=25) list.push(L); for(let L=4050; L<=10000; L+=50) list.push(L); return list; })()
+    };
+    const OFFSETS = {
+      SPZ: { Li_from_Lp: Lp => Lp - 13, La_from_Lp: Lp => Lp + 8 },
+      SPA: { Li_from_Lp: Lp => Lp - 18, La_from_Lp: Lp => Lp + 10 },
+      SPB: { Li_from_Lp: Lp => Lp - 22, La_from_Lp: Lp => Lp + 12 },
+      SPC: { Li_from_Lp: Lp => Lp - 30, La_from_Lp: Lp => Lp + 18 },
+    };
+
+    const $ = sel => document.querySelector(sel);
+    const fmt = n => Number.isFinite(n) ? Math.round(n) + " mm" : "—";
+    const deltaSign = v => v>0?'+':(v<0? '−' : '±');
+
+    function axisFromLength(L, d1, d2){
+      // A = (X + sqrt(X^2 - 2*(d2-d1)^2)) / 4, X = L - (π/2)(d1+d2)
+      const C = (Math.PI/2) * (d1 + d2);
+      const X = (L - C);
+      const disc = X*X - 2*(d2 - d1)*(d2 - d1);
+      if(disc < 0) return NaN;
+      return (X + Math.sqrt(disc)) / 4;
     }
-    function nearestInSeries(x,arr){if(!arr||!arr.length)return null;let best=arr[0],md=Math.abs(arr[0]-x);for(const v of arr){const d=Math.abs(v-x);if(d<md){md=d;best=v}}return best}
-    function nearestN(x,arr,n=5){const s=[...arr].sort((a,b)=>Math.abs(a-x)-Math.abs(b-x));return s.slice(0,n)}
-    function addWarn(text,level='warn'){const icon=level==='bad'?'⛔':'⚠';const cls=level==='bad'?'bad':'warn';const el=document.createElement('div');el.className='note';el.innerHTML=`<span class="${cls}">${icon}</span><div>${text}</div>`;warnArea.appendChild(el)}
-    $('#profile').addEventListener('change',populatePulleys);$('#d1').addEventListener('change',compute);$('#d2').addEventListener('change',compute);$('#A').addEventListener('input',compute);$('#wrapMin').addEventListener('input',compute);$('#n1').addEventListener('input',compute);
-    populatePulleys();setTimeout(()=>{const d1=parseFloat($('#d1').value)||100;const d2=parseFloat($('#d2').value)||160;$('#A').value=Math.round(1.25*d2+0.35*(d2-d1));$('#n1').value=1450;compute();},0);
+
+    // Elemanlar
+    const profileEl = $('#profile'), d1El = $('#d1'), d2El = $('#d2'), AEl = $('#A'), wrapMinEl = $('#wrapMin'), n1El = $('#n1');
+    const LpShow = $('#LpShow'), stdLp = $('#stdLp'), LiEl = $('#Li'), LaEl = $('#La'), LdEl = $('#Ld'), n2El = $('#n2');
+    const warnArea = $('#warnArea'), wrapInfo = $('#wrapInfo'), ratioInfo = $('#ratioInfo'), minAinfo = $('#minAinfo');
+
+    function populatePulleys(){
+      const pr = profileEl.value;
+      const list = PULLEY_PD[pr] || [];
+      d1El.innerHTML = list.map(v => `<option value="${v}">${v}</option>`).join('');
+      d2El.innerHTML = list.map(v => `<option value="${v}">${v}</option>`).join('');
+      if(list.length){
+        const mid = Math.floor(list.length/2);
+        d1El.value = list[Math.max(0, mid-2)];
+        d2El.value = list[Math.min(list.length-1, mid+2)];
+      }
+      compute();
+    }
+
+    function compute(){
+      warnArea.innerHTML = '';
+      const pr = profileEl.value;
+      const d1 = parseFloat(d1El.value);
+      const d2 = parseFloat(d2El.value);
+      const A  = parseFloat(AEl.value);
+      const wrapMin = parseFloat(wrapMinEl.value);
+      const n1 = parseFloat(n1El.value);
+
+      const errors = [];
+      if(!pr || !BELT_SERIES[pr]) errors.push('Lütfen geçerli bir kayış profili seçin.');
+      if(!Number.isFinite(d1)) errors.push('Küçük kasnak d₁ seçilmedi.');
+      if(!Number.isFinite(d2)) errors.push('Büyük kasnak d₂ seçilmedi.');
+      if(Number.isFinite(d1) && Number.isFinite(d2) && d2 < d1) errors.push('d₂ ≥ d₁ olmalıdır.');
+      if(!Number.isFinite(A)) errors.push('Eksen mesafesi A sayısal olmalıdır.');
+      if(Number.isFinite(A) && A <= 0) errors.push('Eksen mesafesi A > 0 olmalıdır.');
+      if(!Number.isFinite(wrapMin) || wrapMin<90 || wrapMin>180) errors.push('Asgari sarma açısı 90°–180° arasında olmalıdır.');
+
+      if(errors.length){
+        warnArea.innerHTML = errors.map(t => `<div class="note"><span class="bad">⚠</span><div>${t}</div></div>`).join('');
+        LpShow.textContent = '—'; stdLp.textContent='—'; LiEl.textContent='—'; LaEl.textContent='—'; LdEl.textContent='—'; n2El.textContent='—';
+        wrapInfo.textContent = 'Sarma açısı: —'; ratioInfo.textContent = 'Oran i = d₂/d₁: —'; minAinfo.textContent = 'Önerilen A(min): —';
+        $('#candTable tbody').innerHTML = '';
+        return;
+      }
+
+      // Sarma açısı ve öneri
+      const alpha1 = 180 - 57.3 * ((d2 - d1)/A);
+      wrapInfo.textContent = `Sarma açısı: ${alpha1.toFixed(1)}°`;
+      if(alpha1 < wrapMin) addWarn(`Sarma açısı yetersiz: α₁ = ${alpha1.toFixed(1)}°. En az ${wrapMin.toFixed(0)}° önerilir.`, 'warn');
+
+      const Arec = 0.5*(d2 - d1) + 1.5*d2;
+      minAinfo.textContent = `Önerilen A(min): ${Math.round(Arec)} mm`;
+      if(A < Arec) addWarn(`Eksen mesafesi düşük olabilir: A = ${Math.round(A)} mm. Öneri ≥ ${Math.round(Arec)} mm.`, 'warn');
+      const Aphys = 0.5*(d2 - d1) + 10;
+      if(A < Aphys) addWarn(`A çok küçük: A ≥ ${(Aphys).toFixed(0)} mm olmalıdır (geometrik sınır).`, 'bad');
+
+      // Oran ve hız
+      const i = d2/d1;
+      ratioInfo.textContent = `Oran i = d₂/d₁: ${i.toFixed(3)}`;
+      if(Number.isFinite(n1)){
+        const n2 = n1 * (d1/d2);
+        n2El.textContent = Number.isFinite(n2) ? Math.round(n2) + " d/dak" : "—";
+      } else {
+        n2El.textContent = "—";
+      }
+
+      // Hatve/datum uzunluğu
+      const Lp = 2*A + (Math.PI/2)*(d1 + d2) + Math.pow((d2 - d1),2)/(4*A);
+      LpShow.textContent = fmt(Lp);
+      LdEl.textContent = fmt(Lp);
+
+      const series = BELT_SERIES[pr];
+      const nearest = nearestInSeries(Lp, series);
+      if(nearest !== null){
+        stdLp.textContent = `${nearest} mm (${deltaSign(nearest - Lp)}${Math.abs(Math.round(nearest - Lp))} mm)`;
+      } else {
+        stdLp.textContent = '—';
+      }
+
+      const li = OFFSETS[pr].Li_from_Lp(Lp);
+      const la = OFFSETS[pr].La_from_Lp(Lp);
+      LiEl.textContent = fmt(li);
+      LaEl.textContent = fmt(la);
+
+      // Aday tablo (en yakın 5) + yeni A′
+      const top5 = nearestN(Lp, series, 5);
+      const tbody = $('#candTable tbody');
+      tbody.innerHTML = top5.map(L => {
+        const Li_c = OFFSETS[pr].Li_from_Lp(L);
+        const La_c = OFFSETS[pr].La_from_Lp(L);
+        const d = Math.round(L - Lp);
+        const cls = d===0 ? 'ok' : (Math.abs(d)<=10 ? 'warn' : '');
+        const Anew = axisFromLength(L, d1, d2);
+        const AnewTxt = Number.isFinite(Anew) ? Math.round(Anew) : '—';
+        return `<tr>
+          <td>${pr}</td>
+          <td><span class="${cls}">${L}</span></td>
+          <td>${deltaSign(d)}${Math.abs(d)}</td>
+          <td>${AnewTxt}</td>
+          <td>${Math.round(Li_c)}</td>
+          <td>${Math.round(La_c)}</td>
+        </tr>`;
+      }).join('');
+
+      if(nearest !== null && Math.abs(nearest - Lp) > 20){
+        addWarn(`Hesaplanan L<sub>p</sub> ile en yakın standart arasında fark büyük: Δ = ${Math.abs(Math.round(nearest - Lp))} mm. Kasnak çaplarını veya A değerini revize edin.`, 'warn');
+      }
+    }
+
+    function nearestInSeries(x, arr){
+      if(!arr || !arr.length) return null;
+      let best = arr[0], md = Math.abs(arr[0]-x);
+      for(const v of arr){
+        const d = Math.abs(v - x);
+        if(d < md){ md = d; best = v; }
+      }
+      return best;
+    }
+    function nearestN(x, arr, n=5){
+      const sorted = [...arr].sort((a,b)=>Math.abs(a-x)-Math.abs(b-x));
+      return sorted.slice(0,n);
+    }
+    function addWarn(text, level='warn'){
+      const icon = level==='bad' ? '⛔' : '⚠';
+      const cls = level==='bad' ? 'bad' : 'warn';
+      const el = document.createElement('div');
+      el.className = 'note';
+      el.innerHTML = `<span class="${cls}">${icon}</span><div>${text}</div>`;
+      warnArea.appendChild(el);
+    }
+
+    // Eventler
+    $('#profile').addEventListener('change', populatePulleys);
+    $('#d1').addEventListener('change', compute);
+    $('#d2').addEventListener('change', compute);
+    $('#A').addEventListener('input', compute);
+    $('#wrapMin').addEventListener('input', compute);
+    $('#n1').addEventListener('input', compute);
+
+    // Başlat
+    populatePulleys();
+    setTimeout(()=>{
+      const d1 = parseFloat($('#d1').value)||100;
+      const d2 = parseFloat($('#d2').value)||160;
+      $('#A').value = Math.round(1.25*d2 + 0.35*(d2-d1));
+      $('#n1').value = 1500;
+      compute();
+    },0);
   </script>
 </body>
 </html>
