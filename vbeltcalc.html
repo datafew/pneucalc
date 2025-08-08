@@ -50,7 +50,6 @@
     .t-blue{background:#163462}.t-green{background:#0f3a2d}.t-purple{background:#4b2355}.t-amber{background:#5a3c14}.t-red{background:#5a1f22}.t-cyan{background:#0e3b52}
     footer{padding:10px 0 26px;color:var(--muted);font-size:12.5px}
     .sr{position:absolute;clip:rect(0 0 0 0);width:1px;height:1px;margin:-1px;overflow:hidden}
-    /* Legend notunda L+sub birleşik kalsın */
     .nowrap{white-space:nowrap}
     sub, sup {font-size: 75%; line-height: 0; position: relative; vertical-align: baseline;}
     sub { bottom: -0.25em; } sup { top: -0.5em; }
@@ -86,16 +85,20 @@
               <label for="d2">Büyük kasnak hatve çapı d₂ (mm)</label>
               <select id="d2"></select>
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <label for="A">Eksen mesafesi A (mm)</label>
               <input id="A" type="number" inputmode="decimal" placeholder="Örn. 380" min="1" step="1" />
             </div>
-            <div class="col-6">
+            <div class="col-4">
+              <label for="n1">Giriş devri n₁ (d/dak)</label>
+              <input id="n1" type="number" inputmode="decimal" placeholder="Örn. 1450" min="1" step="1" />
+            </div>
+            <div class="col-4">
               <label for="wrapMin">Asgari sarma açısı (°)</label>
               <input id="wrapMin" type="number" value="120" min="90" max="180" step="1" />
             </div>
           </div>
-          <div class="note" id="inputNote" style="margin-top:8px">İpucu: Profil → kasnak çapları → A sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.</div>
+          <div class="note" id="inputNote" style="margin-top:8px">İpucu: Profil → kasnak çapları → A → n₁ sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.</div>
         </div>
       </section>
 
@@ -107,10 +110,11 @@
           <div class="kv"><span class="muted">İç uzunluk L<sub>i</sub> (mm)</span><span class="value" id="Li">—</span></div>
           <div class="kv"><span class="muted">Dış/çevre uzunluğu L<sub>a</sub> (mm)</span><span class="value" id="La">—</span></div>
           <div class="kv"><span class="muted">Datum/hatve uzunluğu L<sub>d</sub> (mm)</span><span class="value" id="Ld">—</span></div>
+          <div class="kv"><span class="muted">Çıkış devri n<sub>2</sub> (d/dak)</span><span class="value" id="n2">—</span></div>
 
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
             <span class="pill" id="wrapInfo">Sarma açısı: —</span>
-            <span class="pill" id="ratioInfo">Oran d₂/d₁: —</span>
+            <span class="pill" id="ratioInfo">Oran i=n₁/n₂=d₂/d₁: —</span>
             <span class="pill" id="minAinfo">Önerilen A(min): —</span>
           </div>
 
@@ -157,6 +161,7 @@
             <li>Formül: <code>L = 2A + (π/2)(d₁+d₂) + (d₂−d₁)² / (4A)</code> (hatve/Datum çapları ile).</li>
             <li>Sarma açısı (küçük kasnak): <code>α₁ = 180° − 57.3°·(d₂−d₁)/A</code>.</li>
             <li>Pratik öneri: <code>A ≥ 0.5·(d₂−d₁) + 1.5·d₂</code> rahat montaj/sarma için.</li>
+            <li>Hız oranı (kayıpsız varsayım): <code>i = n₁/n₂ = d₂/d₁</code>, <code>n₂ = n₁·(d₁/d₂)</code>.</li>
           </ul>
         </div>
       </section>
@@ -170,25 +175,14 @@
     const BELT_SERIES={SPZ:(()=>{const l=[587,600,612,630,650,670,687,700,710,730,750,762,775,800,812,825,837,850,875,900,912,937,950,962,975,1000];for(let L=1025;L<=2000;L+=25)l.push(L);for(let L=2050;L<=3550;L+=50)l.push(L);return l;})(),SPA:(()=>{const l=[750,762,775,800,812,825,837,850,875,900,912,937,950,962,975,1000,1016,1030,1050];for(let L=1075;L<=2500;L+=25)l.push(L);for(let L=2550;L<=5000;L+=50)l.push(L);return l;})(),SPB:(()=>{const l=[1250,1270,1287,1300,1320,1340,1350,1370,1400,1420,1450];for(let L=1475;L<=3200;L+=25)l.push(L);for(let L=3250;L<=6300;L+=50)l.push(L);return l;})(),SPC:(()=>{const l=[2000,2030,2060,2120,2240];for(let L=2300;L<=4000;L+=25)l.push(L);for(let L=4050;L<=10000;L+=50)l.push(L);return l;})()};
     const OFFSETS={SPZ:{Li_from_Lp:L=>L-13,La_from_Lp:L=>L+8},SPA:{Li_from_Lp:L=>L-18,La_from_Lp:L=>L+10},SPB:{Li_from_Lp:L=>L-22,La_from_Lp:L=>L+12},SPC:{Li_from_Lp:L=>L-30,La_from_Lp:L=>L+18}};
     const $=s=>document.querySelector(s),fmt=n=>Number.isFinite(n)?Math.round(n)+" mm":"—",deltaSign=v=>v>0?"+":v<0?"−":"±";
-    function axisFromLength(L,d1,d2){
-      const C=(Math.PI/2)*(d1+d2);
-      const X=L-C, disc=X*X-2*(d2-d1)*(d2-d1);
-      if(disc<0) return NaN;
-      return (X+Math.sqrt(disc))/4;
-    }
-    const profileEl=$('#profile'),d1El=$('#d1'),d2El=$('#d2'),AEl=$('#A'),wrapMinEl=$('#wrapMin');
-    const LpShow=$('#LpShow'),stdLp=$('#stdLp'),LiEl=$('#Li'),LaEl=$('#La'),LdEl=$('#Ld');
+    function axisFromLength(L,d1,d2){const C=(Math.PI/2)*(d1+d2);const X=L-C,disc=X*X-2*(d2-d1)*(d2-d1);if(disc<0)return NaN;return (X+Math.sqrt(disc))/4;}
+    const profileEl=$('#profile'),d1El=$('#d1'),d2El=$('#d2'),AEl=$('#A'),wrapMinEl=$('#wrapMin'),n1El=$('#n1');
+    const LpShow=$('#LpShow'),stdLp=$('#stdLp'),LiEl=$('#Li'),LaEl=$('#La'),LdEl=$('#Ld'),n2El=$('#n2');
     const warnArea=$('#warnArea'),wrapInfo=$('#wrapInfo'),ratioInfo=$('#ratioInfo'),minAinfo=$('#minAinfo');
-    function populatePulleys(){
-      const pr=profileEl.value,list=PULLEY_PD[pr]||[];
-      d1El.innerHTML=list.map(v=>`<option value="${v}">${v}</option>`).join('');
-      d2El.innerHTML=list.map(v=>`<option value="${v}">${v}</option>`).join('');
-      if(list.length){const mid=Math.floor(list.length/2);d1El.value=list[Math.max(0,mid-2)];d2El.value=list[Math.min(list.length-1,mid+2)];}
-      compute();
-    }
+    function populatePulleys(){const pr=profileEl.value,list=PULLEY_PD[pr]||[];d1El.innerHTML=list.map(v=>`<option value="${v}">${v}</option>`).join('');d2El.innerHTML=list.map(v=>`<option value="${v}">${v}</option>`).join('');if(list.length){const mid=Math.floor(list.length/2);d1El.value=list[Math.max(0,mid-2)];d2El.value=list[Math.min(list.length-1,mid+2)];}compute();}
     function compute(){
       warnArea.innerHTML='';
-      const pr=profileEl.value,d1=parseFloat(d1El.value),d2=parseFloat(d2El.value),A=parseFloat(AEl.value),wrapMin=parseFloat(wrapMinEl.value);
+      const pr=profileEl.value,d1=parseFloat(d1El.value),d2=parseFloat(d2El.value),A=parseFloat(AEl.value),wrapMin=parseFloat(wrapMinEl.value),n1=parseFloat(n1El.value);
       const errors=[];
       if(!pr||!BELT_SERIES[pr])errors.push('Lütfen geçerli bir kayış profili seçin.');
       if(!Number.isFinite(d1))errors.push('Küçük kasnak d₁ seçilmedi.');
@@ -197,14 +191,17 @@
       if(!Number.isFinite(A))errors.push('Eksen mesafesi A sayısal olmalıdır.');
       if(Number.isFinite(A)&&A<=0)errors.push('Eksen mesafesi A > 0 olmalıdır.');
       if(!Number.isFinite(wrapMin)||wrapMin<90||wrapMin>180)errors.push('Asgari sarma açısı 90°–180° arasında olmalıdır.');
-      if(errors.length){warnArea.innerHTML=errors.map(t=>`<div class="note"><span class="bad">⚠</span><div>${t}</div></div>`).join('');LpShow.textContent='—';stdLp.textContent='—';LiEl.textContent='—';LaEl.textContent='—';LdEl.textContent='—';wrapInfo.textContent='Sarma açısı: —';ratioInfo.textContent='Oran d₂/d₁: —';minAinfo.textContent='Önerilen A(min): —';document.querySelector('#candTable tbody').innerHTML='';return;}
+      if(Number.isFinite(n1) && n1<=0) errors.push('Giriş devri n₁ > 0 olmalıdır.');
+      if(errors.length){warnArea.innerHTML=errors.map(t=>`<div class="note"><span class="bad">⚠</span><div>${t}</div></div>`).join('');LpShow.textContent='—';stdLp.textContent='—';LiEl.textContent='—';LaEl.textContent='—';LdEl.textContent='—';n2El.textContent='—';wrapInfo.textContent='Sarma açısı: —';ratioInfo.textContent='Oran i=n₁/n₂=d₂/d₁: —';minAinfo.textContent='Önerilen A(min): —';document.querySelector('#candTable tbody').innerHTML='';return;}
       const alpha1=180-57.3*((d2-d1)/A);wrapInfo.textContent=`Sarma açısı: ${alpha1.toFixed(1)}°`;if(alpha1<wrapMin)addWarn(`Sarma açısı yetersiz: α₁ = ${alpha1.toFixed(1)}°. En az ${wrapMin.toFixed(0)}° önerilir.`,'warn');
       const Arec=0.5*(d2-d1)+1.5*d2;minAinfo.textContent=`Önerilen A(min): ${Math.round(Arec)} mm`;if(A<Arec)addWarn(`Eksen mesafesi düşük olabilir: A = ${Math.round(A)} mm. Öneri ≥ ${Math.round(Arec)} mm.`,'warn');
       const Aphys=0.5*(d2-d1)+10;if(A<Aphys)addWarn(`A çok küçük: A ≥ ${(Aphys).toFixed(0)} mm olmalıdır (geometrik sınır).`,'bad');
-      ratioInfo.textContent=`Oran d₂/d₁: ${(d2/d1).toFixed(3)}`;
+      const ratio=(d2/d1);ratioInfo.textContent=`Oran i=n₁/n₂=d₂/d₁: ${ratio.toFixed(3)}`;
       const Lp=2*A+(Math.PI/2)*(d1+d2)+Math.pow((d2-d1),2)/(4*A);LpShow.textContent=fmt(Lp);LdEl.textContent=fmt(Lp);
       const series=BELT_SERIES[pr];const nearest=nearestInSeries(Lp,series);if(nearest!==null){stdLp.textContent=`${nearest} mm (${deltaSign(nearest-Lp)}${Math.abs(Math.round(nearest-Lp))} mm)`;}else{stdLp.textContent='—';}
       const li=OFFSETS[pr].Li_from_Lp(Lp),la=OFFSETS[pr].La_from_Lp(Lp);LiEl.textContent=fmt(li);LaEl.textContent=fmt(la);
+      // n2 hesapla (n2 = n1 * d1/d2) - sadece n1 geçerliyse göster
+      if(Number.isFinite(n1) && n1>0){ const n2 = n1*(d1/d2); n2El.textContent = Number.isFinite(n2)? Math.round(n2) + " d/dak" : "—"; } else { n2El.textContent = '—'; }
       const top5=nearestN(Lp,series,5);const tbody=document.querySelector('#candTable tbody');
       tbody.innerHTML=top5.map(L=>{const Li_c=OFFSETS[pr].Li_from_Lp(L);const La_c=OFFSETS[pr].La_from_Lp(L);const d=Math.round(L-Lp);const cls=d===0?'ok':(Math.abs(d)<=10?'warn':'');const Anew=axisFromLength(L,d1,d2);const AnewTxt=Number.isFinite(Anew)?Math.round(Anew):'—';return `<tr><td>${pr}</td><td><span class="${cls}">${L}</span></td><td>${deltaSign(d)}${Math.abs(d)}</td><td>${AnewTxt}</td><td>${Math.round(Li_c)}</td><td>${Math.round(La_c)}</td></tr>`;}).join('');
       if(nearest!==null&&Math.abs(nearest-Lp)>20){addWarn(`Hesaplanan L<sub>p</sub> ile en yakın standart arasında fark büyük: Δ = ${Math.abs(Math.round(nearest-Lp))} mm. Kasnak çaplarını veya A değerini revize edin.`,'warn');}
@@ -212,8 +209,8 @@
     function nearestInSeries(x,arr){if(!arr||!arr.length)return null;let best=arr[0],md=Math.abs(arr[0]-x);for(const v of arr){const d=Math.abs(v-x);if(d<md){md=d;best=v}}return best}
     function nearestN(x,arr,n=5){const s=[...arr].sort((a,b)=>Math.abs(a-x)-Math.abs(b-x));return s.slice(0,n)}
     function addWarn(text,level='warn'){const icon=level==='bad'?'⛔':'⚠';const cls=level==='bad'?'bad':'warn';const el=document.createElement('div');el.className='note';el.innerHTML=`<span class="${cls}">${icon}</span><div>${text}</div>`;warnArea.appendChild(el)}
-    $('#profile').addEventListener('change',populatePulleys);$('#d1').addEventListener('change',compute);$('#d2').addEventListener('change',compute);$('#A').addEventListener('input',compute);$('#wrapMin').addEventListener('input',compute);
-    populatePulleys();setTimeout(()=>{const d1=parseFloat($('#d1').value)||100;const d2=parseFloat($('#d2').value)||160;$('#A').value=Math.round(1.25*d2+0.35*(d2-d1));compute();},0);
+    $('#profile').addEventListener('change',populatePulleys);$('#d1').addEventListener('change',compute);$('#d2').addEventListener('change',compute);$('#A').addEventListener('input',compute);$('#wrapMin').addEventListener('input',compute);$('#n1').addEventListener('input',compute);
+    populatePulleys();setTimeout(()=>{const d1=parseFloat($('#d1').value)||100;const d2=parseFloat($('#d2').value)||160;$('#A').value=Math.round(1.25*d2+0.35*(d2-d1));$('#n1').value=1450;compute();},0);
   </script>
 </body>
 </html>
