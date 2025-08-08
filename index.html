@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="utf-8">
 <title>Mechanical Toolbox</title>
@@ -7,9 +7,8 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='50' fill='%230ea5e9'/><text x='50%' y='57%' font-size='58' text-anchor='middle' fill='white' dy='.3em'>μ</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-/* tiny scrollbar for module grid */
-::-webkit-scrollbar{height:8px;}
-::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:4px;}
+::-webkit-scrollbar{height:8px}
+::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:4px}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -19,7 +18,7 @@
       <span>Mechanical&nbsp;Toolbox</span>
     </h1>
     <nav class="space-x-4 text-sm hidden sm:block">
-      <a href="#modules" class="hover:text-sky-600">Modules</a>
+      <a href="#modules" class="hover:text-sky-600">Modüller</a>
       <a href="https://github.com/datafew" class="hover:text-sky-600" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </div>
@@ -29,54 +28,53 @@
 
   <!-- hero -->
   <section class="text-center space-y-5">
-    <h2 class="text-4xl font-semibold tracking-tight">Instant machine-design calculators &amp; component finders.</h2>
-    <p class="text-lg text-slate-600">Lightweight web modules you can open on any device – no install, no ads.</p>
-    <a href="#modules" class="inline-block bg-sky-600 text-white px-7 py-3 rounded-full shadow hover:bg-sky-700 transition">Explore Modules ↓</a>
+    <h2 class="text-4xl font-semibold tracking-tight">Makine tasarımına yönelik pratik hesaplayıcılar ve tablolar.</h2>
+    <p class="text-lg text-slate-600">Makine tasarımında sık kullanılan hesaplamalar, tablolar ve veri araçları tek noktada. CNC, sac işleme, malzeme bilgisi ve bağlantı elemanları için pratik çözümler.</p>
+    <a href="#modules" class="inline-block bg-sky-600 text-white px-7 py-3 rounded-full shadow hover:bg-sky-700 transition">Modülleri Gör ↓</a>
   </section>
 
-  <!-- search -->
+  <!-- search + grid -->
   <section id="modules" class="space-y-8">
     <div class="flex items-center justify-between flex-col sm:flex-row gap-4">
-      <h3 class="text-2xl font-medium">Modules</h3>
+      <h3 class="text-2xl font-medium">Modüller</h3>
       <div class="relative w-full sm:w-80">
-        <input id="moduleSearch" type="search" placeholder="Search modules..." class="w-full pl-10 pr-3 py-2 rounded-lg border bg-white shadow focus:outline-none focus:ring-2 focus:ring-sky-500" />
+        <input id="moduleSearch" type="search" placeholder="Ara: cnc, flange, tolerans..." class="w-full pl-10 pr-3 py-2 rounded-lg border bg-white shadow focus:outline-none focus:ring-2 focus:ring-sky-500" />
         <svg class="absolute left-3 top-2.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="15.5" y2="15.5"></line></svg>
       </div>
     </div>
 
-    <!-- modules grid -->
-    <div id="moduleGrid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- cards injected by JS -->
-    </div>
-
+    <div id="moduleGrid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"></div>
   </section>
 </main>
 
-<footer class="text-center text-xs text-slate-500 py-6">
-  © 2025 Mechanical Toolbox – built with Supabase &amp; Tailwind CSS. 
-  <a href="https://github.com/datafew" class="underline hover:text-slate-700" target="_blank" rel="noopener">Contribute on GitHub</a>
+<!-- footer with plain text signature -->
+<footer class="text-center text-xs text-slate-500 py-8 border-t mt-10">
+  <div class="flex flex-col items-center gap-1">
+    <p class="tracking-wide text-slate-500"><span class="uppercase text-[10px]">Mechanical Toolbox by</span></p>
+    <p class="text-sm"><span class="font-semibold text-sky-700">sipahi</span></p>
+    <p>© 2025 · Tailwind CSS &amp; Supabase ile geliştirildi. <a href="https://github.com/datafew" target="_blank" rel="noopener" class="underline hover:text-slate-700">GitHub</a></p>
+  </div>
 </footer>
 
 <script>
-// module data (static)
+// static module data
 const modules=[
-  {id:'pneucalc',title:'PneuCalc',desc:'Quickly calculate pneumatic conveying flow rates.',icon:'🌀',tag:'Calculator',color:'sky',file:'pneucalc.html'},
-  {id:'sheetcalc',title:'SheetCalc',desc:'Compute sheet-metal area, volume & cost.',icon:'📄',tag:'Calculator',color:'amber',file:'sheetcalc.html'},
-  {id:'bearing',title:'Bearing Finder',desc:'Search ball & roller bearings by size.',icon:'🛞',tag:'Database',color:'emerald',file:'bearing_finder.html'},
-  {id:'chemcompat',title:'ChemCompat',desc:'Chemical compatibility • search & filter.',icon:'🧪',tag:'Materials',color:'violet',file:'chemcompat.html'},
-  {id:'tolerans',title:'Tolerans',desc:'ISO delik–mil geçmeleri, grafik & limitler.',icon:'📏',tag:'Calculator',color:'sky',file:'tolerance.html'},
-  {id:'flange',title:'Flanş Tablosu',desc:'EN 1092‑1 boyut tablosu (PN serileri).',icon:'⚙️',tag:'Table',color:'emerald',file:'flange_table.html'},
-  {id:'future',title:'Coming Soon',desc:'New module under development.',icon:'➕',tag:'Soon',color:'slate',file:'#',soon:true}
+  {id:'cutspeed',title:'CutSpeed',desc:'CNC devir & ilerleme hesaplayıcı.',icon:'🛠️',tag:'Hesaplayıcı',color:'amber',file:'cutspeed.html',keywords:'cnc devir ilerleme feed rate spindle speed turning milling drilling'},
+  {id:'pneucalc',title:'PneuCalc',desc:'Pnömatik taşıma debi hesapları.',icon:'🌀',tag:'Hesaplayıcı',color:'sky',file:'pneucalc.html',keywords:'pneumatic conveying airflow pipeline'},
+  {id:'sheetcalc',title:'SheetCalc',desc:'Sac alan / hacim / maliyet.',icon:'📄',tag:'Hesaplayıcı',color:'amber',file:'sheetcalc.html',keywords:'sheet metal sac weight cost'},
+  {id:'bearing',title:'Bearing Finder',desc:'Bilyalı & makaralı rulman arama.',icon:'🛞',tag:'Veritabanı',color:'emerald',file:'bearing_finder.html',keywords:'bearing 6000 6200 6300'},
+  {id:'chemcompat',title:'ChemCompat',desc:'Kimyasal uyumluluk arama & filtre.',icon:'🧪',tag:'Malzemeler',color:'violet',file:'chemcompat.html',keywords:'chemical compatibility materials'},
+  {id:'tolerans',title:'Tolerans',desc:'ISO delik–mil geçmeleri, grafik & limitler.',icon:'📏',tag:'Hesaplayıcı',color:'sky',file:'tolerance.html',keywords:'iso tolerans geçme fit h7 g6'},
+  {id:'flange',title:'Flanş Tablosu',desc:'EN 1092‑1 boyut tablosu (PN serileri).',icon:'⚙️',tag:'Tablo',color:'emerald',file:'flange_table.html',keywords:'flange en1092 pn'},
+  {id:'future',title:'Coming Soon',desc:'Yeni modül geliştiriliyor.',icon:'➕',tag:'Yakında',color:'slate',file:'#',soon:true,keywords:'coming soon'}
 ];
-
-function colorClass(c){return {'sky':'sky-600','emerald':'emerald-600','amber':'amber-600','violet':'violet-600','slate':'slate-400'}[c]}
 
 const grid=document.getElementById('moduleGrid');
 modules.forEach(m=>{
   const card=document.createElement('a');
   card.href=m.file;
   card.className=`group relative bg-white rounded-xl p-6 shadow hover:shadow-lg transition ${m.soon?'pointer-events-none opacity-60':''}`;
-  card.setAttribute('data-title',m.title.toLowerCase());
+  card.setAttribute('data-title',(m.title+' '+(m.keywords||'')).toLowerCase());
   card.innerHTML=`
     <div class="absolute top-3 right-3 text-xs bg-${m.color}-100 text-${m.color}-600 px-2 py-0.5 rounded">${m.tag}</div>
     <div class="text-${m.color}-600 text-4xl mb-4">${m.icon}</div>
@@ -86,9 +84,8 @@ modules.forEach(m=>{
   grid.appendChild(card);
 });
 
-// search filter
-const searchInput=document.getElementById('moduleSearch');
-searchInput.addEventListener('input',e=>{
+// search behavior
+document.getElementById('moduleSearch').addEventListener('input',e=>{
   const q=e.target.value.toLowerCase();
   grid.querySelectorAll('a').forEach(card=>{
     const match=card.getAttribute('data-title').includes(q);
