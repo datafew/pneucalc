@@ -53,7 +53,8 @@
   .kv:last-child{border-bottom:0}
   .big{font-size:clamp(18px,4vw,26px); font-weight:800; color:var(--ok)}
 
-  .note{display:flex; gap:8px; align-items:flex-start; padding:9px 10px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.04); font-size:14px; color:var(--muted)}
+  .note{display:flex; gap:8px; align-items:baseline; padding:9px 10px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.04); font-size:14px; color:var(--muted)}
+  .note sub { font-size: 0.85em; vertical-align: sub; line-height: 1; }
   .warn{color:#f59e0b} .bad{color:#ef4444}
   .tbl{width:100%; border-collapse:collapse}
   .tbl th,.tbl td{padding:8px 6px; border-bottom:1px solid var(--border); text-align:left; font-size:13.5px}
@@ -89,7 +90,7 @@
           <div class="grid">
             <div class="col-4">
               <label for="profile">Kayış profili (ISO 4184)</label>
-              <select id="profile">
+              <select id="profile" tabIndex="1">
                 <option value="SPZ">SPZ (10)</option>
                 <option value="SPA">SPA (13)</option>
                 <option value="SPB" selected>SPB (17)</option>
@@ -98,19 +99,19 @@
             </div>
             <div class="col-4">
               <label for="d1">Küçük kasnak hatve çapı d₁ (mm)</label>
-              <select id="d1"></select>
+              <select id="d1" tabIndex="2"></select>
             </div>
             <div class="col-4">
               <label for="d2">Büyük kasnak hatve çapı d₂ (mm)</label>
-              <select id="d2"></select>
+              <select id="d2" tabIndex="3"></select>
             </div>
             <div class="col-4">
               <label for="A">Eksen mesafesi A (mm)</label>
-              <input id="A" type="number" value="300" min="1" step="1">
+              <input id="A" type="number" value="300" min="1" step="1" tabIndex="4">
             </div>
             <div class="col-4">
               <label for="n1">Giriş devri n₁ (d/dak)</label>
-              <input id="n1" type="number" value="3000" min="1" step="1">
+              <input id="n1" type="number" value="3000" min="1" step="1" tabIndex="5">
             </div>
           </div>
           <div class="note" style="margin-top:8px">İpucu: Profil → kasnak çapları → A → n₁ sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.</div>
@@ -118,7 +119,7 @@
       </section>
 
       <!-- UYARILAR / NOTLAR (sonuçlardan önce) -->
-      <section class="card theme-amber" id="warnCard" style="display:none">
+      <section class="card theme-amber" id="warnCard" style="display:none" aria-live="assertive">
         <div class="hd">Uyarılar / Notlar</div>
         <div class="content"><div id="warnArea"></div></div>
       </section>
@@ -126,18 +127,18 @@
       <!-- SONUÇLAR -->
       <section class="card theme-blue" aria-live="polite">
         <div class="hd">Sonuçlar</div>
-        <div class="content">
-          <div class="kv"><span class="muted">Hesaplanan L<sub>w</sub> / L<sub>d</sub></span><span class="big" id="LpShow">—</span></div>
-          <div class="kv"><span class="muted">Önerilen standart L<sub>w</sub>/L<sub>d</sub></span><span class="value" id="stdLp">—</span></div>
-          <div class="kv"><span class="muted">İç uzunluk L<sub>i</sub></span><span class="value" id="Li">—</span></div>
-          <div class="kv"><span class="muted">Dış/çevre uzunluğu L<sub>a</sub></span><span class="value" id="La">—</span></div>
-          <div class="kv"><span class="muted">Datum/hatve uzunluğu L<sub>d</sub></span><span class="value" id="Ld">—</span></div>
-          <div class="kv"><span class="muted">Kesit b×h</span><span class="value" id="sect">—</span></div>
-          <div class="kv"><span class="muted">Datum genişliği w<sub>d</sub></span><span class="value" id="wdVal">—</span></div>
-          <div class="kv"><span class="muted">Sarma açısı α₁</span><span class="value" id="wrapInfo">—</span></div>
+        <div class="content" aria-live="polite">
+          <div class="kv"><span class="muted">Hesaplanan L<sub>w</sub> / L<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="big" id="LpShow">—</span></div>
+          <div class="kv"><span class="muted">Önerilen standart L<sub>w</sub>/L<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="stdLp">—</span></div>
+          <div class="kv"><span class="muted">İç uzunluk L<sub>i</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="Li">—</span></div>
+          <div class="kv"><span class="muted">Dış/çevre uzunluğu L<sub>a</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="La">—</span></div>
+          <div class="kv"><span class="muted">Datum/hatve uzunluğu L<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="Ld">—</span></div>
+          <div class="kv"><span class="muted">Kesit b×h <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="sect">—</span></div>
+          <div class="kv"><span class="muted">Datum genişliği w<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="wdVal">—</span></div>
+          <div class="kv"><span class="muted">Sarma açısı α₁ <span style="font-size:11px;color:#7dd3fc">(°)</span></span><span class="value" id="wrapInfo">—</span></div>
           <div class="kv"><span class="muted">Oran i = d₂/d₁</span><span class="value" id="ratioInfo">—</span></div>
-          <div class="kv"><span class="muted">Önerilen A(min)</span><span class="value" id="minAinfo">—</span></div>
-          <div class="kv"><span class="muted">Çıkış devri n₂</span><span class="value" id="n2">—</span></div>
+          <div class="kv"><span class="muted">Önerilen A(min) <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="minAinfo">—</span></div>
+          <div class="kv"><span class="muted">Çıkış devri n₂ <span style="font-size:11px;color:#7dd3fc">(d/dak)</span></span><span class="value" id="n2">—</span></div>
         </div>
       </section>
 
@@ -151,7 +152,7 @@
             </thead>
             <tbody></tbody>
           </table>
-          <div class="note" style="margin-top:8px">Not: L<sub>i</sub>/L<sub>a</sub> dar‑V için tipik ofsetlerle yaklaşık verilmiştir; üretici kataloğu ile teyit ediniz.</div>
+          <div class="note" style="margin-top:8px">Not: Li ve La dar‑V için tipik ofsetlerle yaklaşık verilmiştir; üretici kataloğu ile teyit ediniz.</div>
         </div>
       </section>
 
