@@ -117,10 +117,10 @@ function showLoader(v){document.getElementById('loader').classList.toggle('hidde
 
 function buildQuery(table,f){
   let q=supabase.from(table).select('*').order('bore_d',{ascending:true});
-  if(f.dmin) q=q.gte('bore_d',f.dmin);
-  if(f.dmax) q=q.lte('bore_d',f.dmax);
-  if(f.Dmax) q=q.lte('outer_d',f.Dmax);
-  if(f.Bmax) q=q.lte('width_b',f.Bmax);
+  if(f.dmin!==null) q=q.gte('bore_d',f.dmin);
+  if(f.dmax!==null) q=q.lte('bore_d',f.dmax);
+  if(f.Dmax!==null) q=q.lte('outer_d',f.Dmax);
+  if(f.Bmax!==null) q=q.lte('width_b',f.Bmax);
   if(f.kw){
     const k=f.kw.replace(/[%]/g,'');
     q=q.or(`iso_code.ilike.*${k}*,series.ilike.*${k}*,manufacturer.ilike.*${k}*`);
@@ -157,7 +157,15 @@ function clearTable(){document.getElementById('tbody').innerHTML='';offset=0;all
 
 async function search(){
   clearTable();
-  const f={dmin:parseInt(document.getElementById('dmin').value)||null,dmax:parseInt(document.getElementById('dmax').value)||null,Dmax:parseInt(document.getElementById('Dmax').value)||null,Bmax:parseInt(document.getElementById('Bmax').value)||null,kw:document.getElementById('kw').value.trim(),column:{}};
+  const g=v=>v===''?null:parseInt(v);
+  const f={
+    dmin:g(document.getElementById('dmin').value),
+    dmax:g(document.getElementById('dmax').value),
+    Dmax:g(document.getElementById('Dmax').value),
+    Bmax:g(document.getElementById('Bmax').value),
+    kw:document.getElementById('kw').value.trim(),
+    column:{}
+  };
   document.querySelectorAll('.filter-input').forEach(i=>{if(i.value)f.column[i.dataset.filter]=i.value});
   lastQuery=buildQuery(document.getElementById('type').value,f);
   await fetchPage();
