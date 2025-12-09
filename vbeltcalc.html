@@ -189,10 +189,10 @@
   };
   // Optibelt SK / Red Power 3: Li = Ld − [38,45,60,83];  La = Li + [13,18,22,30]
   const OFFSETS = {
-    SPZ:{ Li_from_Lp: Lp=>Lp-38, La_from_Lp: Lp=>(Lp-38)+13 },
-    SPA:{ Li_from_Lp: Lp=>Lp-45, La_from_Lp: Lp=>(Lp-45)+18 },
-    SPB:{ Li_from_Lp: Lp=>Lp-60, La_from_Lp: Lp=>(Lp-60)+22 },
-    SPC:{ Li_from_Lp: Lp=>Lp-83, La_from_Lp: Lp=>(Lp-83)+30 },
+    SPZ:{ Li_from_Lp: Lp=>Lp-38, La_from_Lp: Lp=>Lp+13 },
+    SPA:{ Li_from_Lp: Lp=>Lp-45, La_from_Lp: Lp=>Lp+18 },
+    SPB:{ Li_from_Lp: Lp=>Lp-60, La_from_Lp: Lp=>Lp+22 },
+    SPC:{ Li_from_Lp: Lp=>Lp-83, La_from_Lp: Lp=>Lp+30 },
   };
   const PROFILE = {
     SPZ:{b:9.7,h:8, wd:8.5, dmin:63},
