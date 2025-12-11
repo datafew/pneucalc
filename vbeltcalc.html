@@ -2,10 +2,10 @@
 <html lang="tr"><head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Kayış & Kasnak — Temiz Sürüm (final)</title>
+<title>Kayış & Kasnak - V-Kayışı Boy Hesabı</title>
 <style>
   :root{
-    --bg:#0b1020; --text:#e6eefc; --muted:#9bb0cc; --border:#26345e;
+    --bg:#0b1020; --text:#e8f1ff; --muted:#c5d3ec; --border:#26345e; --focus:#38bdf8;
     --shadow: 0 10px 28px rgba(0,0,0,.35); --radius:16px;
     --ok:#2dd4bf; --warn:#f59e0b; --bad:#ef4444;
     --blue1:#16264c; --blue2:#0f1938; --green1:#0f2f24; --green2:#0b241c;
@@ -43,15 +43,73 @@
 
   .grid{display:grid; gap:10px; grid-template-columns: repeat(12,1fr); align-items:end}
   .col-6{grid-column: span 6}.col-4{grid-column: span 4}.col-3{grid-column: span 3}.col-12{grid-column: 1 / -1}
-  @media (max-width:740px){ .col-6,.col-4,.col-3,.col-12{grid-column: 1 / -1} }
+  @media (max-width:740px){
+    .col-6,.col-4,.col-3,.col-12{grid-column: 1 / -1}
+    .result-row{grid-template-columns:1fr auto; gap:4px 12px;}
+    .result-desc{grid-column:1/-1;}
+  }
   label{display:block; color:var(--muted); font-size:12.5px; margin:0 0 6px}
-  select,input{width:100%; padding:9px 11px; border-radius:12px; color:var(--text); border:1px solid var(--border); background:#0e152c; outline:none}
+  select,input{width:100%; padding:9px 11px; border-radius:12px; color:var(--text); border:1px solid var(--border); background:#101a32; outline:none; transition:border-color .15s ease, box-shadow .15s ease}
+  select:focus-visible,input:focus-visible{border-color:var(--focus); box-shadow:0 0 0 3px color-mix(in srgb,var(--focus) 35%, transparent); outline:none}
+  select:hover,input:hover{border-color:color-mix(in srgb,var(--focus) 30%, var(--border))}
   input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+  .formula{font-family:'STIX Two Math','Cambria Math','Times New Roman',serif; font-size:15px; letter-spacing:0.12px;}
 
   .muted{color:var(--muted)} .value{font-weight:600}
   .kv{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px dashed var(--border)}
   .kv:last-child{border-bottom:0}
   .big{font-size:clamp(18px,4vw,26px); font-weight:800; color:var(--ok)}
+
+  .result-grid{display:flex; flex-direction:column; gap:8px;}
+  .result-row{
+    display:grid;
+    grid-template-columns:140px minmax(0,1fr) auto;
+    gap:6px 10px;
+    align-items:center;
+    padding:9px 11px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06));
+    box-shadow:0 8px 18px rgba(0,0,0,.18);
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .result-term{
+    font-size:14px;
+    font-weight:700;
+    color:#d8e7ff;
+    padding:3px 6px;
+    border-radius:8px;
+    background:rgba(255,255,255,.04);
+  }
+  .result-desc{
+    font-size:13px;
+    color:rgba(255,255,255,.85);
+  }
+  .result-value{
+    font-weight:600;
+    text-align:right;
+    color:var(--text);
+    padding:5px 8px;
+    border-radius:8px;
+    background:rgba(45,212,191,.1);
+    box-shadow:inset 0 0 0 1px rgba(45,212,191,.18);
+  }
+  .result-row .big{font-size:clamp(20px,4vw,26px); color:var(--ok)}
+  @media (max-width:560px){
+    .result-row{
+      grid-template-columns:auto 1fr;
+      grid-template-areas:
+        "desc desc"
+        "term value";
+      gap:4px 8px;
+      align-items:center;
+      padding:9px 11px;
+    }
+    .result-term{grid-area:term;}
+    .result-value{grid-area:value; text-align:right;}
+    .result-desc{grid-area:desc;}
+    .result-row .big{font-size:22px;}
+  }
 
   .note{display:flex; gap:8px; align-items:baseline; padding:9px 10px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.04); font-size:14px; color:var(--muted)}
   .note sub { font-size: 0.85em; vertical-align: sub; line-height: 1; }
@@ -61,9 +119,8 @@
   .tbl th{color:var(--muted); font-weight:600}
   .reco-row td{background:rgba(61,199,255,.08)!important; box-shadow: inset 0 0 0 1px rgba(61,199,255,.35)}
 
-  .footer{margin:18px auto 28px; max-width:980px; text-align:center; color:#cfe8ff; opacity:.95; font-weight:700; letter-spacing:.3px}
-  .footer .brand{display:inline-block; background:linear-gradient(90deg,#7dd3fc,#22d3ee,#a78bfa,#34d399,#f59e0b,#7dd3fc); -webkit-background-clip:text; background-clip:text; color:transparent; animation:hues 8s linear infinite}
-  @keyframes hues{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
+  .footer{margin:18px auto 28px; max-width:980px; text-align:center; color:#e6eefc; opacity:.95; font-weight:800; letter-spacing:.5px; font-family:'Georgia','Times New Roman',serif; font-size:16px;}
+  .footer .brand{color:#dff1ff; font-weight:800; text-transform:uppercase; letter-spacing:.8px;}
 </style>
 </head>
 <body>
@@ -78,18 +135,18 @@
 
   <div class="page">
     <header>
-      <h1>Kayış ve Kasnak Hesaplayıcı</h1>
-      <p class="lead">Dar V‑kayışlı (SPZ/SPA/SPB/SPC) kasnak tahriklerinde ölçü seçimi için hızlı yardımcı. ISO 4184 kapsamında <strong>datum/hatve uzunluğu</strong> referansı esas alınır. Alanları değiştirin; sonuçlar anında güncellenir.</p>
+      <h1>Dar V Kayış Hesaplama Aracı</h1>
+      <p class="lead">Bu araç, iki kasnaklı sistemlerde; ISO 4184 standardındaki SPZ/SPA/SPB/SPC tip dar V-kayışlarının ölçü seçimine yardımcı olur.</p>
     </header>
 
     <main id="app" class="container">
-      <!-- GİRDİLER -->
+      <!-- GIRDILER -->
       <section class="card theme-green">
         <div class="hd">Girdiler</div>
         <div class="content">
           <div class="grid">
             <div class="col-4">
-              <label for="profile">Kayış profili (ISO 4184)</label>
+              <label for="profile">Kayış profili (ISO 4184 dar kama)</label>
               <select id="profile" tabIndex="1">
                 <option value="SPZ">SPZ (10)</option>
                 <option value="SPA">SPA (13)</option>
@@ -98,23 +155,23 @@
               </select>
             </div>
             <div class="col-4">
-              <label for="d1">Küçük kasnak hatve çapı d₁ (mm)</label>
+              <label for="d1">Giriş kasnağı anma çapı d<sub>1</sub> (mm)</label>
               <select id="d1" tabIndex="2"></select>
             </div>
             <div class="col-4">
-              <label for="d2">Büyük kasnak hatve çapı d₂ (mm)</label>
+              <label for="d2">Çıkış kasnağı anma çapı d<sub>2</sub> (mm)</label>
               <select id="d2" tabIndex="3"></select>
             </div>
             <div class="col-4">
-              <label for="A">Eksen mesafesi A (mm)</label>
+              <label for="A">Merkez mesafesi C (mm)</label>
               <input id="A" type="number" value="300" min="1" step="1" tabIndex="4">
             </div>
             <div class="col-4">
-              <label for="n1">Giriş devri n₁ (d/dak)</label>
+              <label for="n1">Giriş devri n<sub>1</sub> (d/dak)</label>
               <input id="n1" type="number" value="3000" min="1" step="1" tabIndex="5">
             </div>
           </div>
-          <div class="note" style="margin-top:8px">İpucu: Profil → kasnak çapları → A → n₁ sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.</div>
+          <div class="note" style="margin-top:8px">İpucu: Profil → kasnak çapları → C → n1 sırasıyla girin. Alanlar değiştikçe hesap otomatik yapılır.</div>
         </div>
       </section>
 
@@ -128,53 +185,96 @@
       <section class="card theme-blue" aria-live="polite">
         <div class="hd">Sonuçlar</div>
         <div class="content" aria-live="polite">
-          <div class="kv"><span class="muted">Hesaplanan L<sub>w</sub> / L<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="big" id="LpShow">—</span></div>
-          <div class="kv"><span class="muted">Önerilen standart L<sub>w</sub>/L<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="stdLp">—</span></div>
-          <div class="kv"><span class="muted">İç uzunluk L<sub>i</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="Li">—</span></div>
-          <div class="kv"><span class="muted">Dış/çevre uzunluğu L<sub>a</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="La">—</span></div>
-          <div class="kv"><span class="muted">Datum/hatve uzunluğu L<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="Ld">—</span></div>
-          <div class="kv"><span class="muted">Kesit b×h <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="sect">—</span></div>
-          <div class="kv"><span class="muted">Datum genişliği w<sub>d</sub> <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="wdVal">—</span></div>
-          <div class="kv"><span class="muted">Sarma açısı α₁ <span style="font-size:11px;color:#7dd3fc">(°)</span></span><span class="value" id="wrapInfo">—</span></div>
-          <div class="kv"><span class="muted">Oran i = d₂/d₁</span><span class="value" id="ratioInfo">—</span></div>
-          <div class="kv"><span class="muted">Önerilen A(min) <span style="font-size:11px;color:#7dd3fc">(mm)</span></span><span class="value" id="minAinfo">—</span></div>
-          <div class="kv"><span class="muted">Çıkış devri n₂ <span style="font-size:11px;color:#7dd3fc">(d/dak)</span></span><span class="value" id="n2">—</span></div>
+          <div class="result-grid">
+            <div class="result-row">
+              <span class="result-term">L<sub>w</sub> / L<sub>d</sub></span>
+              <span class="result-desc">Kayışın anma uzunluğu (datum/pitch)</span>
+              <span class="result-value value" id="LpShow">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">L<sub>i</sub></span>
+              <span class="result-desc">Kayışın içten uzunluğu</span>
+              <span class="result-value value" id="Li">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">L<sub>a</sub></span>
+              <span class="result-desc">Kayışın dıştan uzunluğu</span>
+              <span class="result-value value" id="La">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">BxH</span>
+              <span class="result-desc">Kayış kesiti (en × yükseklik)</span>
+              <span class="result-value value" id="sect">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">w<sub>d</sub></span>
+              <span class="result-desc">Datum kanal genişliği</span>
+              <span class="result-value value" id="wdVal">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">α<sub>1</sub></span>
+              <span class="result-desc">Giriş kasnağı sarma açısı</span>
+              <span class="result-value value" id="wrapInfo">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">α<sub>2</sub></span>
+              <span class="result-desc">Çıkış kasnağı sarma açısı</span>
+              <span class="result-value value" id="wrapInfo2">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">i = d<sub>2</sub>/d<sub>1</sub></span>
+              <span class="result-desc">Çevrim oranı</span>
+              <span class="result-value value" id="ratioInfo">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">C(min)</span>
+              <span class="result-desc">Minimum önerilen merkez mesafesi</span>
+              <span class="result-value value" id="minAinfo">-</span>
+            </div>
+            <div class="result-row">
+              <span class="result-term">n<sub>2</sub></span>
+              <span class="result-desc">Çıkış devri</span>
+              <span class="result-value value" id="n2">-</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- ALTERNATİFLER -->
+      <!-- ALTERNATIFLER -->
       <section class="card theme-amber">
-        <div class="hd">Standart Kayış Alternatifleri</div>
+        <div class="hd">Seçilen Standart Kayış ve Alternatifleri</div>
         <div class="content">
           <table class="tbl" id="candTable">
             <thead>
-              <tr><th>Profil</th><th>L<sub>d</sub> (mm)</th><th>Δ (mm)</th><th>A′ (mm)</th><th>L<sub>i</sub> (mm)</th><th>L<sub>a</sub> (mm)</th></tr>
+              <tr><th>Profil</th><th>L<sub>d</sub> (mm)</th><th>ΔL (mm)</th><th>C' (mm)</th><th>L<sub>i</sub> (mm)</th><th>L<sub>a</sub> (mm)</th></tr>
             </thead>
             <tbody></tbody>
           </table>
-          <div class="note" style="margin-top:8px">Not: Li ve La dar‑V için tipik ofsetlerle yaklaşık verilmiştir; üretici kataloğu ile teyit ediniz.</div>
         </div>
       </section>
 
-      <!-- FORMÜLLER + KISALTMA SÖZLÜĞÜ -->
+      <!-- FORMÜLLER -->
       <section class="card theme-green">
-        <div class="hd">Formüller ve Kısaltma Sözlüğü</div>
+        <div class="hd">Formüller</div>
         <div class="content">
-          <ul style="margin:0 0 8px 18px; padding:0; color:var(--muted)">
-            <li>Hatve uzunluğu: <code>L = 2A + (π/2)(d₁+d₂) + (Δd)² / (4A)</code>, <code>Δd = |d₂ − d₁|</code>.</li>
-            <li>Sarma açısı (küçük kasnak): <code>α₁ = 180° − 57.2958°·(Δd/A)</code>.</li>
-            <li>Öneri: <code>A(min) ≈ 0.5·(d_L−d_S) + 1.5·d_L</code>, <code>d_L = max(d₁,d₂)</code>, <code>d_S = min(d₁,d₂)</code>.</li>
-            <li>Standart L verildiğinde yeni eksen: <code>A′ = (X + √(X² − 2Δd²)) / 4</code>, <code>X = L − (π/2)(d₁+d₂)</code>.</li>
+          <ul style="margin:0 0 8px 18px; padding:0; color:var(--muted); line-height:1.65; display:flex; flex-direction:column; gap:8px; list-style:none;">
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">L<sub>d</sub> = 2C + (π/2)(d₁+d₂) + (Δd)<sup>2</sup> / (4C)</span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">Δd = |d₂ - d₁|</span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">α₁ = 180° - 57.2958°·(Δd/C)</span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">C(min) ≈ 0.5·(d<sub>L</sub> - d<sub>S</sub>) + 1.5·d<sub>L</sub></span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">d<sub>L</sub> = max(d₁,d₂)</span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">d<sub>S</sub> = min(d₁,d₂)</span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">C' = (X + √(X<sup>2</sup> - 2Δd<sup>2</sup>)) / 4</span></li>
+            <li style="padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);"><span class="formula">X = L<sub>d</sub> - (π/2)(d₁+d₂)</span></li>
           </ul>
-          <div class="note"><b>Sözlük:</b> Lp: hatve; Ld: datum/hatve; Lw: etkin; Li: iç; La: dış/çevre; i: oran (d₂/d₁).</div>
         </div>
       </section>
     </main>
-    <footer class="footer">Mechanical Toolbox by <span class="brand">sipahi</span> ⚙</footer>
+    <footer class="footer">Mechanical Toolbox · 2025 · <span class="brand">sipahi</span></footer>
   </div>
 
 <script>
-  // Veri tabloları
+  // Veri tablolari
   const PULLEY_PD = {
     SPZ:[63,67,71,75,80,85,90,95,100,106,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,265,280],
     SPA:[80,85,90,95,100,106,112,118,125,132,140,150,160,170,180,190,200,212,224,236,250,265,280,300,315,335,355,375,400],
@@ -187,7 +287,7 @@
     SPB:(()=>{const L=[1250,1270,1287,1300,1320,1340,1350,1370,1400,1420,1450]; for(let x=1475;x<=3200;x+=25)L.push(x); for(let x=3250;x<=6300;x+=50)L.push(x); return L;})(),
     SPC:(()=>{const L=[2000,2030,2060,2120,2240]; for(let x=2300;x<=4000;x+=25)L.push(x); for(let x=4050;x<=10000;x+=50)L.push(x); return L;})()
   };
-  // Optibelt SK / Red Power 3: Li = Ld − [38,45,60,83];  La = Li + [13,18,22,30]
+  // Optibelt SK / Red Power 3: Li = Ld - [38,45,60,83];  La = Ld + [13,18,22,30]
   const OFFSETS = {
     SPZ:{ Li_from_Lp: Lp=>Lp-38, La_from_Lp: Lp=>Lp+13 },
     SPA:{ Li_from_Lp: Lp=>Lp-45, La_from_Lp: Lp=>Lp+18 },
@@ -202,8 +302,13 @@
   };
 
   const $=s=>document.querySelector(s);
-  const fmt=n=>Number.isFinite(n)? Math.round(n)+" mm":"—";
-  const delta=v=>v>0?'+':(v<0?'−':'±');
+  const fmt=n=>Number.isFinite(n)? `${Number(n.toFixed(1))} mm`:'\u2014';
+  const fmtSigned=v=>{
+    if(!Number.isFinite(v)) return '\u00b10';
+    const sign=v>0?'+':(v<0?'\u2212':'\u00b1');
+    return `${sign}${Number(Math.abs(v).toFixed(1))}`;
+  };
+  const ICON = { warn:'⚠️', bad:'⛔' };
 
   function axisFromLength(L,d1,d2){
     const dd=Math.abs(d2-d1), X=L-(Math.PI/2)*(d1+d2), disc=X*X-2*(dd*dd);
@@ -211,9 +316,17 @@
   }
 
   const profileEl=$('#profile'), d1El=$('#d1'), d2El=$('#d2'), AEl=$('#A'), n1El=$('#n1');
-  const LpShow=$('#LpShow'), stdLp=$('#stdLp'), LiEl=$('#Li'), LaEl=$('#La'), LdEl=$('#Ld'), n2El=$('#n2');
-  const sectEl=$('#sect'), wdEl=$('#wdVal'), wrapInfo=$('#wrapInfo'), ratioInfo=$('#ratioInfo'), minAinfo=$('#minAinfo');
+  const LpShow=$('#LpShow'), LiEl=$('#Li'), LaEl=$('#La'), n2El=$('#n2');
+  const sectEl=$('#sect'), wdEl=$('#wdVal'), wrapInfo=$('#wrapInfo'), wrapInfo2=$('#wrapInfo2'), ratioInfo=$('#ratioInfo'), minAinfo=$('#minAinfo');
   const warnCard=$('#warnCard'), warnArea=$('#warnArea');
+  const resetOutputs=(opts={})=>{
+    const { keepMinA=false }=opts;
+    LpShow.textContent=LiEl.textContent=LaEl.textContent='-';
+    n2El.textContent='-';
+    wrapInfo.textContent=wrapInfo2.textContent=ratioInfo.textContent='-';
+    if(!keepMinA) minAinfo.textContent='-';
+    $('#candTable tbody').innerHTML='';
+  };
 
   function populatePulleys(){
     const pr=profileEl.value, list=PULLEY_PD[pr]||[];
@@ -225,7 +338,7 @@
   function nearestIndex(x,arr){ if(!arr||!arr.length) return -1; let k=0,md=Math.abs(arr[0]-x); for(let i=1;i<arr.length;i++){const d=Math.abs(arr[i]-x); if(d<md){md=d;k=i;}} return k; }
 
   function addWarn(text,level='warn'){
-    const icon=level==='bad'?'⛔':'⚠'; const cls=level==='bad'?'bad':'warn';
+    const icon=ICON[level]||ICON.warn; const cls=level==='bad'?'bad':'warn';
     const el=document.createElement('div'); el.className='note'; el.innerHTML=`<span class="${cls}">${icon}</span><div>${text}</div>`; warnArea.appendChild(el);
   }
 
@@ -233,39 +346,60 @@
     warnArea.innerHTML=''; warnCard.style.display='none';
     const pr=profileEl.value; const d1=parseFloat(d1El.value); const d2=parseFloat(d2El.value);
     const A=parseFloat(AEl.value); const n1=parseFloat(n1El.value);
+    let invalid=false;
 
     // Profil bilgilerinin sonuçlarda görünmesi
-    const p=PROFILE[pr]; if(p){ sectEl.textContent=`${p.b}×${p.h} mm`; wdEl.textContent=`${p.wd} mm`; addWarn(`Profil ${pr} için min küçük kasnak ≈ ${p.dmin} mm`, 'warn'); }
+    const p=PROFILE[pr]; if(p){ sectEl.textContent=`${p.b}x${p.h} mm`; wdEl.textContent=`${p.wd} mm`; }
 
     const errs=[]; if(!pr||!BELT_SERIES[pr]) errs.push('Lütfen geçerli bir kayış profili seçin.');
-    if(!Number.isFinite(d1)) errs.push('Küçük kasnak d₁ seçilmedi.');
-    if(!Number.isFinite(d2)) errs.push('Büyük kasnak d₂ seçilmedi.');
-    if(!Number.isFinite(A) || A<=0) errs.push('Eksen mesafesi A > 0 olmalıdır.');
-    if(errs.length){ warnArea.innerHTML=errs.map(t=>`<div class="note"><span class="bad">⛔</span><div>${t}</div></div>`).join(''); warnCard.style.display='block';
-      LpShow.textContent=stdLp.textContent=LiEl.textContent=LaEl.textContent=LdEl.textContent='—'; n2El.textContent='—'; wrapInfo.textContent=ratioInfo.textContent=minAinfo.textContent='—'; $('#candTable tbody').innerHTML=''; return; }
+    if(!Number.isFinite(d1)) errs.push('Tahrik kasnağı (d1) seçilmedi.');
+    if(!Number.isFinite(d2)) errs.push('Çıkış kasnağı (d2) seçilmedi.');
+    if(!Number.isFinite(A) || A<=0) errs.push('Merkez mesafesi C > 0 olmalıdır.');
+    if(errs.length){ warnArea.innerHTML=errs.map(t=>`<div class="note"><span class="bad">${ICON.bad}</span><div>${t}</div></div>`).join(''); warnCard.style.display='block';
+      resetOutputs(); return; }
 
     const dd=Math.abs(d2-d1), dS=Math.min(d1,d2), dL=Math.max(d1,d2);
-    const alpha1=180-57.2958*(dd/A); wrapInfo.textContent=`${alpha1.toFixed(1)}°`;
-    if(p && dS<p.dmin) addWarn(`Küçük kasnak d_small=${Math.round(dS)} mm < d_min≈${p.dmin} mm (profil ${pr}).`, 'bad');
-    if(alpha1<120) addWarn(`Sarma açısı düşük: α₁=${alpha1.toFixed(1)}°. En az 120° önerilir.`, 'warn');
+    const wrapRatio = dd/(2*A);
+    let alpha1 = NaN;
+    if(wrapRatio>=1){
+      invalid=true;
+      wrapInfo.textContent=wrapInfo2.textContent='-';
+      addWarn(`Geçersiz sarma geometrisi: C ≤ (d2-d1)/2 (${Math.round(dd/2)} mm).`, 'bad');
+    }else{
+      alpha1=180-(360/Math.PI)*Math.asin(wrapRatio);
+      const alpha2=180+(360/Math.PI)*Math.asin(wrapRatio);
+      wrapInfo.textContent=`${alpha1.toFixed(1)}°`;
+      wrapInfo2.textContent=`${alpha2.toFixed(1)}°`;
+    }
+    if(p && dS<p.dmin) addWarn(`En küçük kasnak çapı ${Math.round(dS)} mm, bu profil için min ${p.dmin} mm. Çapı büyütün veya profili küçültün.`, 'bad');
+    if(Number.isFinite(alpha1) && alpha1<120) addWarn(`Sarma açısı düşük: α1=${alpha1.toFixed(1)}°. En az 120° önerilir.`, 'warn');
 
-    const Arec=0.5*(dL-dS)+1.5*dL; minAinfo.textContent=`${Math.round(Arec)} mm`; if(A<Arec) addWarn(`Eksen mesafesi düşük olabilir: A=${Math.round(A)} mm. Öneri ≥ ${Math.round(Arec)} mm.`, 'warn');
+    const Arec=0.5*(dL-dS)+1.5*dL; minAinfo.textContent=`${Math.round(Arec)} mm`; if(A<Arec) addWarn(`Merkez mesafesi düşük olabilir: C=${Math.round(A)} mm. Öneri ≈ ${Math.round(Arec)} mm.`, 'warn');
+    if(invalid){ warnCard.style.display = warnArea.childElementCount ? 'block' : 'none'; resetOutputs({keepMinA:true}); return; }
 
     const i=d2/d1; ratioInfo.textContent=`${i.toFixed(2)}`; if(Number.isFinite(n1)) n2El.textContent=Math.round(n1*(d1/d2))+' d/dak';
 
-    const Lp=2*A + (Math.PI/2)*(d1+d2) + (dd*dd)/(4*A); LpShow.textContent=fmt(Lp); LdEl.textContent=fmt(Lp);
-
-    const series=BELT_SERIES[pr]; const idx=nearestIndex(Lp,series); const nearest=series?series[idx]:null; if(nearest!=null){ stdLp.innerHTML=`<b>${nearest} mm</b> <span class="muted">(${delta(nearest-Lp)}${Math.abs(Math.round(nearest-Lp))} mm)</span>`; }
-
+    const Lp=2*A + (Math.PI/2)*(d1+d2) + (dd*dd)/(4*A); LpShow.textContent=fmt(Lp);
     const li=OFFSETS[pr].Li_from_Lp(Lp), la=OFFSETS[pr].La_from_Lp(Lp); LiEl.textContent=fmt(li); LaEl.textContent=fmt(la);
+
+    const series=BELT_SERIES[pr]; const idx=nearestIndex(Lp,series); const nearest=(series&&idx>-1)?series[idx]:null;
 
     // Alternatifler: önerilen satırı 3. sıraya sabitle, etiket kullanma
     const tbody=$('#candTable tbody'); tbody.innerHTML=''; if(series&&series.length){
       let picks=[]; for(let j=idx-2;j<=idx+2;j++) if(j>=0&&j<series.length) picks.push(series[j]);
       picks=[...new Set(picks)].sort((a,b)=>a-b); const pos=picks.indexOf(series[idx]); if(pos>-1 && pos!==2){ picks.splice(pos,1); picks.splice(2,0,series[idx]); }
-      picks.slice(0,5).forEach(L=>{ const Li_c=OFFSETS[pr].Li_from_Lp(L), La_c=OFFSETS[pr].La_from_Lp(L); const d=Math.round(L-Lp); const Anew=axisFromLength(L,d1,d2); const cls=(L===series[idx])?' class="reco-row"':''; const row=`<tr${cls}><td>${pr}</td><td>${L}</td><td>${delta(d)}${Math.abs(d)}</td><td>${Number.isFinite(Anew)?Math.round(Anew):'—'}</td><td>${Math.round(Li_c)}</td><td>${Math.round(La_c)}</td></tr>`; tbody.insertAdjacentHTML('beforeend',row); });
+      picks.slice(0,5).forEach(L=>{
+        const Li_c=OFFSETS[pr].Li_from_Lp(L), La_c=OFFSETS[pr].La_from_Lp(L);
+        const diffDisplay=fmtSigned(L-Lp);
+        const Anew=axisFromLength(L,d1,d2);
+        const cls=(L===series[idx])?' class="reco-row"':'';
+        const row=`<tr${cls}><td>${pr}</td><td>${L}</td><td>${diffDisplay}</td><td>${Number.isFinite(Anew)?Math.round(Anew):'-'}</td><td>${Number(Li_c.toFixed(1))}</td><td>${Number(La_c.toFixed(1))}</td></tr>`;
+        tbody.insertAdjacentHTML('beforeend',row);
+      });
     }
 
+    addWarn('L<sub>i</sub> ve L<sub>a</sub> dar V-kayışı için tipik ofsetlerle yaklaşık verilmiştir; üretici kataloğuyla teyit edin.','warn');
+    addWarn("Standart kayış uzunlukları ISO 4184'e göredir.",'warn');
     warnCard.style.display = warnArea.childElementCount ? 'block' : 'none';
   }
 
