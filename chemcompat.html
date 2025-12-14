@@ -981,7 +981,7 @@
     // Load and parse CSV data
         async function loadData() {
             try {
-                const response = await fetch("assets/data/chemresist.csv");
+                const response = await fetch("assets/data/chemresist.txt");
                 const text = await response.text();
                 
                 data = text.split(/\r?\n/)
