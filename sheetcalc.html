@@ -1,189 +1,845 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sheet Metal Weight Calculator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-<style>
-:root{
-  --primary:#2e7d32;--primary-dark:#1b5e20;--alert:#ec5757;
-  --bg:#f2f5fa;--card:#ffffff;--radius:8px;--shadow:0 2px 6px rgba(0,0,0,.08);}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Inter",Arial,Helvetica,sans-serif;background:var(--bg);color:#222;padding:16px;display:flex;justify-content:center;font-size:14px;}
-.container{width:100%;max-width:780px;}
-header{background:linear-gradient(120deg,var(--primary),var(--primary-dark));color:#fff;padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;margin-bottom:24px;}
-h1{font-size:1.6rem;font-weight:600;}
-.card{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:24px;box-shadow:var(--shadow);}
-label{font-weight:600;font-size:.9rem;}
-input,select{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:4px;font-size:.9rem;}
-.field{display:flex;align-items:center;gap:18px;margin-bottom:14px;}
-.field label{flex:0 0 190px;}
-button{padding:10px 24px;border:none;border-radius:4px;font-weight:600;font-size:.9rem;cursor:pointer;transition:.2s;}
-.btn-primary{background:var(--primary);color:#fff;} .btn-primary:hover{background:var(--primary-dark);}
-.btn-secondary{background:var(--alert);color:#fff;} .btn-secondary:hover{background:#d34141;}
-.btn-row{display:flex;justify-content:center;gap:30px;margin:18px 0;}
-#currentGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;text-align:center;}
-#currentGrid div{background:#f4f6fc;border-radius:6px;padding:14px;}
-#currentGrid span{display:block;margin-top:6px;font-size:1.05rem;font-weight:600;color:var(--primary-dark);}
-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:12px;}
-th,td{padding:8px;border-bottom:1px solid #e0e0e0;text-align:center;}
-th{background:#f8f9fb;} tfoot td{font-weight:600;background:#fafafa;}
-.row-del{cursor:pointer;color:var(--alert);font-weight:700;}
-@media(max-width:600px){
-  .field{flex-direction:column;align-items:stretch;}
-  .field label{width:100%;margin-bottom:4px;}
-  #currentGrid{grid-template-columns:1fr;}
-  .btn-row{flex-direction:column;gap:12px;}
-}
-</style>
-</head>
-<body>
-<div class="container">
-<header><h1>Sheet Metal Weight Calculator</h1></header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sheet Metal Weight Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        /* Accent (buttons, highlights) */
+        --primary: #2563eb; /* royal blue */
+        --primary-dark: #06b6d4; /* cyan */
+        /* Header gradient (separate so it doesn't look identical to CTA) */
+        --header-from: #0f172a;
+        --header-to: #1d4ed8;
+        --alert: #f87171; /* soft red */
+        --bg: #0b1220; /* page background */
+        --card: #101b2d; /* card background */
+        --fg: #e5e7eb; /* main text */
+        --muted: #a3b0c2; /* muted text */
+        --input-bg: #0b1530; /* inputs */
+        --border: rgba(255, 255, 255, 0.09);
+        --grid: rgba(255, 255, 255, 0.08);
+        --radius: 8px;
+        --shadow: 0 4px 18px rgba(2, 6, 23, 0.6);
+      }
 
-<div class="card">
-<form id="calcForm">
-  <div class="field"><label for="matSel">Material</label><select id="matSel"></select></div>
-  <div class="field"><label for="density">Density (g/cm³)</label><input id="density" disabled></div>
-  <div class="field"><label for="inpWidth">Width A (mm)</label><input id="inpWidth" type="number" step="0.01" required></div>
-  <div class="field"><label for="inpLen">Length B (mm)</label><input id="inpLen" type="number" step="0.01" required></div>
-  <div class="field"><label for="inpThk">Thickness t (mm)</label><input id="inpThk" type="number" step="0.01" required></div>
-  <div class="field"><label for="inpQty">Quantity</label><input id="inpQty" type="number" value="1" min="1" step="1"></div>
-  <div class="field"><label for="inpPrice">Price (USD / kg) <span style="font-weight:400;color:#666">(optional)</span></label><input id="inpPrice" type="number" step="0.01" placeholder="e.g. 2.50"></div>
-  <div id="errorMsg" style="color:var(--alert);font-size:.95rem;margin-bottom:8px;display:none;"></div>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  <div class="btn-row">
-    <button class="btn-primary" type="submit">Calculate & Add</button>
-    <button class="btn-secondary" type="button" id="clearAll">Clear History</button>
-  </div>
-</form>
-</div>
+      body {
+        font-family: "Inter", Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        padding: 16px;
+        display: flex;
+        justify-content: center;
+        font-size: 14px;
+      }
 
-<div class="card">
-  <h3 style="font-size:1rem;margin-bottom:12px;text-align:center;">Current Entry</h3>
-  <div id="currentGrid">
-    <div>Weight<br><span id="curWeight">0.000 kg</span></div>
-    <div>Volume<br><span id="curVol">0.000 m³</span></div>
-    <div>Area A×B<br><span id="curArea">0.000 m²</span></div>
-    <div id="costBox" style="display:none;">Cost<br><span id="curCost">0.000 USD</span></div>
-  </div>
-</div>
+      .container {
+        width: 100%;
+        max-width: 780px;
+      }
 
-<div class="card">
-  <h2 style="font-size:1.05rem;margin-bottom:10px;">Calculation History</h2>
-  <table id="histTable" aria-label="Calculation History" role="table">
-    <thead><tr><th>✂️</th><th>Material</th><th>WxLxT (mm)</th><th>Qty</th><th>Area (m²)</th><th>Vol (m³)</th><th>Weight (kg)</th><th>Cost (USD)</th></tr></thead>
-    <tbody></tbody>
-    <tfoot>
-      <tr style="background:#f3f6fa;font-weight:600;">
-        <td colspan="3" style="text-align:right;">Toplam</td>
-        <td id="totQty">0</td>
-        <td id="totArea">0.000 m²</td>
-        <td id="totVol">0.000 m³</td>
-        <td id="totWeight">0.00 kg</td>
-        <td id="totCost">0.00 USD</td>
-      </tr>
-    </tfoot>
-  </table>
-</div>
+      header {
+        background: linear-gradient(120deg, var(--header-from), var(--header-to));
+        color: #fff;
+        padding: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        text-align: center;
+        margin-bottom: 24px;
+      }
 
-<footer style="text-align:center;font-size:.75rem;color:#888;margin-top:10px;">© 2025 misipahi</footer>
-<div style="text-align:center;font-size:.85rem;color:#666;margin-bottom:8px;">Ondalık ayıracı olarak nokta (.) kullanılır, binlik ayırıcı yoktur.</div>
-</div>
+      h1 {
+        font-size: 1.6rem;
+        font-weight: 600;
+      }
 
-<script>
-const materials=[{name:'AISI 304 Stainless Steel',density:7.93},{name:'AISI 316 Stainless Steel',density:7.98},{name:'AISI 1010 Carbon Steel',density:7.87},{name:'Galvanized Steel',density:7.85},{name:'Aluminium 6061‑T6',density:2.70},{name:'Aluminium 5083',density:2.66},{name:'C110 Copper',density:8.96},{name:'C260 Brass',density:8.44},{name:'Grade 2 Titanium',density:4.51},{name:'AISI 430 Stainless Steel',density:7.70}];
-const matSel=document.getElementById('matSel');materials.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m.name;matSel.appendChild(o);});
-const densInput=document.getElementById('density');function setDensity(){densInput.value=materials[matSel.value].density;}setDensity();matSel.onchange=setDensity;
-const tbody=document.querySelector('#histTable tbody');
-const totQtyEl=document.getElementById('totQty');
-const totAreaEl=document.getElementById('totArea');
-const totVolEl=document.getElementById('totVol');
-const totWeightEl=document.getElementById('totWeight');
-const totCostEl=document.getElementById('totCost');
-const curW=document.getElementById('curWeight'),curV=document.getElementById('curVol'),curA=document.getElementById('curArea'),curCost=document.getElementById('curCost'),costBox=document.getElementById('costBox');
-let totalWeight=0, totalCost=0;
-const fmtQty=x=>(+x).toString();
-const fmtArea=x=>{
-  const val = +x;
-  if (val < 1) return val.toFixed(2); // Küçük değerlerde 2 hane
-  return val % 1 === 0 ? val.toFixed(0) : val.toFixed(2);
-};
-const fmtVol=x=>(+x).toFixed(3);
-const fmtWeight=x=>(+x).toFixed(2);
-const fmtCost=x=>(+x).toFixed(2);
-function showError(msg) {
-  const err = document.getElementById('errorMsg');
-  err.textContent = msg;
-  err.style.display = msg ? 'block' : 'none';
-}
-function updateTotals() {
-  let qty = 0, area = 0, vol = 0, weight = 0, cost = 0;
-  tbody.querySelectorAll('tr').forEach(tr => {
-    qty += parseInt(tr.children[3].textContent) || 0;
-    area += parseFloat(tr.children[4].textContent) || 0;
-    vol += parseFloat(tr.children[5].textContent) || 0;
-    weight += parseFloat(tr.children[6].textContent) || 0;
-    cost += tr.children[7].textContent === '-' ? 0 : parseFloat(tr.children[7].textContent) || 0;
-  });
-  totQtyEl.textContent = fmtQty(qty);
-  totAreaEl.textContent = fmtArea(area) + ' m²';
-  totVolEl.textContent = fmtVol(vol) + ' m³';
-  totWeightEl.textContent = fmtWeight(weight) + ' kg';
-  totCostEl.textContent = fmtCost(cost) + ' USD';
-  totalWeight = weight;
-  totalCost = cost;
-}
-function addRow(o){
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td class="row-del">×</td><td>${o.mat}</td><td>${o.dim}</td><td>${fmtQty(o.q)}</td><td>${fmtArea(o.area)} m²</td><td>${fmtVol(o.vol)} m³</td><td>${fmtWeight(o.weight)} kg</td><td>${o.cost?fmtCost(o.cost)+' USD':'-'} </td>`;
-  tr.querySelector('.row-del').onclick=()=>{
-    tr.remove();
-    updateTotals();
-  };
-  tbody.appendChild(tr);
-  updateTotals();
-}
-document.getElementById('calcForm').onsubmit=e=>{
-  e.preventDefault();
-  showError('');
-  const m=materials[matSel.value];
-  const A=parseFloat(inpWidth.value),B=parseFloat(inpLen.value),t=parseFloat(inpThk.value),q=parseInt(inpQty.value||1),price=parseFloat(inpPrice.value);
-  if([A,B,t,q].some(isNaN)){
-    showError('Lütfen tüm sayısal alanları doldurun.');
-    return;
-  }
-  const area=A*B/1e6,vol=A*B*t/1e9,weight=vol*m.density*1000*q;
-  curW.textContent=fmtWeight(weight)+' kg';
-  curV.textContent=fmtVol(vol)+' m³';
-  curA.textContent=fmtArea(area)+' m²';
-  let cost=null;
-  if(!isNaN(price)&&price>0){
-    cost=weight*price;
-    curCost.textContent=fmtCost(cost)+' USD';
-    costBox.style.display='block';
-  }else{
-    costBox.style.display='none';
-  }
-  addRow({mat:m.name,dim:`${A}×${B}×${t}`,q,area,vol,weight,cost});
-};
-document.getElementById('clearAll').onclick=()=>{
-  tbody.innerHTML='';
-  totQtyEl.textContent='0';
-  totAreaEl.textContent='0.000 m²';
-  totVolEl.textContent='0.000 m³';
-  totWeightEl.textContent='0.00 kg';
-  totCostEl.textContent='0.00 USD';
-  totalWeight=0;
-  totalCost=0;
-  curW.textContent='0.00 kg';
-  curV.textContent='0.000 m³';
-  curA.textContent='0.000 m²';
-  costBox.style.display='none';
-  showError('');
-};
-</script>
-</body>
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+
+      label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--fg);
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 0.9rem;
+        background: var(--input-bg);
+        color: var(--fg);
+      }
+
+      input::placeholder {
+        color: rgba(219, 234, 254, 0.45);
+      }
+
+      input[type="number"]:not(#inpQty) {
+        -moz-appearance: textfield; /* Firefox */
+      }
+
+      input[type="number"]:not(#inpQty)::-webkit-outer-spin-button,
+      input[type="number"]:not(#inpQty)::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0 !important;
+      }
+
+      .field {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 14px;
+        border-radius: var(--radius);
+        padding: 10px 15px;
+      }
+
+      .field:nth-of-type(odd) {
+        background: rgba(255, 255, 255, 0.01);
+      }
+
+      .field:nth-of-type(even) {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .field label {
+        flex: 0 0 190px;
+      }
+
+      button {
+        padding: 10px 24px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.2s;
+        background: transparent;
+        color: var(--fg);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow:
+          0 12px 26px rgba(37, 99, 235, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.06);
+      }
+
+      .btn-secondary {
+        background: rgba(248, 113, 113, 0.06);
+        border-color: rgba(248, 113, 113, 0.35);
+        color: #fecaca;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(248, 113, 113, 0.12);
+        border-color: rgba(248, 113, 113, 0.55);
+      }
+
+      .btn-primary:active,
+      .btn-secondary:active {
+        transform: translateY(1px);
+      }
+
+      .btn-row {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 18px 0;
+      }
+
+      #currentGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        text-align: center;
+      }
+
+      #currentGrid div {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 6px;
+        padding: 14px;
+        color: var(--fg);
+      }
+
+      #currentGrid span {
+        display: block;
+        margin-top: 6px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--fg);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin-top: 12px;
+        background: transparent;
+        color: var(--fg);
+      }
+
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid var(--grid);
+        text-align: center;
+        color: var(--fg);
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      tfoot td {
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.01);
+      }
+
+      .tot-icon {
+        font-size: 1.15rem;
+        color: var(--primary);
+        display: inline-block;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+          font-size: 13px;
+        }
+
+        h1 {
+          font-size: 1.4rem;
+        }
+
+        .card {
+          padding: 16px;
+          margin-bottom: 12px;
+        }
+
+        .field {
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 10px;
+          padding: 10px 12px;
+        }
+
+        .field label {
+          flex: 0 0 44%;
+          width: auto;
+          margin-bottom: 0;
+        }
+
+        input,
+        select {
+          padding: 8px 10px;
+          width: auto;
+          flex: 1 1 0;
+          min-width: 0;
+        }
+
+        select {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        #currentGrid {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+
+        #currentGrid div {
+          padding: 10px 10px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        #currentGrid br {
+          display: none;
+        }
+
+        #currentGrid span {
+          font-size: 1rem;
+          margin-top: 0;
+          text-align: right;
+        }
+
+        .btn-row {
+          flex-direction: column;
+          gap: 8px;
+          margin: 12px 0;
+        }
+
+        button {
+          padding: 8px 16px;
+        }
+
+        table {
+          font-size: 0.75rem;
+        }
+
+        th,
+        td {
+          padding: 5px;
+        }
+
+        .table-wrapper {
+          overflow-x: auto;
+          width: 100%;
+        }
+
+        table {
+          min-width: 600px;
+        }
+
+        footer {
+          font-size: 0.85rem;
+          margin-top: 12px;
+        }
+      }
+
+      /* focus and accessibility */
+      .row-del {
+        background: none;
+        border: 0;
+        color: var(--alert);
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1.15rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+
+      .row-del:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .row-del:focus {
+        outline: 3px solid rgba(37, 99, 235, 0.16);
+        box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.06);
+      }
+
+      input:focus,
+      button:focus,
+      select:focus {
+        outline: 3px solid rgba(37, 99, 235, 0.08);
+      }
+
+      caption {
+        font-weight: 600;
+        text-align: left;
+        margin-bottom: 8px;
+        color: var(--fg);
+      }
+
+      footer {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+        letter-spacing: 0.2px;
+      }
+
+      .muted-note {
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .optional {
+        font-weight: 400;
+        color: var(--muted);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header><h1>Sheet Metal Weight Calculator</h1></header>
+
+      <div class="card">
+        <form id="calcForm">
+          <div class="field">
+            <label for="matSel">Material</label><select id="matSel"></select>
+          </div>
+          <div class="field">
+            <label for="density">Density (g/cm³)</label
+            ><input id="density" type="text" inputmode="decimal" maxlength="5" placeholder="e.g. 7.85" disabled />
+          </div>
+          <div class="field"><label for="inpWidth">Width A (mm)</label><input id="inpWidth" type="number" required min="0" step="any" /></div>
+          <div class="field"><label for="inpLen">Length B (mm)</label><input id="inpLen" type="number" required min="0" step="any" /></div>
+          <div class="field"><label for="inpThk">Thickness t (mm)</label><input id="inpThk" type="number" required min="0" step="any" /></div>
+          <div class="field"><label for="inpQty">Quantity</label><input id="inpQty" type="number" min="1" step="1" value="1" /></div>
+          <div class="field">
+            <label for="inpPrice">Price (USD/kg) <span class="optional">(optional)</span></label
+            ><input id="inpPrice" type="number" placeholder="e.g. 2.50" min="0" step="any" />
+          </div>
+          <div id="errorMsg" style="color: var(--alert); font-size: 0.95rem; margin-bottom: 8px; display: none"></div>
+          <div class="muted-note">Use dot (.) as the decimal separator. No thousands separator.</div>
+
+          <div class="btn-row">
+            <button class="btn-primary" type="submit">Calculate & Add</button>
+            <button class="btn-secondary" type="button" id="clearAll">Clear History</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size: 1rem; margin-bottom: 12px; text-align: center">Current Entry</h3>
+        <div id="currentGrid">
+          <div>Weight<br /><span id="curWeight">0.00 kg</span></div>
+          <div>Volume<br /><span id="curVol">0.000 m³</span></div>
+          <div>Area<br /><span id="curArea">0.00 m²</span></div>
+          <div id="costBox" style="display: none">Cost<br /><span id="curCost">0.00 USD</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size: 1.05rem; margin-bottom: 10px">Calculation History</h2>
+        <div class="table-wrapper">
+          <table id="histTable" aria-label="Calculation History" role="table">
+            <thead>
+              <tr>
+                <th><span class="sr-only">Remove</span></th>
+                <th>Qty</th>
+                <th>Weight (kg)</th>
+                <th>Density (g/cm³)</th>
+                <th>Area (m²)</th>
+                <th>Vol (m³)</th>
+                <th>W×L×T (mm)</th>
+                <th>Cost (USD)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr style="background: rgba(255, 255, 255, 0.02); font-weight: 600; color: var(--fg)">
+                <td style="text-align: left">
+                  <span class="tot-icon" aria-hidden="true" title="Total">Σ</span><span class="sr-only">Total</span>
+                </td>
+                <td id="totQty">0</td>
+                <td id="totWeight">0.00 kg</td>
+                <td>-</td>
+                <td id="totArea">0.00 m²</td>
+                <td id="totVol">0.000 m³</td>
+                <td>-</td>
+                <td id="totCost">0.00 USD</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <footer>Mechanical Toolbox &middot; 2025 &middot; sipahi</footer>
+    </div>
+
+    <script>
+      const materials = [
+        { name: "AISI 304 Stainless Steel", density: 7.93 },
+        { name: "AISI 316 Stainless Steel", density: 7.98 },
+        { name: "AISI 1010 Carbon Steel", density: 7.87 },
+        { name: "Galvanized Steel", density: 7.85 },
+        { name: "Aluminium 6061-T6", density: 2.7 },
+        { name: "Aluminium 5083", density: 2.66 },
+        { name: "C110 Copper", density: 8.96 },
+        { name: "C260 Brass", density: 8.44 },
+        { name: "Grade 2 Titanium", density: 4.51 },
+        { name: "AISI 430 Stainless Steel", density: 7.7 }
+      ];
+
+      const CUSTOM_MATERIAL_VALUE = "custom";
+      let customDensityText = "7.85";
+
+      const matSel = document.getElementById("matSel");
+      const densInput = document.getElementById("density");
+      const inpWidth = document.getElementById("inpWidth");
+      const inpLen = document.getElementById("inpLen");
+      const inpThk = document.getElementById("inpThk");
+      const inpQty = document.getElementById("inpQty");
+      const inpPrice = document.getElementById("inpPrice");
+      const tbody = document.querySelector("#histTable tbody");
+      const totQtyEl = document.getElementById("totQty");
+      const totAreaEl = document.getElementById("totArea");
+      const totVolEl = document.getElementById("totVol");
+      const totWeightEl = document.getElementById("totWeight");
+      const totCostEl = document.getElementById("totCost");
+      const curW = document.getElementById("curWeight");
+      const curV = document.getElementById("curVol");
+      const curA = document.getElementById("curArea");
+      const curCost = document.getElementById("curCost");
+      const costBox = document.getElementById("costBox");
+
+      materials.forEach((m, i) => {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = m.name;
+        matSel.appendChild(option);
+      });
+
+      const customOption = document.createElement("option");
+      customOption.value = CUSTOM_MATERIAL_VALUE;
+      customOption.textContent = "Custom";
+      matSel.appendChild(customOption);
+
+      function isValidDensityText(s) {
+        if (s === "") return true; // allow empty while typing
+        if (!/^\d{0,2}(\.\d{0,2})?$/.test(s)) return false;
+        const n = Number(s);
+        return Number.isFinite(n) && n <= 99.99;
+      }
+
+      function normalizeDensityText(s) {
+        const t = String(s).trim().replace(",", ".");
+        if (t === "") return "";
+        const n = Number(t);
+        if (!Number.isFinite(n)) return "";
+        const clamped = Math.max(0, Math.min(99.99, n));
+        return clamped.toFixed(2);
+      }
+
+      function setDensity() {
+        if (matSel.value === CUSTOM_MATERIAL_VALUE) {
+          densInput.disabled = false;
+          densInput.value = customDensityText;
+          densInput.focus();
+          densInput.select();
+          return;
+        }
+
+        densInput.disabled = true;
+        densInput.value = materials[matSel.value].density.toFixed(2);
+      }
+
+      matSel.onchange = setDensity;
+      setDensity();
+
+      densInput.addEventListener("input", () => {
+        if (matSel.value !== CUSTOM_MATERIAL_VALUE) return;
+        const next = densInput.value.replace(",", ".");
+        if (!isValidDensityText(next)) {
+          densInput.value = customDensityText;
+          return;
+        }
+        densInput.value = next;
+        if (next !== "") customDensityText = next;
+      });
+
+      densInput.addEventListener("blur", () => {
+        if (matSel.value !== CUSTOM_MATERIAL_VALUE) return;
+        const normalized = normalizeDensityText(densInput.value);
+        if (normalized) {
+          densInput.value = normalized;
+          customDensityText = normalized;
+          return;
+        }
+        densInput.value = customDensityText;
+      });
+
+      const fmtQty = (x) => (+x).toString();
+      const fmtArea = (x) => {
+        const val = +x;
+        if (val < 1) return val.toFixed(2);
+        return val % 1 === 0 ? val.toFixed(0) : val.toFixed(2);
+      };
+      const fmtVol = (x) => (+x).toFixed(3);
+      const fmtWeight = (x) => (+x).toFixed(2);
+      const fmtCost = (x) => (+x).toFixed(2);
+      const fmtDensity = (x) => (+x).toFixed(2);
+
+      function showError(msg) {
+        const err = document.getElementById("errorMsg");
+        err.textContent = msg;
+        err.style.display = msg ? "block" : "none";
+      }
+
+      const STORAGE_KEY = "pneucalc.sheetcalc.history.tbody.v1";
+
+      function saveHistory() {
+        try {
+          localStorage.setItem(STORAGE_KEY, tbody.innerHTML);
+        } catch {
+          /* ignore */
+        }
+      }
+
+      function bindRowDeleteHandlers() {
+        tbody.querySelectorAll(".row-del").forEach((btn) => {
+          if (btn.dataset.bound === "1") return;
+          btn.dataset.bound = "1";
+          btn.onclick = () => {
+            btn.closest("tr")?.remove();
+            updateTotals();
+            saveHistory();
+          };
+        });
+      }
+
+      function restoreHistory() {
+        try {
+          const html = localStorage.getItem(STORAGE_KEY);
+          if (!html) return;
+          tbody.innerHTML = html;
+
+          const toNumberOrNull = (s) => {
+            const n = parseFloat(String(s).trim());
+            return Number.isFinite(n) ? n : null;
+          };
+
+          const normalizeRow = (tr) => {
+            const tds = Array.from(tr.children);
+            if (tds.length < 8) return;
+
+            const dimAt6 = (tds[6]?.textContent || "").includes("×");
+            const dimAt2 = (tds[2]?.textContent || "").includes("×");
+
+            let qty, weight, density, area, vol, dim, costText;
+
+            if (dimAt6) {
+              // New layout:
+              // Remove | Qty | Weight | Density | Area | Vol | W×L×T | Cost
+              qty = toNumberOrNull(tds[1].textContent);
+              weight = toNumberOrNull(tds[2].textContent);
+              density = toNumberOrNull(tds[3].textContent);
+              area = toNumberOrNull(tds[4].textContent);
+              vol = toNumberOrNull(tds[5].textContent);
+              dim = (tds[6].textContent || "").trim();
+              costText = (tds[7].textContent || "").trim();
+            } else if (dimAt2) {
+              // Previous layout:
+              // Remove | Density | W×L×T | Qty | Area | Vol | Weight | Cost
+              density = toNumberOrNull(tds[1].textContent);
+              dim = (tds[2].textContent || "").trim();
+              qty = toNumberOrNull(tds[3].textContent);
+              area = toNumberOrNull(tds[4].textContent);
+              vol = toNumberOrNull(tds[5].textContent);
+              weight = toNumberOrNull(tds[6].textContent);
+              costText = (tds[7].textContent || "").trim();
+            } else {
+              return;
+            }
+
+            if (density === null && weight !== null && vol !== null && vol > 0) {
+              density = weight / (vol * 1000);
+            }
+
+            const cost = costText === "-" ? null : toNumberOrNull(costText);
+
+            const rebuilt = document.createElement("tr");
+            rebuilt.innerHTML = `
+              <td><button type="button" class="row-del" aria-label="Remove row">×</button></td>
+              <td>${qty === null ? "" : fmtQty(qty)}</td>
+              <td>${weight === null ? "" : fmtWeight(weight)}</td>
+              <td>${density === null ? "" : fmtDensity(density)}</td>
+              <td>${area === null ? "" : fmtArea(area)}</td>
+              <td>${vol === null ? "" : fmtVol(vol)}</td>
+              <td>${dim || ""}</td>
+              <td>${cost === null ? "-" : fmtCost(cost)}</td>
+            `;
+
+            tr.replaceWith(rebuilt);
+          };
+
+          tbody.querySelectorAll("tr").forEach(normalizeRow);
+          bindRowDeleteHandlers();
+          updateTotals();
+          saveHistory();
+        } catch {
+          /* ignore */
+        }
+      }
+
+      function updateTotals() {
+        let qty = 0,
+          area = 0,
+          vol = 0,
+          weight = 0,
+          cost = 0;
+
+        tbody.querySelectorAll("tr").forEach((tr) => {
+          qty += parseInt(tr.children[1].textContent, 10) || 0;
+          weight += parseFloat(tr.children[2].textContent) || 0;
+          area += parseFloat(tr.children[4].textContent) || 0;
+          vol += parseFloat(tr.children[5].textContent) || 0;
+          cost += tr.children[7].textContent === "-" ? 0 : parseFloat(tr.children[7].textContent) || 0;
+        });
+
+        totQtyEl.textContent = fmtQty(qty);
+        totAreaEl.textContent = fmtArea(area) + " m²";
+        totVolEl.textContent = fmtVol(vol) + " m³";
+        totWeightEl.textContent = fmtWeight(weight) + " kg";
+        totCostEl.textContent = fmtCost(cost) + " USD";
+      }
+
+      function addRow(o) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><button type="button" class="row-del" aria-label="Remove row">×</button></td>
+          <td>${fmtQty(o.q)}</td>
+          <td>${fmtWeight(o.weight)}</td>
+          <td>${fmtDensity(o.density)}</td>
+          <td>${fmtArea(o.area)}</td>
+          <td>${fmtVol(o.vol)}</td>
+          <td>${o.dim}</td>
+          <td>${o.cost ? fmtCost(o.cost) : "-"}</td>
+        `;
+        tr.querySelector(".row-del").onclick = () => {
+          tr.remove();
+          updateTotals();
+          saveHistory();
+        };
+        tbody.appendChild(tr);
+        updateTotals();
+        saveHistory();
+      }
+
+      document.getElementById("calcForm").onsubmit = (e) => {
+        e.preventDefault();
+        showError("");
+
+        const isCustom = matSel.value === CUSTOM_MATERIAL_VALUE;
+        const density = isCustom ? Number(densInput.value) : materials[matSel.value].density;
+        const materialName = isCustom ? "Custom" : materials[matSel.value].name;
+
+        if (isCustom) {
+          if (!/^\d{1,2}(\.\d{1,2})?$/.test(String(densInput.value).trim())) {
+            showError("Custom density must be in the format 0–99.99 (up to 2 decimals).");
+            return;
+          }
+          if (!Number.isFinite(density) || density <= 0 || density > 99.99) {
+            showError("Custom density must be between 0.01 and 99.99 g/cm³.");
+            return;
+          }
+        }
+
+        const A = parseFloat(inpWidth.value);
+        const B = parseFloat(inpLen.value);
+        const t = parseFloat(inpThk.value);
+        const q = parseInt(inpQty.value || "1", 10);
+        const price = parseFloat(inpPrice.value);
+
+        if ([A, B, t].some((x) => Number.isNaN(x)) || A <= 0 || B <= 0 || t <= 0) {
+          showError("Please enter positive values for width, length, and thickness.");
+          return;
+        }
+        if (Number.isNaN(q) || q < 1) {
+          showError("Quantity must be at least 1.");
+          return;
+        }
+
+        const areaEach = (A * B) / 1e6;
+        const volEach = (A * B * t) / 1e9;
+
+        const area = areaEach * q;
+        const vol = volEach * q;
+        const weight = vol * density * 1000; // density g/cm³ -> kg/m³ = density * 1000
+
+        curW.textContent = fmtWeight(weight) + " kg";
+        curV.textContent = fmtVol(vol) + " m³";
+        curA.textContent = fmtArea(area) + " m²";
+
+        let cost = null;
+        if (!Number.isNaN(price) && price > 0) {
+          cost = weight * price;
+          curCost.textContent = fmtCost(cost) + " USD";
+          costBox.style.display = "block";
+        } else {
+          curCost.textContent = "0.00 USD";
+          costBox.style.display = "none";
+        }
+
+        addRow({ density, dim: `${A}×${B}×${t}`, q, area, vol, weight, cost });
+      };
+
+      document.getElementById("clearAll").onclick = () => {
+        tbody.innerHTML = "";
+        totQtyEl.textContent = "0";
+        totAreaEl.textContent = "0.00 m²";
+        totVolEl.textContent = "0.000 m³";
+        totWeightEl.textContent = "0.00 kg";
+        totCostEl.textContent = "0.00 USD";
+        localStorage.removeItem(STORAGE_KEY);
+
+        curW.textContent = "0.00 kg";
+        curV.textContent = "0.000 m³";
+        curA.textContent = "0.00 m²";
+        curCost.textContent = "0.00 USD";
+        costBox.style.display = "none";
+        showError("");
+      };
+
+      function handleMobileLabels() {
+        const isMobile = window.matchMedia("(max-width: 600px)").matches;
+        document.querySelectorAll(".field").forEach((field) => {
+          const label = field.querySelector("label");
+          const control = field.querySelector("input, select");
+          if (!label || !control) return;
+
+          if (!control.dataset.originalLabel) {
+            control.dataset.originalLabel = label.textContent;
+            control.dataset.originalPlaceholder = control.placeholder || "";
+          }
+
+          if (isMobile) {
+            label.classList.remove("hidden-on-mobile");
+            control.placeholder = control.dataset.originalPlaceholder;
+            control.onfocus = null;
+            control.onblur = null;
+          } else {
+            label.classList.remove("hidden-on-mobile");
+            control.placeholder = control.dataset.originalPlaceholder;
+            control.onfocus = null;
+            control.onblur = null;
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        restoreHistory();
+        handleMobileLabels();
+      });
+      window.addEventListener("resize", handleMobileLabels);
+    </script>
+  </body>
 </html>
