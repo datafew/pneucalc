@@ -2,173 +2,975 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Bearing Finder</title>
+<title>Rolling Bearing Finder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
-.dot{display:inline-block;width:10px;height:10px;border-radius:9999px;margin-right:2px}
-.l1{background:#dc2626}.l2{background:#f97316}.l3{background:#facc15}.l4{background:#4ade80}.l5{background:#16a34a}
-.empty{background:#d1d5db}
+/* Minimal Tailwind-like utility subset for `bearing_finder.html`.
+   Purpose: remove `https://cdn.tailwindcss.com` while keeping the existing class markup.
+   Scope: only the utilities currently used by the page. */
+
+:root{
+  --slate-50:#f8fafc;
+  --slate-100:#f1f5f9;
+  --slate-300:#cbd5e1;
+  --slate-400:#94a3b8;
+  --slate-500:#64748b;
+  --slate-600:#475569;
+  --slate-700:#334155;
+  --slate-800:#1e293b;
+  --slate-900:#0f172a;
+  --slate-950:#020617;
+  --cyan-400:#22d3ee;
+  --cyan-500:#06b6d4;
+}
+
+*,
+*::before,
+*::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}
+
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.5;padding-bottom:80px}
+
+/* Form controls: inherit dark theme text color */
+button,
+input,
+select,
+textarea{font:inherit;color:inherit}
+
+table{border-collapse:collapse}
+
+/* Layout */
+.max-w-6xl{max-width:72rem}
+.mx-auto{margin-left:auto;margin-right:auto}
+.w-full{width:100%}
+.min-w-full{min-width:100%}
+.max-h-\[26rem\]{max-height:26rem}
+.p-4{padding:1rem}
+.px-2{padding-left:.5rem;padding-right:.5rem}
+.px-3{padding-left:.75rem;padding-right:.75rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.py-1{padding-top:.25rem;padding-bottom:.25rem}
+.py-2{padding-top:.5rem;padding-bottom:.5rem}
+.py-4{padding-top:1rem;padding-bottom:1rem}
+.py-6{padding-top:1.5rem;padding-bottom:1.5rem}
+.mb-1{margin-bottom:.25rem}
+.mb-2{margin-bottom:.5rem}
+.mb-3{margin-bottom:.75rem}
+.mt-1{margin-top:.25rem}
+.mt-2{margin-top:.5rem}
+.gap-1{gap:.25rem}
+.gap-2{gap:.5rem}
+.gap-3{gap:.75rem}
+.gap-4{gap:1rem}
+
+.space-y-6>:not([hidden])~:not([hidden]){margin-top:1.5rem}
+
+/* Display */
+.hidden{display:none !important}
+.block{display:block}
+.flex{display:flex}
+.inline-flex{display:inline-flex}
+.grid{display:grid}
+
+.flex-1{flex:1 1 0%}
+.min-w-0{min-width:0}
+
+.flex-col{flex-direction:column}
+.flex-wrap{flex-wrap:wrap}
+
+.items-start{align-items:flex-start}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}
+.justify-end{justify-content:flex-end}
+
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.col-span-1{grid-column:span 1 / span 1}
+.col-span-2{grid-column:span 2 / span 2}
+
+/* Position */
+.relative{position:relative}
+.absolute{position:absolute}
+.sticky{position:sticky}
+.top-0{top:0}
+.inset-0{top:0;right:0;bottom:0;left:0}
+.z-10{z-index:10}
+.z-20{z-index:20}
+
+/* Overflow */
+.overflow-x-auto{overflow-x:auto}
+.overflow-y-auto{overflow-y:auto}
+.overflow-hidden{overflow:hidden}
+
+/* Typography */
+.text-left{text-align:left}
+.text-right{text-align:right}
+.uppercase{text-transform:uppercase}
+.tracking-tight{letter-spacing:-.025em}
+.leading-5{line-height:1.25rem}
+.font-medium{font-weight:500}
+.font-semibold{font-weight:600}
+.text-xs{font-size:.75rem;line-height:1rem}
+.text-sm{font-size:.875rem;line-height:1.25rem}
+.text-base{font-size:1rem;line-height:1.5rem}
+.text-xl{font-size:1.25rem;line-height:1.75rem}
+
+/* Colors */
+.bg-slate-950{background-color:var(--slate-950)}
+.bg-slate-950\/40{background-color:rgba(2,6,23,.4)}
+.bg-slate-950\/60{background-color:rgba(2,6,23,.6)}
+.bg-slate-950\/80{background-color:rgba(2,6,23,.8)}
+.bg-slate-900\/50{background-color:rgba(15,23,42,.5)}
+.bg-cyan-500{background-color:var(--cyan-500)}
+
+.text-slate-950{color:var(--slate-950)}
+.text-slate-100{color:var(--slate-100)}
+.text-slate-300{color:var(--slate-300)}
+.text-slate-400{color:var(--slate-400)}
+.text-slate-500{color:var(--slate-500)}
+.text-red-400{color:#f87171}
+
+/* Borders */
+.border{border-width:1px;border-style:solid}
+.border-b{border-bottom-width:1px}
+.border-t{border-top-width:1px}
+.border-slate-700{border-color:var(--slate-700)}
+.border-slate-800{border-color:var(--slate-800)}
+.border-slate-900{border-color:var(--slate-900)}
+
+/* Radius + shadows */
+.rounded-lg{border-radius:.5rem}
+.rounded-xl{border-radius:.75rem}
+.shadow-sm{box-shadow:0 1px 2px rgba(0,0,0,.25)}
+
+/* Effects */
+.backdrop-blur{backdrop-filter:blur(10px)}
+
+/* Variants (Tailwind-like) */
+.hover\:bg-cyan-400:hover{background-color:var(--cyan-400)}
+.hover\:bg-slate-950\/40:hover{background-color:rgba(2,6,23,.4)}
+.focus\:outline-none:focus{outline:0}
+.focus\:ring-2:focus{box-shadow:0 0 0 3px rgba(34,211,238,.25)}
+.focus\:ring-cyan-500\/40:focus{box-shadow:0 0 0 3px rgba(34,211,238,.25)}
+.placeholder\:text-slate-600::placeholder{color:var(--slate-600)}
+
+/* Responsive (min-width) */
+@media (min-width:640px){
+  .sm\:flex-row{flex-direction:row}
+  .sm\:items-center{align-items:center}
+  .sm\:justify-between{justify-content:space-between}
+  .sm\:text-2xl{font-size:1.5rem;line-height:2rem}
+}
+@media (min-width:1024px){
+  .lg\:grid-cols-12{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .lg\:grid-cols-14{grid-template-columns:repeat(14,minmax(0,1fr))}
+  .lg\:col-span-1{grid-column:span 1 / span 1}
+  .lg\:col-span-2{grid-column:span 2 / span 2}
+  .lg\:col-span-3{grid-column:span 3 / span 3}
+  .lg\:col-span-4{grid-column:span 4 / span 4}
+  .lg\:col-span-6{grid-column:span 6 / span 6}
+}
+
+/* Table helpers */
+.divide-y>:not([hidden])~:not([hidden]){border-top-width:1px}
+.divide-slate-800>:not([hidden])~:not([hidden]){border-top-color:var(--slate-800)}
+
+/* Page-specific utility classes already referenced in the HTML */
+#results{background-color:var(--slate-950);color:var(--slate-400)}
 .compact-table{table-layout:fixed;width:100%}
-.compact-table th,.compact-table td{padding:4px 6px;font-size:12px;white-space:nowrap}
-.filter-input{width:100%;padding:2px 4px}
-.spinner{border:4px solid #cbd5e1;border-top-color:#0ea5e9;border-radius:9999px;width:32px;height:32px;animation:spin 1s linear infinite}
+.compact-table th,.compact-table td{padding:6px 10px;font-size:14px;white-space:nowrap}
+.designation-col{
+  max-width:20ch;
+  width:20ch;
+}
+.designation-text{
+  display:inline-block;
+  max-width:20ch;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.matrix-type{
+  white-space:nowrap;
+  max-width:12rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:inline-block;
+}
+.matrix-headline{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+  text-transform:uppercase;
+  font-size:.7rem;
+  line-height:1.1;
+}
+.matrix-headline span{
+  display:block;
+}
+.matrix-headline-left{
+  align-items:flex-start;
+}
+  .tight-col{padding-left:4px;padding-right:4px}
+  .type-text{
+    display:inline-block;
+    max-width:9rem;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    vertical-align:middle;
+  }
+  .tight-col{padding-left:4px;padding-right:4px}
+#results thead{background-color:var(--slate-950)}
+#results thead tr{background-color:var(--slate-950)}
+#results thead th{background-color:var(--slate-950) !important;position:sticky;top:0;z-index:5}
+#results tbody td{background-color:transparent}
+#results tbody tr:hover td{background-color:rgba(2,6,23,.4)}
+#results td.type-col,
+#results th.type-header{
+  color:var(--slate-400);
+  font-weight:500;
+}
+
+.spinner{
+  border:4px solid var(--slate-700);
+  border-top-color:var(--cyan-400);
+  border-radius:9999px;
+  width:32px;
+  height:32px;
+  animation:spin 1s linear infinite;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Small component styles for compound inputs */
+.field-group{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  background-color:var(--slate-950);
+  border:1px solid var(--slate-700);
+  border-radius:.5rem;
+  padding:.5rem .75rem;
+}
+.field-group:focus-within{
+  box-shadow:0 0 0 3px rgba(34,211,238,.25);
+  border-color:rgba(34,211,238,.4);
+}
+.field-group input{
+  flex:1;
+  min-width:0;
+  background:transparent;
+  border:0;
+  padding:0;
+  outline:none;
+}
+.field-group .unit-label{
+  font-size:.7rem;
+  color:var(--slate-500);
+  text-transform:lowercase;
+}
+
+.field-group.narrow{
+  width:100%;
+  gap:.25rem;
+  padding:.5rem .5rem;
+}
+
+/* Number inputs: hide spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+input[type=number]{-moz-appearance:textfield}
+
+/* Section chips */
+.section-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.35rem .65rem;
+  border-radius:9999px;
+  border:1px solid rgba(6,182,212,.35);
+  background:linear-gradient(90deg, rgba(6,182,212,.18), rgba(2,6,23,.02));
+  color:var(--cyan-400);
+  font-weight:600;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+  font-size:.7rem;
+}
+.btn-chip{
+  border-radius:.75rem;
+  border:1px solid rgba(6,182,212,.35);
+  background:linear-gradient(120deg, rgba(6,182,212,.15), rgba(2,6,23,.02));
+  color:var(--cyan-400);
+  font-weight:600;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+  font-size:.75rem;
+}
+.btn-chip-secondary{
+  border-color:rgba(148,163,184,.4);
+  color:var(--slate-200);
+  background:linear-gradient(120deg, rgba(148,163,184,.12), rgba(2,6,23,.02));
+}
+@media (max-width:480px){
+  .filter-grid .type-field,
+  .filter-grid .kw-field,
+  .filter-grid .btn-row{
+    grid-column:1 / -1;
+  }
+  .filter-grid .btn-row{
+    flex-direction:column;
+  }
+}
+.section-wrap{
+  position:relative;
+  padding-top:2.6rem;
+}
+.chip-float{
+  position:absolute;
+  top:0;
+  left:1rem;
+  z-index:30;
+}
+.chip-float-right{
+  position:absolute;
+  top:0;
+  right:1rem;
+  z-index:30;
+  text-align:right;
+  line-height:1.05;
+  min-width:7rem;
+  max-width:12rem;
+  white-space:normal;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:flex-start;
+  height:auto;
+}
+@media (max-width:640px){
+  .chip-float-right{
+    min-width:7.5rem;
+    max-width:10rem;
+    font-size:.78rem;
+  }
+}
+#count .count-main{
+  display:block;
+}
+#count .count-extra{
+  display:block;
+  color:var(--slate-500);
+}
+.site-header{
+  z-index:60;
+}
+.signature{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:linear-gradient(90deg, rgba(14,165,233,.25), rgba(34,197,94,.25), rgba(167,139,250,.25));
+  border-top:1px solid rgba(148,163,184,.25);
+  padding:10px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  backdrop-filter:blur(6px);
+  z-index:50;
+}
+.sign-left{
+  font-size:12px;
+  color:#d1d5db;
+  text-align:center;
+  width:100%;
+}
+.sign-left strong{display:block;font-size:13px;color:#f8fafc}
+.sign-left span{display:block;font-size:11px;color:#cbd5e1}
+.sign-right{display:none}
+
+/* Table numeric alignment */
+.num{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+.font-mono{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
 </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-<div class="max-w-6xl mx-auto p-4 space-y-6">
+<body class="bg-slate-950 text-slate-100">
+<header class="site-header sticky top-0 z-20 bg-slate-950/80 backdrop-blur border-b border-slate-800">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-xl sm:text-2xl font-semibold tracking-tight">Rolling Bearing Finder</h1>
+      <p class="text-xs text-slate-400">Dimension-first lookup • Rolling bearings only (combined bearings and units excluded) • This page focuses on rolling bearing type taxonomy and boundary dimensions (d, D, B).</p>
+    </div>
+  </div>
+</header>
 
-<h1 class="text-3xl font-semibold">Bearing Finder</h1>
+<main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
 <!-- Filter panel -->
-<section class="bg-white rounded-xl shadow p-4 flex flex-wrap gap-4 items-end">
-  <div>
-    <label class="block text-sm font-medium mb-1" for="type">Bearing type</label>
-    <select id="type" class="border rounded px-2 py-1">
-      <optgroup label="All"><option value="all_bearings">All types</option></optgroup>
-      <optgroup label="Ball bearings">
-        <option value="deep_groove_ball_bearings">Deep‑groove ball</option>
-        <option value="angular_contact_ball_bearings">Angular‑contact ball</option>
-        <option value="self_aligning_ball_bearings">Self‑aligning ball</option>
-        <option value="thrust_ball_bearings">Thrust ball</option>
-      </optgroup>
-      <optgroup label="Roller bearings">
-        <option value="cylindrical_roller_bearings">Cylindrical roller</option>
-        <option value="tapered_roller_bearings">Tapered roller</option>
-        <option value="spherical_roller_bearings">Spherical roller</option>
-        <option value="needle_roller_bearings">Needle roller</option>
-        <option value="thrust_roller_bearings">Thrust roller</option>
-      </optgroup>
-    </select>
+<div class="section-wrap">
+  <span class="section-chip chip-float">Search Tool</span>
+  <section class="rounded-xl border border-slate-800 bg-slate-900/50 shadow-sm p-4">
+  <div class="grid grid-cols-2 lg:grid-cols-14 gap-3 items-end filter-grid">
+    <div class="col-span-2 lg:col-span-3 type-field">
+      <select id="type" aria-label="Rolling bearing type" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/40" title="Rolling bearing type">
+        <option value="all_bearings">All rolling bearings</option>
+        <optgroup label="Ball bearings - radial">
+          <option value="deep_groove_ball_bearings">Deep groove ball bearing</option>
+          <option value="angular_contact_ball_bearings">Angular contact ball bearing (incl. 4-point contact)</option>
+          <option value="self_aligning_ball_bearings">Self-aligning ball bearing</option>
+        </optgroup>
+        <optgroup label="Ball bearings - thrust">
+          <option value="thrust_ball_bearings">Thrust ball bearing (single/double direction)</option>
+        </optgroup>
+        <optgroup label="Roller bearings - radial">
+          <option value="cylindrical_roller_bearings">Cylindrical roller bearing</option>
+          <option value="needle_roller_bearings">Needle roller bearing</option>
+          <option value="tapered_roller_bearings">Tapered roller bearing</option>
+          <option value="spherical_roller_bearings">Spherical roller bearing</option>
+          <option value="toroidal_roller_bearings">Toroidal roller bearing (CARB)</option>
+        </optgroup>
+        <optgroup label="Roller bearings - thrust">
+          <option value="thrust_roller_bearings">Thrust roller bearing (general)</option>
+          <option value="cylindrical_thrust_roller_bearings">Cylindrical thrust roller bearing</option>
+          <option value="needle_thrust_roller_bearings">Needle thrust roller bearing</option>
+          <option value="tapered_thrust_roller_bearings">Tapered thrust roller bearing</option>
+          <option value="spherical_thrust_roller_bearings">Spherical thrust roller bearing</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="col-span-2 lg:col-span-2">
+      <div class="field-group narrow">
+        <input id="dmin" type="number" step="1" max="999" inputmode="numeric" placeholder="d min" aria-label="Min bore d (mm)" class="text-sm placeholder:text-slate-600 focus:outline-none">
+        <span class="text-slate-500">-</span>
+        <input id="dmax" type="number" step="1" max="999" inputmode="numeric" placeholder="d max" aria-label="Max bore d (mm)" class="text-sm placeholder:text-slate-600 focus:outline-none">
+        <span class="unit-label" aria-hidden="true">mm</span>
+      </div>
+    </div>
+
+    <div class="col-span-2 lg:col-span-2">
+      <div class="field-group narrow">
+        <input id="Dmin" type="number" step="1" max="999" inputmode="numeric" placeholder="D min" aria-label="Min outer diameter D (mm)" class="text-sm placeholder:text-slate-600 focus:outline-none">
+        <span class="text-slate-500">-</span>
+        <input id="Dmax" type="number" step="1" max="999" inputmode="numeric" placeholder="D max" aria-label="Max outer diameter D (mm)" class="text-sm placeholder:text-slate-600 focus:outline-none">
+        <span class="unit-label" aria-hidden="true">mm</span>
+      </div>
+    </div>
+
+    <div class="col-span-2 lg:col-span-2">
+      <div class="field-group narrow">
+        <input id="Bmin" type="number" step="1" max="999" inputmode="numeric" placeholder="B min" aria-label="Min width B (mm)" class="text-sm placeholder:text-slate-600 focus:outline-none">
+        <span class="text-slate-500">-</span>
+        <input id="Bmax" type="number" step="1" max="999" inputmode="numeric" placeholder="B max" aria-label="Max width B (mm)" class="text-sm placeholder:text-slate-600 focus:outline-none">
+        <span class="unit-label" aria-hidden="true">mm</span>
+      </div>
+    </div>
+
+    <div class="col-span-2 lg:col-span-3 kw-field">
+      <input id="kw" type="text" aria-label="Keyword" placeholder="ISO / series / designation" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/40" title="Keyword">
+    </div>
+
+    <div class="col-span-2 lg:col-span-2 flex gap-2 btn-row">
+      <button id="search" type="button" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 btn-chip focus:outline-none focus:ring-2 focus:ring-cyan-500/40 hover:bg-slate-950/40">
+        <span>Search</span>
+      </button>
+      <button id="resetFilters" type="button" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 btn-chip btn-chip-secondary focus:outline-none focus:ring-2 focus:ring-cyan-500/40 hover:bg-slate-950/40">
+        <span>Clear</span>
+      </button>
+    </div>
   </div>
-  <div><label class="block text-sm font-medium mb-1">Min d (mm)</label>
-    <input id="dmin" type="number" step="1" class="border rounded px-2 py-1 w-24"></div>
-  <div><label class="block text-sm font-medium mb-1">Max d (mm)</label>
-    <input id="dmax" type="number" step="1" class="border rounded px-2 py-1 w-24"></div>
-  <div><label class="block text-sm font-medium mb-1">Max D (mm)</label>
-    <input id="Dmax" type="number" step="1" class="border rounded px-2 py-1 w-24"></div>
-  <div><label class="block text-sm font-medium mb-1">Max B (mm)</label>
-    <input id="Bmax" type="number" step="1" class="border rounded px-2 py-1 w-24"></div>
-  <div><label class="block text-sm font-medium mb-1">Keyword</label>
-    <input id="kw" type="text" placeholder="ISO / series / brand" class="border rounded px-2 py-1 w-48"></div>
-  <button id="search" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
-  <span id="count" class="ml-auto text-sm text-slate-600"></span>
-</section>
-
-<!-- Performance Matrix -->
-<section class="bg-white rounded-xl shadow p-4 overflow-x-auto">
-  <h2 class="text-lg font-medium mb-2">Performance Matrix</h2>
-  <table id="matrix" class="min-w-full text-sm border">
-    <thead class="bg-gray-100 text-xs uppercase">
-      <tr><th>Type</th><th>Radial</th><th>Axial</th><th>Align</th><th>Acc.</th><th>Speed</th><th>Noise</th><th>Friction</th></tr>
-    </thead>
-    <tbody class="divide-y"></tbody>
-  </table>
-</section>
-
-<!-- Results -->
-<section id="result-container" class="bg-white rounded-xl shadow relative max-h-96 overflow-y-auto">
-  <div id="loader" class="absolute inset-0 flex items-center justify-center bg-white/70 hidden">
-    <span class="spinner"></span>
-  </div>
-  <table id="results" class="compact-table divide-y divide-gray-200 w-full">
-    <thead class="bg-gray-100 text-xs uppercase">
-      <tr>
-        <th>Type<br><input data-filter="type" class="filter-input"></th>
-        <th>ISO<br><input data-filter="iso_code" class="filter-input"></th>
-        <th>Series<br><input data-filter="series" class="filter-input"></th>
-        <th>d (mm)<br><input data-filter="bore_d" type="number" class="filter-input"></th>
-        <th>D (mm)<br><input data-filter="outer_d" type="number" class="filter-input"></th>
-        <th>B (mm)<br><input data-filter="width_b" type="number" class="filter-input"></th>
-        <th>C (N)<br><input data-filter="dynamic_c" type="number" class="filter-input"></th>
-        <th>C₀ (N)<br><input data-filter="static_c0" type="number" class="filter-input"></th>
-        <th>Mfr.<br><input data-filter="manufacturer" class="filter-input"></th>
-      </tr>
-    </thead>
-    <tbody id="tbody" class="divide-y divide-gray-200"></tbody>
-  </table>
-</section>
-
+  <p class="mt-2 text-xs text-slate-500">ISO vocabulary-aligned groups; variants (seals, clearance, accuracy) are attributes, not types.</p>
+  </section>
 </div>
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-const supabase = createClient('https://smpursaseraicgckafdh.supabase.co','sb_publishable_IPVG86Dn5WQDqpDDZx2twQ_9DIconOy');
+<!-- Results -->
+<div class="section-wrap">
+  <span class="section-chip chip-float">Search Results</span>
+  <span id="count" class="chip-float-right text-xs text-slate-400 bg-slate-950/80 backdrop-blur border border-slate-800 rounded-lg px-2 py-1">Shown: - / -</span>
+  <section class="rounded-xl border border-slate-800 bg-slate-950 shadow-sm overflow-hidden">
+  <div id="result-container" class="max-h-[26rem] overflow-y-auto relative bg-slate-950">
+  <div id="loader" class="absolute inset-0 flex items-center justify-center hidden pointer-events-none">
+    <span class="spinner"></span>
+  </div>
+  <table id="results" class="compact-table w-full divide-y divide-slate-800">
+  <colgroup>
+      <col style="width:3.2rem">
+      <col style="width:4.5rem">
+      <col class="designation-col">
+      <col style="width:7rem">
+      <col style="width:7rem">
+      <col style="width:6rem">
+      <col style="width:8rem">
+    </colgroup>
+    <thead class="text-xs text-slate-300">
+      <tr class="border-b border-slate-800">
+        <th class="px-3 py-2 text-right">#</th>
+        <th class="text-left px-3 py-2 type-header">Brand</th>
+        <th class="text-left px-2 py-2 tight-col designation-col">Designation</th>
+        <th class="px-2 py-2 text-right tight-col">d (mm)</th>
+        <th class="px-2 py-2 text-right tight-col">D (mm)</th>
+        <th class="px-3 py-2 text-right">B (mm)</th>
+        <th class="text-left px-3 py-2 type-header">Type</th>
+      </tr>
+    </thead>
+    <tbody id="tbody" class="divide-y divide-slate-800 text-slate-400"></tbody>
+  </table>
+</div>
+  </section>
+</div>
 
-/* Matrix rendering */
-function dotBar(level){
-  let s='';
-  for(let i=1;i<=5;i++){s+=`<span class="dot ${(i<=level)?'l'+level:'empty'}"></span>`;}
-  return s;
-}
-const matrixData=[['Deep‑groove ball',4,3,3,3,5,5,5],['Angular‑contact ball',4,4,1,3,5,4,4],['Self‑aligning ball',4,3,5,1,3,2,4],['Cylindrical roller',5,2,3,4,4,3,4],['Tapered roller',5,5,3,3,3,4,4],['Spherical roller',5,4,5,1,3,3,4],['Needle roller',5,2,3,3,4,3,3],['Thrust ball',1,5,1,3,4,4,4],['Thrust roller',1,5,4,3,3,3,4]];
-const mbody=document.querySelector('#matrix tbody');
-matrixData.forEach(r=>{mbody.insertAdjacentHTML('beforeend',`<tr class="hover:bg-slate-50"><td class="px-3 py-1">${r[0]}</td>${r.slice(1).map(dotBar).map(c=>`<td>${c}</td>`).join('')}</tr>`);});
+<!-- Performance Matrix -->
+<div id="matrix-section" class="section-wrap">
+  <span class="section-chip chip-float">Bearing Type Guidance Matrix (Typical)</span>
+  <section class="rounded-xl border border-slate-800 bg-slate-900/50 shadow-sm p-4">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div class="text-xs text-slate-200 flex flex-wrap items-center gap-2">
+    <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#ef4444"></span><span>Poor</span></span>
+    <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#f97316"></span><span>Fair</span></span>
+    <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#facc15"></span><span>Moderate</span></span>
+    <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#a3e635"></span><span>Good</span></span>
+    <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#34d399"></span><span>Excellent</span></span>
+    </div>
+  </div>
+  <div class="overflow-x-auto">
+    <table id="matrix" class="min-w-full text-sm">
+      <thead class="bg-slate-950/40 text-xs text-slate-300">
+        <tr class="border-b border-slate-800">
+          <th class="text-left px-3 py-2"><span class="matrix-headline matrix-headline-left"><span>Bearing</span><span>Type</span></span></th>
+          <th class="px-3 py-2" title="Radial load capacity (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Radial</span><span>Load</span></span></th>
+          <th class="px-3 py-2" title="Axial load capacity (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Axial</span><span>Load</span></span></th>
+          <th class="px-3 py-2" title="Misalignment tolerance (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Misalign</span><span>Tolerance</span></span></th>
+          <th class="px-3 py-2" title="Shock / impact suitability (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Shock</span><span>Load</span></span></th>
+          <th class="px-3 py-2" title="Speed capability (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Speed</span><span>Limit</span></span></th>
+          <th class="px-3 py-2" title="Noise emission / quietness (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Noise</span><span>Emission</span></span></th>
+          <th class="px-3 py-2" title="Low friction / lower losses (relative 1-5 scale; higher is better)"><span class="matrix-headline"><span>Friction</span><span>Loss</span></span></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-800"></tbody>
+    </table>
+  </div>
+  </section>
+</div>
 
-/* Map for labels */
-const labelMap={deep_groove_ball_bearings:'Deep‑groove ball',angular_contact_ball_bearings:'Angular‑contact ball',self_aligning_ball_bearings:'Self‑aligning ball',thrust_ball_bearings:'Thrust ball',cylindrical_roller_bearings:'Cylindrical roller',tapered_roller_bearings:'Tapered roller',spherical_roller_bearings:'Spherical roller',needle_roller_bearings:'Needle roller',thrust_roller_bearings:'Thrust roller',all_bearings:''};
+</main>
 
-/* Infinite scroll vars */
-const pageSize=100;
-let offset=0, allLoaded=false, loading=false, lastQuery=null;
+<div class="signature" aria-label="Sipahi imzası">
+  <div class="sign-left">
+    <strong>Mechanical Toolbox 2025</strong>
+    <strong>Rolling Bearing Finder</strong>
+    <span>sipahi</span>
+  </div>
+</div>
 
-function showLoader(v){document.getElementById('loader').classList.toggle('hidden',!v);}
+<script>
+(function renderTypeSelectionMatrix(){
+  const mbody = document.querySelector('#matrix tbody');
+  if(!mbody) return;
 
-function buildQuery(table,f){
-  let q=supabase.from(table).select('*').order('bore_d',{ascending:true});
-  if(f.dmin) q=q.gte('bore_d',f.dmin);
-  if(f.dmax) q=q.lte('bore_d',f.dmax);
-  if(f.Dmax) q=q.lte('outer_d',f.Dmax);
-  if(f.Bmax) q=q.lte('width_b',f.Bmax);
-  if(f.kw){
-    const k=f.kw.replace(/[%]/g,'');
-    q=q.or(`iso_code.ilike.*${k}*,series.ilike.*${k}*,manufacturer.ilike.*${k}*`);
+  const matrixMetrics = ['Radial load','Axial load','Misalignment','Shock','Speed','Quietness','Low friction'];
+  const matrixData = [
+    ['Deep groove ball',4,3,2,3,5,5,5],
+    ['Angular contact ball',4,4,1,3,5,4,4],
+    ['Self-aligning ball',3,2,5,2,3,3,4],
+    ['Cylindrical roller',5,2,2,4,4,3,3],
+    ['Tapered roller',5,5,2,4,3,3,2],
+    ['Spherical roller',5,4,5,5,3,2,2],
+    ['Needle roller',5,2,2,3,4,3,3],
+    ['Toroidal roller (CARB)',5,2,4,4,4,2,3],
+    ['Thrust ball',1,5,1,2,4,4,4],
+    ['Thrust roller (general)',1,5,2,4,3,3,2],
+    ['Cylindrical thrust roller',1,5,1,4,3,2,2],
+    ['Needle thrust roller',1,4,1,3,4,2,3],
+    ['Tapered thrust roller',2,5,1,4,3,2,2],
+    ['Spherical thrust roller',3,5,5,5,3,2,2],
+  ];
+
+  const colors = ['#ef4444','#f97316','#facc15','#a3e635','#34d399'];
+  const inactive = '#1e293b';
+
+  function ratingBar(level, label){
+    const title = `${label}: ${level}/5`;
+    const parts = Array.from({length:5}, (_v, idx) => {
+      const bg = idx < level ? colors[idx] : inactive;
+      return `<span style="display:inline-block;width:16px;height:8px;border-radius:3px;background:${bg}"></span>`;
+    }).join('');
+    return `<div style="display:flex;align-items:center;justify-content:center;gap:4px" title="${title}" aria-label="${title}">${parts}</div>`;
   }
-  Object.entries(f.column||{}).forEach(([k,v])=>{
-    if(!v) return;
-    const nums=['bore_d','outer_d','width_b','dynamic_c','static_c0'];
-    q=nums.includes(k)?q.eq(k,parseFloat(v)):q.ilike(k,'%'+v+'%');
-  });
-  return q;
-}
 
-async function fetchPage(){
-  if(loading||allLoaded) return;
-  loading=true; showLoader(true);
-  const {data,error}=await lastQuery.range(offset,offset+pageSize-1);
-  showLoader(false); loading=false;
-  if(error){console.error(error);return;}
-  if(!data.length){allLoaded=true;return;}
-  offset+=data.length; appendRows(data);
-  document.getElementById('count').textContent=`Results: ${offset}${allLoaded?' (all loaded)':''}`;
-}
-
-function appendRows(rows){
-  const tb=document.getElementById('tbody');
-  const current=document.getElementById('type').value;
-  rows.forEach(r=>{
-    const t=r.type ?? labelMap[current] ?? '';
-    tb.insertAdjacentHTML('beforeend',`<tr class="hover:bg-slate-50"><td>${t}</td><td>${r.iso_code??''}</td><td>${r.series??''}</td><td>${r.bore_d??''}</td><td>${r.outer_d??''}</td><td>${r.width_b??''}</td><td>${r.dynamic_c??''}</td><td>${r.static_c0??''}</td><td>${r.manufacturer??''}</td></tr>`);
-  });
-}
-
-function clearTable(){document.getElementById('tbody').innerHTML='';offset=0;allLoaded=false;document.getElementById('count').textContent='';}
-
-async function search(){
-  clearTable();
-  const f={dmin:parseInt(document.getElementById('dmin').value)||null,dmax:parseInt(document.getElementById('dmax').value)||null,Dmax:parseInt(document.getElementById('Dmax').value)||null,Bmax:parseInt(document.getElementById('Bmax').value)||null,kw:document.getElementById('kw').value.trim(),column:{}};
-  document.querySelectorAll('.filter-input').forEach(i=>{if(i.value)f.column[i.dataset.filter]=i.value});
-  lastQuery=buildQuery(document.getElementById('type').value,f);
-  await fetchPage();
-}
-
-document.getElementById('search').addEventListener('click',search);
-document.querySelectorAll('.filter-input').forEach(i=>i.addEventListener('keyup',e=>{if(e.key==='Enter')search();}));
-document.getElementById('result-container').addEventListener('scroll',e=>{
-  const el=e.target;
-  if(el.scrollTop+el.clientHeight>=el.scrollHeight-40){fetchPage();}
-});
+  mbody.innerHTML = '';
+  for(const row of matrixData){
+    const [type, ...levels] = row;
+    const cells = levels.map((level, idx)=>`<td class="px-3 py-2">${ratingBar(level, matrixMetrics[idx])}</td>`).join('');
+      mbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-950/40"><td class="px-3 py-2 text-slate-100 font-medium matrix-type" title="${type}">${type}</td>${cells}</tr>`);
+  }
+})();
 </script>
+
+<script>
+(function bearingFinderLocalData(){
+  const labelMap = {
+    deep_groove_ball_bearings: 'Deep groove ball',
+    angular_contact_ball_bearings: 'Angular contact ball',
+    self_aligning_ball_bearings: 'Self-aligning ball',
+    thrust_ball_bearings: 'Thrust ball',
+    cylindrical_roller_bearings: 'Cylindrical roller',
+    needle_roller_bearings: 'Needle roller',
+    tapered_roller_bearings: 'Tapered roller',
+    spherical_roller_bearings: 'Spherical roller',
+    toroidal_roller_bearings: 'Toroidal roller (CARB)',
+    thrust_roller_bearings: 'Thrust roller',
+    cylindrical_thrust_roller_bearings: 'Cylindrical thrust roller',
+    needle_thrust_roller_bearings: 'Needle thrust roller',
+    tapered_thrust_roller_bearings: 'Tapered thrust roller',
+    spherical_thrust_roller_bearings: 'Spherical thrust roller',
+    all_bearings: '',
+  };
+
+  const dataFiles = {
+    deep_groove_ball_bearings: [
+      {path: 'assets/data/bearings/deep_groove_ball_bearings.csv', brand: 'Datafew'},
+      {path: 'assets/data/bearings/skf_deep_groove_ball_bearings.csv', brand: 'SKF'},
+    ],
+    angular_contact_ball_bearings: [{path: 'assets/data/bearings/angular_contact_ball_bearings.csv', brand: 'Datafew'}],
+    self_aligning_ball_bearings: [{path: 'assets/data/bearings/self_aligning_ball_bearings.csv', brand: 'Datafew'}],
+    thrust_ball_bearings: [{path: 'assets/data/bearings/thrust_ball_bearings.csv', brand: 'Datafew'}],
+    cylindrical_roller_bearings: [{path: 'assets/data/bearings/cylindrical_roller_bearings.csv', brand: 'Datafew'}],
+    needle_roller_bearings: [{path: 'assets/data/bearings/needle_roller_bearings.csv', brand: 'Datafew'}],
+    tapered_roller_bearings: [{path: 'assets/data/bearings/tapered_roller_bearings.csv', brand: 'Datafew'}],
+    spherical_roller_bearings: [{path: 'assets/data/bearings/spherical_roller_bearings.csv', brand: 'Datafew'}],
+    toroidal_roller_bearings: [{path: 'assets/data/bearings/toroidal_roller_bearings.csv', brand: 'Datafew'}],
+    thrust_roller_bearings: [{path: 'assets/data/bearings/thrust_roller_bearings.csv', brand: 'Datafew'}],
+    cylindrical_thrust_roller_bearings: [{path: 'assets/data/bearings/cylindrical_thrust_roller_bearings.csv', brand: 'Datafew'}],
+    needle_thrust_roller_bearings: [{path: 'assets/data/bearings/needle_thrust_roller_bearings.csv', brand: 'Datafew'}],
+    tapered_thrust_roller_bearings: [{path: 'assets/data/bearings/tapered_thrust_roller_bearings.csv', brand: 'Datafew'}],
+    spherical_thrust_roller_bearings: [{path: 'assets/data/bearings/spherical_thrust_roller_bearings.csv', brand: 'Datafew'}],
+  };
+
+  const fileCache = new Map();
+  const typeCache = new Map();
+
+  const pageSize = 100;
+  let offset = 0;
+  let allLoaded = false;
+  let loading = false;
+  let filteredRows = [];
+
+  const els = {
+    typeSel: document.getElementById('type'),
+    dmin: document.getElementById('dmin'),
+    dmax: document.getElementById('dmax'),
+    Dmin: document.getElementById('Dmin'),
+    Dmax: document.getElementById('Dmax'),
+    Bmin: document.getElementById('Bmin'),
+    Bmax: document.getElementById('Bmax'),
+    kw: document.getElementById('kw'),
+    tbody: document.getElementById('tbody'),
+    count: document.getElementById('count'),
+    loader: document.getElementById('loader'),
+    resultContainer: document.getElementById('result-container'),
+    btnSearch: document.getElementById('search'),
+    btnReset: document.getElementById('resetFilters'),
+  };
+
+  function showLoader(v){
+    if(!els.loader) return;
+    els.loader.classList.toggle('hidden', !v);
+  }
+
+  function setCount(text, isError=false){
+    if(!els.count) return;
+    const marker = ' (scroll to load more)';
+    let mainText = text || '';
+    let extraText = '';
+    if(mainText.includes(marker)){
+      extraText = 'Scroll to load more';
+      mainText = mainText.replace(marker, '');
+    }
+    const mainHtml = escapeHtml(mainText);
+    const extraHtml = extraText ? `<span class="count-extra">${escapeHtml(extraText)}</span>` : '';
+    els.count.innerHTML = `<span class="count-main">${mainHtml}</span>${extraHtml}`;
+    els.count.classList.toggle('text-red-400', !!isError);
+  }
+
+  function splitCsvLine(line){
+    const out = [];
+    let curr = '';
+    let inQuotes = false;
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch === '"'){
+        if(inQuotes && line[i+1] === '"'){ curr += '"'; i++; continue; }
+        inQuotes = !inQuotes;
+        continue;
+      }
+      if(ch === ',' && !inQuotes){
+        out.push(curr);
+        curr = '';
+        continue;
+      }
+      curr += ch;
+    }
+    out.push(curr);
+    return out;
+  }
+
+  function parseCsv(text){
+    const clean = String(text || '').replace(/\uFEFF/g, '');
+    const lines = clean.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if(lines.length === 0) return [];
+    const headers = splitCsvLine(lines[0]).map(h => h.trim()).filter(Boolean);
+    const rows = [];
+    for(let i=1;i<lines.length;i++){
+      const cols = splitCsvLine(lines[i]);
+      const row = {};
+      for(let j=0;j<headers.length;j++){
+        row[headers[j]] = (cols[j] ?? '').trim();
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function toNumberOrNull(value){
+    if(value === undefined || value === null) return null;
+    const s = String(value).trim();
+    if(!s) return null;
+    const n = parseFloat(s.replace(',', '.'));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function normalizeRow(raw, typeKey, {brand} = {}){
+    const iso = raw.iso_code || raw.iso || raw.code || raw.designation || raw.Designation || '';
+    const series = raw.series || raw.Series || '';
+    const loadRating = toNumberOrNull(raw.load_rating || raw['Basic dynamic load rating'] || raw['Basic dynamic load rating (Cr)']);
+    const limitingSpeed = toNumberOrNull(raw.limiting_speed || raw['Limiting speed'] || raw['Limiting speed (rpm)']);
+    const brandValue = raw.brand || brand || '';
+    return {
+      type: raw.type || labelMap[typeKey] || '',
+      iso_code: iso,
+      series: series,
+      bore_d: toNumberOrNull(raw.bore_d || raw['Bore diameter']),
+      outer_d: toNumberOrNull(raw.outer_d || raw['Outside diameter']),
+      width_b: toNumberOrNull(raw.width_b || raw['Width'] || raw.width),
+      load_rating: loadRating,
+      limiting_speed: limitingSpeed,
+      brand: brandValue,
+      _source: typeKey,
+    };
+  }
+
+  async function loadFile(path, typeKey, opts){
+    if(fileCache.has(path)) return fileCache.get(path);
+    const promise = (async () => {
+      const res = await fetch(path, { cache: 'no-store' });
+      if(!res.ok) throw new Error(`Failed to load ${path} (HTTP ${res.status})`);
+      const text = await res.text();
+      const rawRows = parseCsv(text);
+      return rawRows
+        .map(r => normalizeRow(r, typeKey, opts || {}))
+        .filter(r => r.iso_code || r.bore_d || r.outer_d || r.width_b);
+    })();
+    fileCache.set(path, promise);
+    return promise;
+  }
+
+  async function loadTypeRows(typeKey){
+    if(typeCache.has(typeKey)) return typeCache.get(typeKey);
+
+    const promise = (async () => {
+      if(typeKey === 'all_bearings'){
+        const keys = Object.keys(dataFiles);
+        const all = await Promise.all(keys.map(k => loadTypeSources(k).catch(() => [])));
+        return all.flat();
+      }
+
+      return loadTypeSources(typeKey);
+    })();
+
+    typeCache.set(typeKey, promise);
+    return promise;
+  }
+
+  async function loadTypeSources(typeKey){
+    const entry = dataFiles[typeKey];
+    if(!entry) return [];
+    const sources = Array.isArray(entry) ? entry : [entry];
+    const rows = await Promise.all(sources.map(src => loadFile(src.path, typeKey, src).catch(() => [])));
+    return rows.flat();
+  }
+
+  function escapeHtml(s){
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function truncateText(value, limit=16){
+    const text = String(value ?? '');
+    return text.length > limit ? `${text.slice(0, limit)}…` : text;
+  }
+
+  function appendRows(rows, startIndex){
+    if(!els.tbody) return;
+    const current = els.typeSel?.value || 'all_bearings';
+    const defaultType = labelMap[current] || '';
+    const frag = document.createDocumentFragment();
+    for(let i = 0; i < rows.length; i++){
+      const r = rows[i];
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-950/40';
+      const t = r.type || defaultType;
+      const idx = (startIndex || 1) + i;
+      const brandLabel = escapeHtml(r.brand || 'Datafew');
+      const typeText = truncateText(t, 16);
+      tr.innerHTML = `
+        <td class="num font-mono">${idx}</td>
+      <td class="type-col">${brandLabel}</td>
+      <td class="tight-col designation-col"><span class="designation-text" title="${escapeHtml(r.iso_code)}">${escapeHtml(r.iso_code)}</span></td>
+      <td class="num font-mono tight-col">${r.bore_d ?? ''}</td>
+      <td class="num font-mono tight-col">${r.outer_d ?? ''}</td>
+      <td class="num font-mono">${r.width_b ?? ''}</td>
+      <td class="type-col font-medium"><span class="type-text" title="${escapeHtml(t)}">${escapeHtml(typeText)}</span></td>
+      `;
+      frag.appendChild(tr);
+    }
+    els.tbody.appendChild(frag);
+  }
+
+  function clearTable(){
+    if(els.tbody) els.tbody.innerHTML = '';
+    offset = 0;
+    allLoaded = false;
+    filteredRows = [];
+    setCount('Shown: - / -');
+  }
+
+  function applyFilters(rows, f){
+    let out = rows.slice();
+
+    const inRange = (val, min, max) => {
+      if(val == null) return false;
+      if(min != null && max != null){
+        if(min === max) return val === min;
+        return val >= min && val <= max;
+      }
+      if(min != null) return val === min;
+      if(max != null) return val === max;
+      return true;
+    };
+
+    if(f.dmin != null || f.dmax != null){
+      out = out.filter(r => inRange(r.bore_d, f.dmin, f.dmax));
+    }
+    if(f.Dmin != null || f.Dmax != null){
+      out = out.filter(r => inRange(r.outer_d, f.Dmin, f.Dmax));
+    }
+    if(f.Bmin != null || f.Bmax != null){
+      out = out.filter(r => inRange(r.width_b, f.Bmin, f.Bmax));
+    }
+
+    if(f.kw){
+      const k = f.kw.toLowerCase();
+      out = out.filter(r => {
+        const hay = [
+          r.iso_code,
+          r.series,
+          r.type,
+        ].map(v => String(v || '').toLowerCase());
+        return hay.some(v => v.includes(k));
+      });
+    }
+
+    out.sort((a,b)=>{
+      const da = a.bore_d ?? Infinity, db = b.bore_d ?? Infinity;
+      if(da !== db) return da - db;
+      const oa = a.outer_d ?? Infinity, ob = b.outer_d ?? Infinity;
+      if(oa !== ob) return oa - ob;
+      const wa = a.width_b ?? Infinity, wb = b.width_b ?? Infinity;
+      if(wa !== wb) return wa - wb;
+      return String(a.iso_code || '').localeCompare(String(b.iso_code || ''), undefined, {numeric:true});
+    });
+
+    return out;
+  }
+
+  function renderNextPage(){
+    if(loading || allLoaded) return;
+    loading = true;
+    const slice = filteredRows.slice(offset, offset + pageSize);
+    appendRows(slice, offset + 1);
+    offset += slice.length;
+    allLoaded = offset >= filteredRows.length;
+    setCount(`Shown: ${offset} / ${filteredRows.length}${allLoaded ? '' : ' (scroll to load more)'}`);
+    loading = false;
+  }
+
+  async function search(){
+    clearTable();
+
+    const f = {
+      dmin: els.dmin?.value ? parseInt(els.dmin.value, 10) : null,
+      dmax: els.dmax?.value ? parseInt(els.dmax.value, 10) : null,
+      Dmin: els.Dmin?.value ? parseInt(els.Dmin.value, 10) : null,
+      Dmax: els.Dmax?.value ? parseInt(els.Dmax.value, 10) : null,
+      Bmin: els.Bmin?.value ? parseInt(els.Bmin.value, 10) : null,
+      Bmax: els.Bmax?.value ? parseInt(els.Bmax.value, 10) : null,
+      kw: (els.kw?.value || '').trim(),
+    };
+
+    const typeKey = els.typeSel?.value || 'all_bearings';
+
+    try{
+      showLoader(true);
+      const baseRows = await loadTypeRows(typeKey);
+      filteredRows = applyFilters(baseRows, f);
+
+      if(filteredRows.length === 0){
+        setCount('No matches.');
+      }else{
+        renderNextPage();
+      }
+    }catch(err){
+      console.error(err);
+      const msg = (err && err.message) ? err.message : String(err);
+      setCount(`Data load failed: ${msg}. If opening via file://, use a local server.`, true);
+    }finally{
+      showLoader(false);
+    }
+  }
+
+  function onScroll(){
+    const el = els.resultContainer;
+    if(!el) return;
+    if(el.scrollTop + el.clientHeight >= el.scrollHeight - 40){
+      renderNextPage();
+    }
+  }
+
+  els.btnSearch?.addEventListener('click', search);
+  els.resultContainer?.addEventListener('scroll', onScroll);
+  els.typeSel?.addEventListener('change', () => { clearTable(); setCount('Shown: - / -'); });
+  for(const el of [els.kw, els.dmin, els.dmax, els.Dmin, els.Dmax, els.Bmin, els.Bmax]){
+    el?.addEventListener('keyup', e => { if(e.key === 'Enter') search(); });
+  }
+  els.btnReset?.addEventListener('click', () => {
+    if(els.typeSel) els.typeSel.value = 'all_bearings';
+    for(const el of [els.dmin, els.dmax, els.Dmin, els.Dmax, els.Bmin, els.Bmax, els.kw]){
+      if(el) el.value = '';
+    }
+    search();
+  });
+
+  setCount('Shown: - / -');
+})();
+</script>
+
 </body>
 </html>
