@@ -1,0 +1,4 @@
+iso_code,series,bore_d,outer_d,width_b
+CARB20,Carb,20,43,10
+CARB25,Carb,25,47,13
+CARB30,Carb,30,60,15
