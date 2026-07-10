@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="tr"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HG Serisi 3 Loblu Roots Blower Performans ve Seçim Tablosu</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 100%; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
+        .table-container { overflow-x: auto; margin-bottom: 40px; border: 1px solid #dcdcdc; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; font-size: 10.5px; text-align: center; white-space: nowrap; }
+        thead { background-color: #2c3e50; color: #ffffff; }
+        th { background-color: #2c3e50; color: #ffffff; }
+        thead tr:nth-child(2) th { background-color: #16a085; }
+        th, td { padding: 4px 2px; border: 1px solid #cccccc; }
+        tbody td { cursor: default; }
+        tbody.hide-cursor td { cursor: none !important; }
+        
+        /* Solid background for zebra rows to support sticky column opacity */
+        .model-group-odd td { background-color: #ffffff; }
+        .model-group-even td { background-color: #e5ecf2; }
+        
+        tbody td.highlight-col { background-color: #d4ecfc !important; }
+        tbody tr:hover td { background-color: #bfe2f9 !important; }
+        td.highlight-row-spanned { background-color: #bfe2f9 !important; }
+        tbody tr td:hover { background-color: #e74c3c !important; color: #ffffff !important; text-shadow: 0 0 0.5px currentColor, 0.2px 0 0 currentColor; }
+        
+        .section-title { background-color: #16a085; color: white; padding: 12px; font-size: 14px; font-weight: bold; margin-top: 30px; }
+        .section-row { background-color: #16a085; color: white; font-weight: bold; font-size: 13px; text-align: left; }
+        .section-row td { padding: 10px; text-align: left; border: 1px solid #16a085; }
+
+        /* Sticky Columns CSS configuration */
+        td[data-col="0"], th.sticky-col-0 {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15);
+            width: 54px;
+            min-width: 54px;
+            max-width: 54px;
+        }
+        td[data-col="1"], th.sticky-col-1 {
+            position: sticky;
+            left: 54px;
+            z-index: 2;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15);
+            width: 24px;
+            min-width: 24px;
+            max-width: 24px;
+        }
+        td[data-col="2"], th.sticky-col-2 {
+            position: sticky;
+            left: 78px;
+            z-index: 2;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15);
+            width: 36px;
+            min-width: 36px;
+            max-width: 36px;
+        }
+        td[data-col="3"], th.sticky-col-3 {
+            position: sticky;
+            left: 114px;
+            z-index: 2;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15);
+            width: 36px;
+            min-width: 36px;
+            max-width: 36px;
+        }
+        thead th.sticky-col-0, thead th.sticky-col-1, thead th.sticky-col-2, thead th.sticky-col-3 {
+            background-color: #2c3e50 !important;
+            z-index: 4 !important;
+        }
+
+        /* Uniform width optimization for all pressure data columns (Qs, La, Po) */
+        tbody td:not([data-col="0"]):not([data-col="1"]):not([data-col="2"]):not([data-col="3"]),
+        thead tr:nth-child(2) th {
+            width: 36px;
+            min-width: 36px;
+            max-width: 36px;
+            box-sizing: border-box;
+        }
+
+        /* Responsive adjustments for mobile screens */
+        @media (max-width: 768px) {
+            body { padding: 8px; }
+            .container { padding: 10px; }
+            h1 { font-size: 15px; margin-bottom: 12px; }
+            table { font-size: 9.5px; }
+            
+            /* Enhanced tooltip font and padding for mobile bottom HUD sheet */
+            #custom-tooltip {
+                font-size: 12px !important;
+                padding: 12px 16px !important;
+                border-left: 6px solid #16a085 !important;
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.15) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>HG Serisi 3 Loblu Roots Blower Performans ve Seçim Tablosu</h1>
+
+
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" class="sticky-col-0">Model</th>
+                    <th rowspan="2" class="sticky-col-1">P</th>
+                    <th rowspan="2" class="sticky-col-2">n</th>
+                    <th rowspan="2" class="sticky-col-3">Qth</th>
+                    <th colspan="3">9.8 kPa</th><th colspan="3">19.6 kPa</th><th colspan="3">29.4 kPa</th>
+                    <th colspan="3">39.2 kPa</th><th colspan="3">49.0 kPa</th><th colspan="3">58.8 kPa</th>
+                    <th colspan="3">68.6 kPa</th><th colspan="3">78.4 kPa</th><th colspan="3">88.2 kPa</th>
+                    <th colspan="3">98.0 kPa</th>
+                </tr>
+                <tr>
+                    <th>Qs</th><th>La</th><th>Po</th><th>Qs</th><th>La</th><th>Po</th><th>Qs</th><th>La</th><th>Po</th>
+                    <th>Qs</th><th>La</th><th>Po</th><th>Qs</th><th>La</th><th>Po</th><th>Qs</th><th>La</th><th>Po</th>
+                    <th>Qs</th><th>La</th><th>Po</th><th>Qs</th><th>La</th><th>Po</th><th>Qs</th><th>La</th><th>Po</th>
+                    <th>Qs</th><th>La</th><th>Po</th>
+                </tr>
+            </thead>
+            <tbody>
+<tr class="model-group-odd"><td rowspan="8" data-col="0" class="">HG-50</td><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">1.69</td><td data-col="4">1.12</td><td data-col="5">0.5</td><td data-col="6">1.1</td><td data-col="7">0.90</td><td data-col="8">0.8</td><td data-col="9">1.1</td><td data-col="10">0.75</td><td data-col="11">1.0</td><td data-col="12">1.5</td><td data-col="13">0.60</td><td data-col="14">1.3</td><td data-col="15">2.2</td><td data-col="16">0.45</td><td data-col="17">1.6</td><td data-col="18">2.2</td><td data-col="19" class="">-</td><td data-col="20" class="">-</td><td data-col="21" class="">-</td><td data-col="22" class="">-</td><td data-col="23" class="">-</td><td data-col="24" class="">-</td><td data-col="25" class="">-</td><td data-col="26" class="">-</td><td data-col="27" class="">-</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">2.33</td><td data-col="4">1.76</td><td data-col="5">0.6</td><td data-col="6">1.1</td><td data-col="7">1.55</td><td data-col="8">1.0</td><td data-col="9">1.5</td><td data-col="10">1.45</td><td data-col="11">1.4</td><td data-col="12">2.2</td><td data-col="13">1.30</td><td data-col="14">1.8</td><td data-col="15">2.2</td><td data-col="16">1.10</td><td data-col="17">2.1</td><td data-col="18">3</td><td data-col="19">0.96</td><td data-col="20">2.5</td><td data-col="21">3</td><td data-col="22">0.85</td><td data-col="23">2.8</td><td data-col="24">4</td><td data-col="25" class="">-</td><td data-col="26" class="">-</td><td data-col="27" class="">-</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2500</td><td data-col="3">2.91</td><td data-col="4">2.34</td><td data-col="5">0.9</td><td data-col="6">1.1</td><td data-col="7">2.13</td><td data-col="8">1.3</td><td data-col="9">2.2</td><td data-col="10">1.95</td><td data-col="11">1.8</td><td data-col="12">2.2</td><td data-col="13">1.80</td><td data-col="14">2.2</td><td data-col="15">3</td><td data-col="16">1.65</td><td data-col="17">2.7</td><td data-col="18">4</td><td data-col="19">1.54</td><td data-col="20">3.2</td><td data-col="21">4</td><td data-col="22">1.43</td><td data-col="23">3.7</td><td data-col="24">5.5</td><td data-col="25">1.38</td><td data-col="26">4.1</td><td data-col="27">5.5</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">3.50</td><td data-col="4">2.93</td><td data-col="5">1.1</td><td data-col="6">1.5</td><td data-col="7">2.79</td><td data-col="8">1.5</td><td data-col="9">2.2</td><td data-col="10">2.61</td><td data-col="11">2.2</td><td data-col="12">3</td><td data-col="13">2.40</td><td data-col="14">2.8</td><td data-col="15">4</td><td data-col="16">2.32</td><td data-col="17">3.3</td><td data-col="18">4</td><td data-col="19">2.20</td><td data-col="20">3.8</td><td data-col="21">5.5</td><td data-col="22">2.00</td><td data-col="23">4.5</td><td data-col="24">5.5</td><td data-col="25">1.90</td><td data-col="26">5.1</td><td data-col="27">7.5</td><td data-col="28">1.80</td><td data-col="29">5.6</td><td data-col="30">7.5</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3500</td><td data-col="3">4.08</td><td data-col="4">3.51</td><td data-col="5">1.4</td><td data-col="6">2.2</td><td data-col="7">3.37</td><td data-col="8">2.0</td><td data-col="9">3</td><td data-col="10">3.19</td><td data-col="11">2.7</td><td data-col="12">4</td><td data-col="13">3.00</td><td data-col="14">3.4</td><td data-col="15">4</td><td data-col="16">2.90</td><td data-col="17">4.0</td><td data-col="18">5.5</td><td data-col="19">2.78</td><td data-col="20">4.6</td><td data-col="21">5.5</td><td data-col="22">2.67</td><td data-col="23">5.3</td><td data-col="24">7.5</td><td data-col="25">2.57</td><td data-col="26">6.0</td><td data-col="27">7.5</td><td data-col="28">2.47</td><td data-col="29">6.6</td><td data-col="30">7.5</td><td data-col="31">2.38</td><td data-col="32">7.3</td><td data-col="33">11</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">4000</td><td data-col="3">4.67</td><td data-col="4">4.10</td><td data-col="5">1.7</td><td data-col="6">2.2</td><td data-col="7">3.90</td><td data-col="8">2.4</td><td data-col="9">3</td><td data-col="10">3.78</td><td data-col="11">3.2</td><td data-col="12">4</td><td data-col="13">3.60</td><td data-col="14">3.9</td><td data-col="15">5.5</td><td data-col="16">3.48</td><td data-col="17">4.7</td><td data-col="18">5.5</td><td data-col="19">3.30</td><td data-col="20">5.5</td><td data-col="21">7.5</td><td data-col="22">3.25</td><td data-col="23">6.2</td><td data-col="24">7.5</td><td data-col="25">3.15</td><td data-col="26">7.0</td><td data-col="27">11</td><td data-col="28">3.00</td><td data-col="29">7.7</td><td data-col="30">11</td><td data-col="31">2.90</td><td data-col="32">8.5</td><td data-col="33">11</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">4500</td><td data-col="3">5.25</td><td data-col="4">4.68</td><td data-col="5">2.0</td><td data-col="6">3</td><td data-col="7">4.45</td><td data-col="8">2.9</td><td data-col="9">4</td><td data-col="10">4.35</td><td data-col="11">3.7</td><td data-col="12">5.5</td><td data-col="13">4.20</td><td data-col="14">4.5</td><td data-col="15">5.5</td><td data-col="16">4.00</td><td data-col="17">5.4</td><td data-col="18">7.5</td><td data-col="19">3.94</td><td data-col="20">6.2</td><td data-col="21">7.5</td><td data-col="22">3.80</td><td data-col="23">7.1</td><td data-col="24">11</td><td data-col="25">3.80</td><td data-col="26">7.9</td><td data-col="27">11</td><td data-col="28">3.63</td><td data-col="29">8.8</td><td data-col="30">11</td><td data-col="31">3.45</td><td data-col="32">9.7</td><td data-col="33">11</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">5000</td><td data-col="3">5.83</td><td data-col="4">5.83</td><td data-col="5">2.2</td><td data-col="6">3</td><td data-col="7">5.08</td><td data-col="8">3.1</td><td data-col="9">4</td><td data-col="10">4.93</td><td data-col="11">4.0</td><td data-col="12">5.5</td><td data-col="13">4.78</td><td data-col="14">5.0</td><td data-col="15">5.5</td><td data-col="16">4.55</td><td data-col="17">6.0</td><td data-col="18">7.5</td><td data-col="19">4.50</td><td data-col="20">7.0</td><td data-col="21">11</td><td data-col="22">4.35</td><td data-col="23">7.9</td><td data-col="24">11</td><td data-col="25">4.30</td><td data-col="26">8.8</td><td data-col="27">11</td><td data-col="28">4.20</td><td data-col="29">9.7</td><td data-col="30">11</td><td data-col="31">4.12</td><td data-col="32">10.6</td><td data-col="33">15</td></tr>
+<tr class="model-group-even"><td rowspan="8" data-col="0" class="">HG-65</td><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">2.83</td><td data-col="4">2.08</td><td data-col="5">0.6</td><td data-col="6">1.1</td><td data-col="7">1.75</td><td data-col="8">1.1</td><td data-col="9">1.5</td><td data-col="10">1.50</td><td data-col="11">1.6</td><td data-col="12">2.2</td><td data-col="13">1.30</td><td data-col="14">2.1</td><td data-col="15">3</td><td data-col="16">1.10</td><td data-col="17">2.5</td><td data-col="18">3</td><td data-col="19" class="">-</td><td data-col="20" class="">-</td><td data-col="21" class="">-</td><td data-col="22" class="">-</td><td data-col="23" class="">-</td><td data-col="24" class="">-</td><td data-col="25" class="">-</td><td data-col="26" class="">-</td><td data-col="27" class="">-</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">3.90</td><td data-col="4">3.20</td><td data-col="5">0.9</td><td data-col="6">1.1</td><td data-col="7">2.80</td><td data-col="8">1.6</td><td data-col="9">2.2</td><td data-col="10">2.63</td><td data-col="11">2.2</td><td data-col="12">3</td><td data-col="13">2.42</td><td data-col="14">2.8</td><td data-col="15">4</td><td data-col="16">2.23</td><td data-col="17">3.4</td><td data-col="18">4</td><td data-col="19">2.00</td><td data-col="20">4.1</td><td data-col="21">5.5</td><td data-col="22">1.85</td><td data-col="23">4.7</td><td data-col="24">5.5</td><td data-col="25" class="">-</td><td data-col="26" class="">-</td><td data-col="27" class="">-</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2500</td><td data-col="3">4.80</td><td data-col="4">4.20</td><td data-col="5">1.4</td><td data-col="6">1.5</td><td data-col="7">3.80</td><td data-col="8">2.0</td><td data-col="9">3</td><td data-col="10">3.60</td><td data-col="11">2.9</td><td data-col="12">4</td><td data-col="13">3.40</td><td data-col="14">3.6</td><td data-col="15">5.5</td><td data-col="16">3.21</td><td data-col="17">4.4</td><td data-col="18">5.5</td><td data-col="19">3.00</td><td data-col="20">5.3</td><td data-col="21">7.5</td><td data-col="22">2.80</td><td data-col="23">6.0</td><td data-col="24">7.5</td><td data-col="25">2.70</td><td data-col="26">6.5</td><td data-col="27">11</td><td data-col="28">2.60</td><td data-col="29">7.7</td><td data-col="30">11</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">5.85</td><td data-col="4">5.16</td><td data-col="5">1.7</td><td data-col="6">2.2</td><td data-col="7">4.80</td><td data-col="8">2.6</td><td data-col="9">3</td><td data-col="10">4.50</td><td data-col="11">3.5</td><td data-col="12">4</td><td data-col="13">4.30</td><td data-col="14">4.5</td><td data-col="15">5.5</td><td data-col="16">4.10</td><td data-col="17">5.4</td><td data-col="18">7.5</td><td data-col="19">3.95</td><td data-col="20">6.3</td><td data-col="21">7.5</td><td data-col="22">3.80</td><td data-col="23">7.3</td><td data-col="24">11</td><td data-col="25">3.70</td><td data-col="26">8.3</td><td data-col="27">11</td><td data-col="28">3.50</td><td data-col="29">9.3</td><td data-col="30">11</td><td data-col="31">3.40</td><td data-col="32">10.2</td><td data-col="33">15</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3500</td><td data-col="3">6.83</td><td data-col="4">6.10</td><td data-col="5">2.2</td><td data-col="6">3</td><td data-col="7">5.80</td><td data-col="8">3.2</td><td data-col="9">4</td><td data-col="10">5.50</td><td data-col="11">4.3</td><td data-col="12">5.5</td><td data-col="13">5.30</td><td data-col="14">5.5</td><td data-col="15">7.5</td><td data-col="16">5.10</td><td data-col="17">6.6</td><td data-col="18">7.5</td><td data-col="19">4.90</td><td data-col="20">7.7</td><td data-col="21">11</td><td data-col="22">4.80</td><td data-col="23">8.8</td><td data-col="24">11</td><td data-col="25">4.60</td><td data-col="26">10.0</td><td data-col="27">11</td><td data-col="28">4.50</td><td data-col="29">11.0</td><td data-col="30">15</td><td data-col="31">4.36</td><td data-col="32">12.0</td><td data-col="33">15</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">4000</td><td data-col="3">7.80</td><td data-col="4">7.05</td><td data-col="5">2.4</td><td data-col="6">3</td><td data-col="7">6.70</td><td data-col="8">3.7</td><td data-col="9">5.5</td><td data-col="10">6.50</td><td data-col="11">5.0</td><td data-col="12">5.5</td><td data-col="13">6.30</td><td data-col="14">6.2</td><td data-col="15">7.5</td><td data-col="16">6.10</td><td data-col="17">7.4</td><td data-col="18">11</td><td data-col="19">5.90</td><td data-col="20">8.7</td><td data-col="21">11</td><td data-col="22">5.75</td><td data-col="23">10.0</td><td data-col="24">11</td><td data-col="25">5.60</td><td data-col="26">11.0</td><td data-col="27">15</td><td data-col="28">5.46</td><td data-col="29">12.5</td><td data-col="30">15</td><td data-col="31">5.45</td><td data-col="32">13.8</td><td data-col="33">18.5</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">4500</td><td data-col="3">8.78</td><td data-col="4">8.00</td><td data-col="5">3.0</td><td data-col="6">4</td><td data-col="7">7.70</td><td data-col="8">4.4</td><td data-col="9">5.5</td><td data-col="10">7.45</td><td data-col="11">6.0</td><td data-col="12">7.5</td><td data-col="13">7.30</td><td data-col="14">7.4</td><td data-col="15">11</td><td data-col="16">7.05</td><td data-col="17">8.7</td><td data-col="18">11</td><td data-col="19">6.90</td><td data-col="20">10.2</td><td data-col="21">15</td><td data-col="22">6.70</td><td data-col="23">11.6</td><td data-col="24">15</td><td data-col="25">6.58</td><td data-col="26">13.0</td><td data-col="27">15</td><td data-col="28">6.50</td><td data-col="29">14.5</td><td data-col="30">18.5</td><td data-col="31">6.30</td><td data-col="32">15.9</td><td data-col="33">18.5</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">5000</td><td data-col="3">9.75</td><td data-col="4">9.00</td><td data-col="5">3.5</td><td data-col="6">4</td><td data-col="7">8.68</td><td data-col="8">5.1</td><td data-col="9">7.5</td><td data-col="10">8.40</td><td data-col="11">6.8</td><td data-col="12">7.5</td><td data-col="13">8.20</td><td data-col="14">8.3</td><td data-col="15">11</td><td data-col="16">8.00</td><td data-col="17">10.0</td><td data-col="18">11</td><td data-col="19">7.85</td><td data-col="20">11.5</td><td data-col="21">15</td><td data-col="22">7.70</td><td data-col="23">13.1</td><td data-col="24">15</td><td data-col="25">7.55</td><td data-col="26">14.7</td><td data-col="27">18.5</td><td data-col="28">7.40</td><td data-col="29">16.4</td><td data-col="30">18.5</td><td data-col="31">7.30</td><td data-col="32">17.9</td><td data-col="33">22</td></tr>
+<tr class="model-group-odd"><td rowspan="9" data-col="0" class="">HG-80</td><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">7.27</td><td data-col="4">6.05</td><td data-col="5">1.9</td><td data-col="6">2.2</td><td data-col="7">5.55</td><td data-col="8">3.0</td><td data-col="9">4</td><td data-col="10">5.20</td><td data-col="11">4.3</td><td data-col="12">5.5</td><td data-col="13">4.90</td><td data-col="14">5.3</td><td data-col="15">7.5</td><td data-col="16">4.70</td><td data-col="17">6.5</td><td data-col="18">7.5</td><td data-col="19">4.50</td><td data-col="20">7.8</td><td data-col="21">11</td><td data-col="22">4.35</td><td data-col="23">8.9</td><td data-col="24">11</td><td data-col="25">4.20</td><td data-col="26">10.1</td><td data-col="27">15</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">2300</td><td data-col="3">8.37</td><td data-col="4">7.12</td><td data-col="5">2.4</td><td data-col="6">3</td><td data-col="7">6.65</td><td data-col="8">3.6</td><td data-col="9">5.5</td><td data-col="10">6.30</td><td data-col="11">5.0</td><td data-col="12">7.5</td><td data-col="13">6.05</td><td data-col="14">6.5</td><td data-col="15">7.5</td><td data-col="16">5.80</td><td data-col="17">7.8</td><td data-col="18">11</td><td data-col="19">5.60</td><td data-col="20">9.2</td><td data-col="21">11</td><td data-col="22">5.45</td><td data-col="23">10.4</td><td data-col="24">15</td><td data-col="25">5.30</td><td data-col="26">11.9</td><td data-col="27">15</td><td data-col="28">5.20</td><td data-col="29">13.2</td><td data-col="30">15</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2500</td><td data-col="3">9.09</td><td data-col="4">7.86</td><td data-col="5">2.8</td><td data-col="6">4</td><td data-col="7">7.40</td><td data-col="8">4.2</td><td data-col="9">5.5</td><td data-col="10">7.08</td><td data-col="11">5.7</td><td data-col="12">7.5</td><td data-col="13">6.80</td><td data-col="14">7.1</td><td data-col="15">11</td><td data-col="16">6.58</td><td data-col="17">8.6</td><td data-col="18">11</td><td data-col="19">6.38</td><td data-col="20">10.2</td><td data-col="21">15</td><td data-col="22">6.20</td><td data-col="23">11.7</td><td data-col="24">15</td><td data-col="25">6.10</td><td data-col="26">13.0</td><td data-col="27">15</td><td data-col="28">6.00</td><td data-col="29">14.5</td><td data-col="30">18.5</td><td data-col="31">5.90</td><td data-col="32">16.0</td><td data-col="33">18.5</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2800</td><td data-col="3">10.10</td><td data-col="4">8.98</td><td data-col="5">3.2</td><td data-col="6">4</td><td data-col="7">8.55</td><td data-col="8">4.8</td><td data-col="9">5.5</td><td data-col="10">8.20</td><td data-col="11">6.6</td><td data-col="12">7.5</td><td data-col="13">7.90</td><td data-col="14">8.1</td><td data-col="15">11</td><td data-col="16">7.70</td><td data-col="17">9.8</td><td data-col="18">11</td><td data-col="19">7.50</td><td data-col="20">11.6</td><td data-col="21">15</td><td data-col="22">7.38</td><td data-col="23">13.1</td><td data-col="24">15</td><td data-col="25">7.20</td><td data-col="26">14.8</td><td data-col="27">18.5</td><td data-col="28">7.10</td><td data-col="29">16.4</td><td data-col="30">18.5</td><td data-col="31">6.98</td><td data-col="32">18.2</td><td data-col="33">22</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">10.90</td><td data-col="4">9.72</td><td data-col="5">3.6</td><td data-col="6">5.5</td><td data-col="7">9.25</td><td data-col="8">5.4</td><td data-col="9">7.5</td><td data-col="10">8.92</td><td data-col="11">7.2</td><td data-col="12">11</td><td data-col="13">8.64</td><td data-col="14">8.9</td><td data-col="15">11</td><td data-col="16">8.42</td><td data-col="17">10.7</td><td data-col="18">15</td><td data-col="19">8.23</td><td data-col="20">12.5</td><td data-col="21">15</td><td data-col="22">8.07</td><td data-col="23">14.3</td><td data-col="24">18.5</td><td data-col="25">7.93</td><td data-col="26">16.0</td><td data-col="27">18.5</td><td data-col="28">7.81</td><td data-col="29">17.8</td><td data-col="30">22</td><td data-col="31">7.71</td><td data-col="32">19.6</td><td data-col="33">22</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3300</td><td data-col="3">12.00</td><td data-col="4">10.80</td><td data-col="5">4.3</td><td data-col="6">5.5</td><td data-col="7">10.40</td><td data-col="8">6.2</td><td data-col="9">7.5</td><td data-col="10">10.10</td><td data-col="11">8.2</td><td data-col="12">11</td><td data-col="13">9.80</td><td data-col="14">10.2</td><td data-col="15">15</td><td data-col="16">9.60</td><td data-col="17">12.1</td><td data-col="18">15</td><td data-col="19">9.38</td><td data-col="20">14.0</td><td data-col="21">18.5</td><td data-col="22">9.22</td><td data-col="23">16.0</td><td data-col="24">18.5</td><td data-col="25">9.06</td><td data-col="26">18.0</td><td data-col="27">22</td><td data-col="28">8.95</td><td data-col="29">20.0</td><td data-col="30">22</td><td data-col="31">8.85</td><td data-col="32">21.6</td><td data-col="33">30</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3500</td><td data-col="3">12.70</td><td data-col="4">11.50</td><td data-col="5">5.1</td><td data-col="6">7.5</td><td data-col="7">11.20</td><td data-col="8">7.0</td><td data-col="9">11</td><td data-col="10">10.80</td><td data-col="11">9.0</td><td data-col="12">11</td><td data-col="13">10.60</td><td data-col="14">11.0</td><td data-col="15">15</td><td data-col="16">10.40</td><td data-col="17">13.4</td><td data-col="18">15</td><td data-col="19">10.20</td><td data-col="20">15.0</td><td data-col="21">18.5</td><td data-col="22">10.00</td><td data-col="23">17.4</td><td data-col="24">22</td><td data-col="25">9.85</td><td data-col="26">19.5</td><td data-col="27">22</td><td data-col="28">9.70</td><td data-col="29">21.5</td><td data-col="30">30</td><td data-col="31">9.60</td><td data-col="32">23.5</td><td data-col="33">30</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3800</td><td data-col="3">13.80</td><td data-col="4">12.70</td><td data-col="5">5.9</td><td data-col="6">7.5</td><td data-col="7">12.30</td><td data-col="8">8.1</td><td data-col="9">11</td><td data-col="10">12.00</td><td data-col="11">10.3</td><td data-col="12">15</td><td data-col="13">11.70</td><td data-col="14">12.6</td><td data-col="15">15</td><td data-col="16">11.50</td><td data-col="17">14.8</td><td data-col="18">18.5</td><td data-col="19">11.50</td><td data-col="20">17.0</td><td data-col="21">22</td><td data-col="22">11.50</td><td data-col="23">19.0</td><td data-col="24">22</td><td data-col="25">11.00</td><td data-col="26">21.0</td><td data-col="27">30</td><td data-col="28">11.00</td><td data-col="29">23.5</td><td data-col="30">30</td><td data-col="31">10.80</td><td data-col="32">26.0</td><td data-col="33">30</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">4000</td><td data-col="3">14.50</td><td data-col="4">13.50</td><td data-col="5">6.2</td><td data-col="6">7.5</td><td data-col="7">13.20</td><td data-col="8">8.5</td><td data-col="9">11</td><td data-col="10">12.80</td><td data-col="11">11.0</td><td data-col="12">15</td><td data-col="13">12.50</td><td data-col="14">13.2</td><td data-col="15">15</td><td data-col="16">12.50</td><td data-col="17">15.2</td><td data-col="18">18.5</td><td data-col="19">12.00</td><td data-col="20">18.0</td><td data-col="21">22</td><td data-col="22">12.00</td><td data-col="23">20.3</td><td data-col="24">30</td><td data-col="25">11.80</td><td data-col="26">22.5</td><td data-col="27">30</td><td data-col="28">11.80</td><td data-col="29">25.0</td><td data-col="30">30</td><td data-col="31">11.80</td><td data-col="32">27.5</td><td data-col="33">37</td></tr>
+<tr class="model-group-even"><td rowspan="9" data-col="0" class="">HG-100</td><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">10.90</td><td data-col="4">9.15</td><td data-col="5">2.5</td><td data-col="6">3</td><td data-col="7">8.50</td><td data-col="8">4.3</td><td data-col="9">5.5</td><td data-col="10">8.00</td><td data-col="11">6.0</td><td data-col="12">7.5</td><td data-col="13">7.55</td><td data-col="14">7.8</td><td data-col="15">11</td><td data-col="16">7.20</td><td data-col="17">9.5</td><td data-col="18">11</td><td data-col="19">7.00</td><td data-col="20">11.2</td><td data-col="21">15</td><td data-col="22">6.70</td><td data-col="23">13.0</td><td data-col="24">15</td><td data-col="25">6.50</td><td data-col="26">14.8</td><td data-col="27">18.5</td><td data-col="28">6.30</td><td data-col="29">16.5</td><td data-col="30">18.5</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2300</td><td data-col="3">12.50</td><td data-col="4">11.00</td><td data-col="5">3.0</td><td data-col="6">4</td><td data-col="7">10.50</td><td data-col="8">5.5</td><td data-col="9">7.5</td><td data-col="10">9.70</td><td data-col="11">7.0</td><td data-col="12">11</td><td data-col="13">9.50</td><td data-col="14">9.2</td><td data-col="15">11</td><td data-col="16">8.90</td><td data-col="17">11.0</td><td data-col="18">15</td><td data-col="19">8.60</td><td data-col="20">13.0</td><td data-col="21">15</td><td data-col="22">8.40</td><td data-col="23">15.0</td><td data-col="24">18.5</td><td data-col="25">8.20</td><td data-col="26">17.0</td><td data-col="27">22</td><td data-col="28">8.00</td><td data-col="29">19.0</td><td data-col="30">22</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2500</td><td data-col="3">13.60</td><td data-col="4">12.00</td><td data-col="5">3.5</td><td data-col="6">5.5</td><td data-col="7">11.80</td><td data-col="8">5.5</td><td data-col="9">7.5</td><td data-col="10">11.00</td><td data-col="11">8.1</td><td data-col="12">11</td><td data-col="13">10.50</td><td data-col="14">10.3</td><td data-col="15">15</td><td data-col="16">10.00</td><td data-col="17">12.3</td><td data-col="18">15</td><td data-col="19">9.80</td><td data-col="20">14.5</td><td data-col="21">18.5</td><td data-col="22">9.50</td><td data-col="23">16.5</td><td data-col="24">18.5</td><td data-col="25">9.30</td><td data-col="26">19.0</td><td data-col="27">22</td><td data-col="28">9.10</td><td data-col="29">21.0</td><td data-col="30">30</td><td data-col="31">8.98</td><td data-col="32">23.0</td><td data-col="33">30</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2800</td><td data-col="3">15.30</td><td data-col="4">13.60</td><td data-col="5">4.2</td><td data-col="6">5.5</td><td data-col="7">13.00</td><td data-col="8">6.9</td><td data-col="9">11</td><td data-col="10">12.80</td><td data-col="11">9.0</td><td data-col="12">11</td><td data-col="13">12.00</td><td data-col="14">11.0</td><td data-col="15">15</td><td data-col="16">12.00</td><td data-col="17">14.0</td><td data-col="18">18.5</td><td data-col="19">11.80</td><td data-col="20">16.0</td><td data-col="21">18.5</td><td data-col="22">11.50</td><td data-col="23">18.0</td><td data-col="24">22</td><td data-col="25">11.00</td><td data-col="26">21.0</td><td data-col="27">30</td><td data-col="28">11.00</td><td data-col="29">24.0</td><td data-col="30">30</td><td data-col="31">11.00</td><td data-col="32">26.0</td><td data-col="33">30</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">16.40</td><td data-col="4">14.70</td><td data-col="5">5.1</td><td data-col="6">7.5</td><td data-col="7">14.10</td><td data-col="8">7.5</td><td data-col="9">11</td><td data-col="10">13.60</td><td data-col="11">10.2</td><td data-col="12">15</td><td data-col="13">13.20</td><td data-col="14">13.0</td><td data-col="15">15</td><td data-col="16">13.00</td><td data-col="17">15.0</td><td data-col="18">18.5</td><td data-col="19">12.50</td><td data-col="20">18.0</td><td data-col="21">22</td><td data-col="22">12.00</td><td data-col="23">21.0</td><td data-col="24">30</td><td data-col="25">12.00</td><td data-col="26">23.0</td><td data-col="27">30</td><td data-col="28">12.00</td><td data-col="29">26.0</td><td data-col="30">30</td><td data-col="31">12.00</td><td data-col="32">28.0</td><td data-col="33">37</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3300</td><td data-col="3">18.00</td><td data-col="4">16.40</td><td data-col="5">6.2</td><td data-col="6">7.5</td><td data-col="7">15.70</td><td data-col="8">9.2</td><td data-col="9">11</td><td data-col="10">15.30</td><td data-col="11">12.0</td><td data-col="12">15</td><td data-col="13">15.00</td><td data-col="14">14.8</td><td data-col="15">18.5</td><td data-col="16">15.00</td><td data-col="17">18.0</td><td data-col="18">22</td><td data-col="19">14.80</td><td data-col="20">20.5</td><td data-col="21">30</td><td data-col="22">14.00</td><td data-col="23">23.0</td><td data-col="24">30</td><td data-col="25">13.80</td><td data-col="26">26.0</td><td data-col="27">30</td><td data-col="28">13.60</td><td data-col="29">29.0</td><td data-col="30">37</td><td data-col="31">13.50</td><td data-col="32">32.0</td><td data-col="33">37</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3500</td><td data-col="3">19.10</td><td data-col="4">17.50</td><td data-col="5">7.0</td><td data-col="6">11</td><td data-col="7">16.90</td><td data-col="8">10.3</td><td data-col="9">15</td><td data-col="10">16.40</td><td data-col="11">13.0</td><td data-col="12">15</td><td data-col="13">16.00</td><td data-col="14">16.0</td><td data-col="15">18.5</td><td data-col="16">15.70</td><td data-col="17">19.0</td><td data-col="18">22</td><td data-col="19">15.40</td><td data-col="20">22.0</td><td data-col="21">30</td><td data-col="22">15.20</td><td data-col="23">25.0</td><td data-col="24">30</td><td data-col="25">14.90</td><td data-col="26">29.0</td><td data-col="27">37</td><td data-col="28">14.80</td><td data-col="29">32.0</td><td data-col="30">37</td><td data-col="31">14.60</td><td data-col="32">35.0</td><td data-col="33">45</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3800</td><td data-col="3">20.70</td><td data-col="4">19.20</td><td data-col="5">8.5</td><td data-col="6">11</td><td data-col="7">18.50</td><td data-col="8">11.5</td><td data-col="9">15</td><td data-col="10">18.10</td><td data-col="11">15.0</td><td data-col="12">18.5</td><td data-col="13">17.70</td><td data-col="14">18.0</td><td data-col="15">22</td><td data-col="16">17.40</td><td data-col="17">22.0</td><td data-col="18">30</td><td data-col="19">17.10</td><td data-col="20">25.0</td><td data-col="21">30</td><td data-col="22">16.90</td><td data-col="23">28.0</td><td data-col="24">37</td><td data-col="25">16.70</td><td data-col="26">32.0</td><td data-col="27">37</td><td data-col="28">16.50</td><td data-col="29">35.0</td><td data-col="30">45</td><td data-col="31">16.30</td><td data-col="32">38.0</td><td data-col="33">45</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">4000</td><td data-col="3">21.80</td><td data-col="4">20.30</td><td data-col="5">9.0</td><td data-col="6">11</td><td data-col="7">19.70</td><td data-col="8">13.0</td><td data-col="9">15</td><td data-col="10">19.20</td><td data-col="11">16.0</td><td data-col="12">18.5</td><td data-col="13">18.80</td><td data-col="14">20.0</td><td data-col="15">22</td><td data-col="16">18.50</td><td data-col="17">23.0</td><td data-col="18">30</td><td data-col="19">18.30</td><td data-col="20">27.0</td><td data-col="21">30</td><td data-col="22">18.00</td><td data-col="23">30.0</td><td data-col="24">37</td><td data-col="25">17.80</td><td data-col="26">34.0</td><td data-col="27">37</td><td data-col="28">17.60</td><td data-col="29">37.0</td><td data-col="30">45</td><td data-col="31">17.40</td><td data-col="32">40.0</td><td data-col="33">45</td></tr>
+<tr class="model-group-odd"><td rowspan="8" data-col="0" class="">HG-125</td><td data-col="1">4</td><td data-col="2">1150</td><td data-col="3">15.80</td><td data-col="4">10.30</td><td data-col="5">3.4</td><td data-col="6">4</td><td data-col="7">9.50</td><td data-col="8">5.4</td><td data-col="9">7.5</td><td data-col="10">8.60</td><td data-col="11">7.4</td><td data-col="12">11</td><td data-col="13">8.40</td><td data-col="14">9.5</td><td data-col="15">11</td><td data-col="16">7.80</td><td data-col="17">11.4</td><td data-col="18">15</td><td data-col="19">7.50</td><td data-col="20">13.0</td><td data-col="21">15</td><td data-col="22">7.20</td><td data-col="23">15.4</td><td data-col="24">18.5</td><td data-col="25">6.90</td><td data-col="26">17.5</td><td data-col="27">22</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">19.00</td><td data-col="4">13.50</td><td data-col="5">4.3</td><td data-col="6">5.5</td><td data-col="7">12.80</td><td data-col="8">7.0</td><td data-col="9">11</td><td data-col="10">11.90</td><td data-col="11">9.5</td><td data-col="12">11</td><td data-col="13">11.50</td><td data-col="14">12.0</td><td data-col="15">15</td><td data-col="16">11.00</td><td data-col="17">14.0</td><td data-col="18">18.5</td><td data-col="19">10.80</td><td data-col="20">17.2</td><td data-col="21">22</td><td data-col="22">10.50</td><td data-col="23">20.0</td><td data-col="24">22</td><td data-col="25">10.00</td><td data-col="26">22.0</td><td data-col="27">30</td><td data-col="28">9.90</td><td data-col="29">25.0</td><td data-col="30">30</td><td data-col="31">9.70</td><td data-col="32">27.0</td><td data-col="33">37</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1750</td><td data-col="3">21.80</td><td data-col="4">16.90</td><td data-col="5">5.5</td><td data-col="6">7.5</td><td data-col="7">15.90</td><td data-col="8">8.5</td><td data-col="9">11</td><td data-col="10">15.50</td><td data-col="11">12.0</td><td data-col="12">15</td><td data-col="13">14.90</td><td data-col="14">15.0</td><td data-col="15">18.5</td><td data-col="16">14.50</td><td data-col="17">18.0</td><td data-col="18">22</td><td data-col="19">14.00</td><td data-col="20">21.0</td><td data-col="21">30</td><td data-col="22">13.80</td><td data-col="23">24.0</td><td data-col="24">30</td><td data-col="25">13.60</td><td data-col="26">27.4</td><td data-col="27">37</td><td data-col="28">13.50</td><td data-col="29">30.0</td><td data-col="30">37</td><td data-col="31">13.30</td><td data-col="32">33.5</td><td data-col="33">45</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">25.00</td><td data-col="4">19.80</td><td data-col="5">7.0</td><td data-col="6">11</td><td data-col="7">18.80</td><td data-col="8">10.5</td><td data-col="9">15</td><td data-col="10">18.30</td><td data-col="11">14.0</td><td data-col="12">18.5</td><td data-col="13">17.80</td><td data-col="14">17.5</td><td data-col="15">22</td><td data-col="16">17.40</td><td data-col="17">21.0</td><td data-col="18">30</td><td data-col="19">16.90</td><td data-col="20">24.5</td><td data-col="21">30</td><td data-col="22">16.60</td><td data-col="23">28.0</td><td data-col="24">37</td><td data-col="25">16.50</td><td data-col="26">31.0</td><td data-col="27">37</td><td data-col="28">16.50</td><td data-col="29">35.0</td><td data-col="30">45</td><td data-col="31">15.90</td><td data-col="32">38.6</td><td data-col="33">45</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2300</td><td data-col="3">28.30</td><td data-col="4">23.00</td><td data-col="5">8.5</td><td data-col="6">11</td><td data-col="7">22.00</td><td data-col="8">12.0</td><td data-col="9">15</td><td data-col="10">21.80</td><td data-col="11">16.5</td><td data-col="12">22</td><td data-col="13">21.00</td><td data-col="14">20.5</td><td data-col="15">30</td><td data-col="16">20.80</td><td data-col="17">25.0</td><td data-col="18">30</td><td data-col="19">20.80</td><td data-col="20">28.6</td><td data-col="21">37</td><td data-col="22">20.00</td><td data-col="23">33.0</td><td data-col="24">37</td><td data-col="25">19.80</td><td data-col="26">37.0</td><td data-col="27">45</td><td data-col="28">19.60</td><td data-col="29">41.0</td><td data-col="30">55</td><td data-col="31">19.80</td><td data-col="32">45.0</td><td data-col="33">55</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2600</td><td data-col="3">30.50</td><td data-col="4">26.50</td><td data-col="5">10.1</td><td data-col="6">15</td><td data-col="7">25.60</td><td data-col="8">14.8</td><td data-col="9">18.5</td><td data-col="10">25.00</td><td data-col="11">19.0</td><td data-col="12">22</td><td data-col="13">24.80</td><td data-col="14">24.0</td><td data-col="15">30</td><td data-col="16">24.00</td><td data-col="17">28.0</td><td data-col="18">37</td><td data-col="19">23.80</td><td data-col="20">33.0</td><td data-col="21">37</td><td data-col="22">23.60</td><td data-col="23">38.0</td><td data-col="24">45</td><td data-col="25">23.30</td><td data-col="26">42.0</td><td data-col="27">55</td><td data-col="28">23.00</td><td data-col="29">47.0</td><td data-col="30">55</td><td data-col="31">22.70</td><td data-col="32">51.0</td><td data-col="33">75</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2800</td><td data-col="3">32.70</td><td data-col="4">28.50</td><td data-col="5">11.4</td><td data-col="6">15</td><td data-col="7">27.60</td><td data-col="8">16.3</td><td data-col="9">22</td><td data-col="10">27.00</td><td data-col="11">21.3</td><td data-col="12">30</td><td data-col="13">26.50</td><td data-col="14">26.2</td><td data-col="15">30</td><td data-col="16">26.20</td><td data-col="17">31.2</td><td data-col="18">37</td><td data-col="19">25.80</td><td data-col="20">36.1</td><td data-col="21">45</td><td data-col="22">25.60</td><td data-col="23">41.2</td><td data-col="24">45</td><td data-col="25">25.30</td><td data-col="26">46.2</td><td data-col="27">55</td><td data-col="28">25.00</td><td data-col="29">51.2</td><td data-col="30">75</td><td data-col="31">24.80</td><td data-col="32">56.2</td><td data-col="33">75</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">34.90</td><td data-col="4">30.70</td><td data-col="5">12.3</td><td data-col="6">15</td><td data-col="7">29.90</td><td data-col="8">17.4</td><td data-col="9">22</td><td data-col="10">29.50</td><td data-col="11">23.0</td><td data-col="12">30</td><td data-col="13">28.70</td><td data-col="14">28.5</td><td data-col="15">37</td><td data-col="16">28.50</td><td data-col="17">33.7</td><td data-col="18">37</td><td data-col="19">28.00</td><td data-col="20">39.2</td><td data-col="21">45</td><td data-col="22">27.80</td><td data-col="23">44.4</td><td data-col="24">55</td><td data-col="25">27.50</td><td data-col="26">48.0</td><td data-col="27">55</td><td data-col="28">27.50</td><td data-col="29">55.1</td><td data-col="30">75</td><td data-col="31">27.20</td><td data-col="32">60.4</td><td data-col="33">75</td></tr>
+<tr class="model-group-even"><td rowspan="8" data-col="0" class="">HG-150</td><td data-col="1">4</td><td data-col="2">1150</td><td data-col="3">25.30</td><td data-col="4">17.00</td><td data-col="5">5.2</td><td data-col="6">7.5</td><td data-col="7">15.50</td><td data-col="8">8.6</td><td data-col="9">11</td><td data-col="10">14.30</td><td data-col="11">11.8</td><td data-col="12">15</td><td data-col="13">13.60</td><td data-col="14">15.1</td><td data-col="15">18.5</td><td data-col="16">13.00</td><td data-col="17">18.4</td><td data-col="18">22</td><td data-col="19">12.50</td><td data-col="20">21.5</td><td data-col="21">30</td><td data-col="22">12.00</td><td data-col="23">24.9</td><td data-col="24">30</td><td data-col="25">11.80</td><td data-col="26">28.0</td><td data-col="27">37</td><td data-col="28">11.50</td><td data-col="29">31.5</td><td data-col="30">37</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">30.50</td><td data-col="4">22.00</td><td data-col="5">6.5</td><td data-col="6">7.5</td><td data-col="7">20.80</td><td data-col="8">10.8</td><td data-col="9">15</td><td data-col="10">19.80</td><td data-col="11">14.9</td><td data-col="12">18.5</td><td data-col="13">19.00</td><td data-col="14">19.0</td><td data-col="15">22</td><td data-col="16">18.40</td><td data-col="17">23.0</td><td data-col="18">30</td><td data-col="19">17.90</td><td data-col="20">27.1</td><td data-col="21">37</td><td data-col="22">17.50</td><td data-col="23">31.3</td><td data-col="24">37</td><td data-col="25">17.20</td><td data-col="26">35.6</td><td data-col="27">45</td><td data-col="28">16.90</td><td data-col="29">39.5</td><td data-col="30">45</td><td data-col="31">16.80</td><td data-col="32">47.8</td><td data-col="33">55</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1750</td><td data-col="3">34.90</td><td data-col="4">27.40</td><td data-col="5">8.1</td><td data-col="6">11</td><td data-col="7">26.00</td><td data-col="8">13.2</td><td data-col="9">15</td><td data-col="10">25.00</td><td data-col="11">18.1</td><td data-col="12">22</td><td data-col="13">24.50</td><td data-col="14">23.1</td><td data-col="15">30</td><td data-col="16">23.80</td><td data-col="17">28.1</td><td data-col="18">37</td><td data-col="19">23.50</td><td data-col="20">33.0</td><td data-col="21">37</td><td data-col="22">23.00</td><td data-col="23">38.0</td><td data-col="24">45</td><td data-col="25">22.50</td><td data-col="26">43.0</td><td data-col="27">55</td><td data-col="28">22.50</td><td data-col="29">48.0</td><td data-col="30">55</td><td data-col="31">22.00</td><td data-col="32">53.1</td><td data-col="33">75</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">40.10</td><td data-col="4">31.80</td><td data-col="5">11.1</td><td data-col="6">15</td><td data-col="7">30.50</td><td data-col="8">16.8</td><td data-col="9">18.5</td><td data-col="10">29.60</td><td data-col="11">22.4</td><td data-col="12">30</td><td data-col="13">29.00</td><td data-col="14">28.1</td><td data-col="15">37</td><td data-col="16">28.50</td><td data-col="17">33.9</td><td data-col="18">37</td><td data-col="19">27.90</td><td data-col="20">39.6</td><td data-col="21">45</td><td data-col="22">27.50</td><td data-col="23">45.2</td><td data-col="24">55</td><td data-col="25">27.20</td><td data-col="26">51.0</td><td data-col="27">75</td><td data-col="28">27.00</td><td data-col="29">56.7</td><td data-col="30">75</td><td data-col="31">26.80</td><td data-col="32">62.4</td><td data-col="33">75</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2300</td><td data-col="3">45.30</td><td data-col="4">37.00</td><td data-col="5">14.0</td><td data-col="6">18.5</td><td data-col="7">35.90</td><td data-col="8">20.5</td><td data-col="9">30</td><td data-col="10">35.00</td><td data-col="11">27.0</td><td data-col="12">30</td><td data-col="13">34.50</td><td data-col="14">33.5</td><td data-col="15">37</td><td data-col="16">33.80</td><td data-col="17">40.1</td><td data-col="18">45</td><td data-col="19">33.50</td><td data-col="20">46.6</td><td data-col="21">55</td><td data-col="22">33.00</td><td data-col="23">53.2</td><td data-col="24">75</td><td data-col="25">32.80</td><td data-col="26">59.9</td><td data-col="27">75</td><td data-col="28">32.50</td><td data-col="29">66.4</td><td data-col="30">75</td><td data-col="31">32.30</td><td data-col="32">73.0</td><td data-col="33">90</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2600</td><td data-col="3">48.80</td><td data-col="4">42.50</td><td data-col="5">16.5</td><td data-col="6">18.5</td><td data-col="7">41.30</td><td data-col="8">24.0</td><td data-col="9">30</td><td data-col="10">40.50</td><td data-col="11">31.3</td><td data-col="12">37</td><td data-col="13">39.80</td><td data-col="14">38.9</td><td data-col="15">45</td><td data-col="16">39.20</td><td data-col="17">46.2</td><td data-col="18">55</td><td data-col="19">38.80</td><td data-col="20">53.7</td><td data-col="21">55</td><td data-col="22">38.50</td><td data-col="23">61.0</td><td data-col="24">75</td><td data-col="25">38.00</td><td data-col="26">68.4</td><td data-col="27">75</td><td data-col="28">37.90</td><td data-col="29">75.9</td><td data-col="30">90</td><td data-col="31">37.60</td><td data-col="32">83.3</td><td data-col="33">90</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">2800</td><td data-col="3">52.30</td><td data-col="4">46.00</td><td data-col="5">18.4</td><td data-col="6">22</td><td data-col="7">44.90</td><td data-col="8">26.4</td><td data-col="9">30</td><td data-col="10">44.00</td><td data-col="11">34.4</td><td data-col="12">45</td><td data-col="13">43.40</td><td data-col="14">42.3</td><td data-col="15">55</td><td data-col="16">42.90</td><td data-col="17">50.3</td><td data-col="18">55</td><td data-col="19">42.50</td><td data-col="20">58.4</td><td data-col="21">75</td><td data-col="22">42.00</td><td data-col="23">66.3</td><td data-col="24">75</td><td data-col="25">41.80</td><td data-col="26">74.3</td><td data-col="27">90</td><td data-col="28">41.50</td><td data-col="29">82.1</td><td data-col="30">90</td><td data-col="31">41.30</td><td data-col="32">90.2</td><td data-col="33">110</td></tr>
+<tr class="model-group-even"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">55.40</td><td data-col="4">49.50</td><td data-col="5">20.0</td><td data-col="6">22</td><td data-col="7">48.40</td><td data-col="8">28.5</td><td data-col="9">37</td><td data-col="10">47.70</td><td data-col="11">37.2</td><td data-col="12">45</td><td data-col="13">47.00</td><td data-col="14">45.6</td><td data-col="15">55</td><td data-col="16">46.50</td><td data-col="17">54.0</td><td data-col="18">75</td><td data-col="19">46.00</td><td data-col="20">62.7</td><td data-col="21">75</td><td data-col="22">45.70</td><td data-col="23">71.2</td><td data-col="24">90</td><td data-col="25">45.30</td><td data-col="26">79.8</td><td data-col="27">90</td><td data-col="28">45.00</td><td data-col="29">88.2</td><td data-col="30">110</td><td data-col="31">44.90</td><td data-col="32">97.0</td><td data-col="33">110</td></tr>
+<tr class="model-group-odd"><td rowspan="8" data-col="0" class="">HG-175</td><td data-col="1">4</td><td data-col="2">1150</td><td data-col="3">27.10</td><td data-col="4">23.60</td><td data-col="5">6.9</td><td data-col="6">11</td><td data-col="7">22.30</td><td data-col="8">11.4</td><td data-col="9">15</td><td data-col="10">21.00</td><td data-col="11">15.7</td><td data-col="12">18.5</td><td data-col="13">20.00</td><td data-col="14">20.2</td><td data-col="15">30</td><td data-col="16">19.30</td><td data-col="17">24.6</td><td data-col="18">30</td><td data-col="19">18.50</td><td data-col="20">29.0</td><td data-col="21">37</td><td data-col="22">17.80</td><td data-col="23">33.4</td><td data-col="24">37</td><td data-col="25">17.00</td><td data-col="26">38.0</td><td data-col="27">45</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">34.20</td><td data-col="4">30.80</td><td data-col="5">8.6</td><td data-col="6">11</td><td data-col="7">29.20</td><td data-col="8">14.2</td><td data-col="9">18.5</td><td data-col="10">28.20</td><td data-col="11">19.9</td><td data-col="12">22</td><td data-col="13">27.20</td><td data-col="14">25.4</td><td data-col="15">30</td><td data-col="16">26.30</td><td data-col="17">31.0</td><td data-col="18">37</td><td data-col="19">25.50</td><td data-col="20">36.6</td><td data-col="21">45</td><td data-col="22">24.80</td><td data-col="23">42.1</td><td data-col="24">55</td><td data-col="25">24.10</td><td data-col="26">47.7</td><td data-col="27">55</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1750</td><td data-col="3">41.30</td><td data-col="4">37.80</td><td data-col="5">11.2</td><td data-col="6">15</td><td data-col="7">36.30</td><td data-col="8">18.0</td><td data-col="9">22</td><td data-col="10">35.20</td><td data-col="11">24.7</td><td data-col="12">30</td><td data-col="13">34.30</td><td data-col="14">31.5</td><td data-col="15">37</td><td data-col="16">33.30</td><td data-col="17">38.1</td><td data-col="18">45</td><td data-col="19">32.60</td><td data-col="20">45.0</td><td data-col="21">55</td><td data-col="22">31.90</td><td data-col="23">51.7</td><td data-col="24">75</td><td data-col="25">31.20</td><td data-col="26">58.4</td><td data-col="27">75</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">2000</td><td data-col="3">47.20</td><td data-col="4">43.70</td><td data-col="5">14.5</td><td data-col="6">18.5</td><td data-col="7">42.20</td><td data-col="8">22.2</td><td data-col="9">30</td><td data-col="10">41.20</td><td data-col="11">30.0</td><td data-col="12">37</td><td data-col="13">40.10</td><td data-col="14">37.7</td><td data-col="15">45</td><td data-col="16">39.30</td><td data-col="17">45.4</td><td data-col="18">55</td><td data-col="19">38.50</td><td data-col="20">53.1</td><td data-col="21">75</td><td data-col="22">37.80</td><td data-col="23">60.9</td><td data-col="24">75</td><td data-col="25">37.10</td><td data-col="26">68.5</td><td data-col="27">90</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2300</td><td data-col="3">54.30</td><td data-col="4">50.90</td><td data-col="5">18.0</td><td data-col="6">22</td><td data-col="7">49.30</td><td data-col="8">26.9</td><td data-col="9">30</td><td data-col="10">48.10</td><td data-col="11">35.7</td><td data-col="12">45</td><td data-col="13">47.20</td><td data-col="14">44.7</td><td data-col="15">55</td><td data-col="16">46.30</td><td data-col="17">53.5</td><td data-col="18">75</td><td data-col="19">45.70</td><td data-col="20">62.3</td><td data-col="21">75</td><td data-col="22">44.80</td><td data-col="23">71.2</td><td data-col="24">90</td><td data-col="25">44.20</td><td data-col="26">80.1</td><td data-col="27">90</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2600</td><td data-col="3">61.40</td><td data-col="4">57.90</td><td data-col="5">20.9</td><td data-col="6">30</td><td data-col="7">56.40</td><td data-col="8">31.0</td><td data-col="9">37</td><td data-col="10">55.20</td><td data-col="11">41.0</td><td data-col="12">45</td><td data-col="13">54.30</td><td data-col="14">51.0</td><td data-col="15">75</td><td data-col="16">53.50</td><td data-col="17">61.0</td><td data-col="18">75</td><td data-col="19">52.70</td><td data-col="20">71.0</td><td data-col="21">90</td><td data-col="22">51.90</td><td data-col="23">81.0</td><td data-col="24">90</td><td data-col="25">51.30</td><td data-col="26">91.0</td><td data-col="27">110</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">2800</td><td data-col="3">66.10</td><td data-col="4">62.60</td><td data-col="5">23.7</td><td data-col="6">30</td><td data-col="7">61.10</td><td data-col="8">34.4</td><td data-col="9">45</td><td data-col="10">60.00</td><td data-col="11">45.2</td><td data-col="12">55</td><td data-col="13">59.00</td><td data-col="14">56.0</td><td data-col="15">75</td><td data-col="16">58.10</td><td data-col="17">66.9</td><td data-col="18">75</td><td data-col="19">57.40</td><td data-col="20">77.6</td><td data-col="21">90</td><td data-col="22">56.80</td><td data-col="23">88.4</td><td data-col="24">110</td><td data-col="25">56.00</td><td data-col="26">99.2</td><td data-col="27">110</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">2</td><td data-col="2">3000</td><td data-col="3">70.80</td><td data-col="4">67.30</td><td data-col="5">25.4</td><td data-col="6">30</td><td data-col="7">65.90</td><td data-col="8">37.0</td><td data-col="9">45</td><td data-col="10">64.80</td><td data-col="11">48.5</td><td data-col="12">55</td><td data-col="13">63.80</td><td data-col="14">60.0</td><td data-col="15">75</td><td data-col="16">62.90</td><td data-col="17">71.8</td><td data-col="18">90</td><td data-col="19">62.10</td><td data-col="20">83.2</td><td data-col="21">110</td><td data-col="22">61.40</td><td data-col="23">94.9</td><td data-col="24">110</td><td data-col="25">60.80</td><td data-col="26">106.4</td><td data-col="27">132</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td rowspan="7" data-col="0" class="">HG-200</td><td data-col="1">4</td><td data-col="2">970</td><td data-col="3">44.00</td><td data-col="4">38.70</td><td data-col="5">9.7</td><td data-col="6">11</td><td data-col="7">36.70</td><td data-col="8">17.0</td><td data-col="9">22</td><td data-col="10">35.10</td><td data-col="11">24.1</td><td data-col="12">30</td><td data-col="13">34.00</td><td data-col="14">31.2</td><td data-col="15">37</td><td data-col="16">33.00</td><td data-col="17">38.6</td><td data-col="18">45</td><td data-col="19">32.10</td><td data-col="20">45.7</td><td data-col="21">55</td><td data-col="22">31.50</td><td data-col="23">53.0</td><td data-col="24">75</td><td data-col="25">30.90</td><td data-col="26">60.1</td><td data-col="27">75</td><td data-col="28">30.30</td><td data-col="29">67.3</td><td data-col="30">75</td><td data-col="31">29.90</td><td data-col="32">74.5</td><td data-col="33">90</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1250</td><td data-col="3">56.70</td><td data-col="4">51.60</td><td data-col="5">14.0</td><td data-col="6">18.5</td><td data-col="7">49.60</td><td data-col="8">23.3</td><td data-col="9">30</td><td data-col="10">48.10</td><td data-col="11">32.5</td><td data-col="12">37</td><td data-col="13">46.90</td><td data-col="14">41.9</td><td data-col="15">55</td><td data-col="16">46.00</td><td data-col="17">51.1</td><td data-col="18">75</td><td data-col="19">45.20</td><td data-col="20">60.4</td><td data-col="21">75</td><td data-col="22">44.50</td><td data-col="23">69.6</td><td data-col="24">90</td><td data-col="25">44.00</td><td data-col="26">79.0</td><td data-col="27">90</td><td data-col="28">43.40</td><td data-col="29">88.2</td><td data-col="30">110</td><td data-col="31">42.90</td><td data-col="32">97.4</td><td data-col="33">110</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">65.80</td><td data-col="4">60.80</td><td data-col="5">17.9</td><td data-col="6">22</td><td data-col="7">58.80</td><td data-col="8">28.5</td><td data-col="9">37</td><td data-col="10">57.40</td><td data-col="11">39.4</td><td data-col="12">45</td><td data-col="13">56.20</td><td data-col="14">50.0</td><td data-col="15">55</td><td data-col="16">55.30</td><td data-col="17">60.9</td><td data-col="18">75</td><td data-col="19">54.50</td><td data-col="20">71.7</td><td data-col="21">90</td><td data-col="22">53.80</td><td data-col="23">82.4</td><td data-col="24">110</td><td data-col="25">53.20</td><td data-col="26">93.0</td><td data-col="27">110</td><td data-col="28">52.70</td><td data-col="29">103.9</td><td data-col="30">132</td><td data-col="31">52.20</td><td data-col="32">114.7</td><td data-col="33">132</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1600</td><td data-col="3">72.60</td><td data-col="4">67.70</td><td data-col="5">21.3</td><td data-col="6">30</td><td data-col="7">65.70</td><td data-col="8">33.0</td><td data-col="9">37</td><td data-col="10">64.30</td><td data-col="11">45.0</td><td data-col="12">55</td><td data-col="13">63.20</td><td data-col="14">57.0</td><td data-col="15">75</td><td data-col="16">62.20</td><td data-col="17">68.8</td><td data-col="18">75</td><td data-col="19">61.40</td><td data-col="20">80.6</td><td data-col="21">90</td><td data-col="22">60.80</td><td data-col="23">92.5</td><td data-col="24">110</td><td data-col="25">60.20</td><td data-col="26">104.5</td><td data-col="27">132</td><td data-col="28">59.70</td><td data-col="29">115.8</td><td data-col="30">132</td><td data-col="31">59.20</td><td data-col="32">128.2</td><td data-col="33">160</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1750</td><td data-col="3">79.40</td><td data-col="4">74.60</td><td data-col="5">25.4</td><td data-col="6">30</td><td data-col="7">72.60</td><td data-col="8">38.4</td><td data-col="9">45</td><td data-col="10">71.20</td><td data-col="11">51.5</td><td data-col="12">75</td><td data-col="13">70.10</td><td data-col="14">64.4</td><td data-col="15">75</td><td data-col="16">69.20</td><td data-col="17">77.3</td><td data-col="18">90</td><td data-col="19">68.40</td><td data-col="20">90.3</td><td data-col="21">110</td><td data-col="22">67.70</td><td data-col="23">103.4</td><td data-col="24">132</td><td data-col="25">67.20</td><td data-col="26">116.3</td><td data-col="27">132</td><td data-col="28">66.70</td><td data-col="29">128.9</td><td data-col="30">160</td><td data-col="31">66.20</td><td data-col="32">142.2</td><td data-col="33">160</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1900</td><td data-col="3">86.20</td><td data-col="4">81.50</td><td data-col="5">30.5</td><td data-col="6">37</td><td data-col="7">79.60</td><td data-col="8">44.6</td><td data-col="9">55</td><td data-col="10">78.20</td><td data-col="11">58.7</td><td data-col="12">75</td><td data-col="13">77.10</td><td data-col="14">72.9</td><td data-col="15">90</td><td data-col="16">76.20</td><td data-col="17">87.0</td><td data-col="18">110</td><td data-col="19">75.50</td><td data-col="20">101.0</td><td data-col="21">110</td><td data-col="22">74.70</td><td data-col="23">115.1</td><td data-col="24">132</td><td data-col="25">74.20</td><td data-col="26">129.2</td><td data-col="27">160</td><td data-col="28">73.70</td><td data-col="29">142.9</td><td data-col="30">160</td><td data-col="31">73.20</td><td data-col="32">157.5</td><td data-col="33">185</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">2050</td><td data-col="3">93.00</td><td data-col="4">88.30</td><td data-col="5">35.0</td><td data-col="6">45</td><td data-col="7">86.50</td><td data-col="8">50.2</td><td data-col="9">55</td><td data-col="10">85.00</td><td data-col="11">65.4</td><td data-col="12">75</td><td data-col="13">84.00</td><td data-col="14">80.7</td><td data-col="15">90</td><td data-col="16">83.10</td><td data-col="17">96.0</td><td data-col="18">110</td><td data-col="19">82.40</td><td data-col="20">111.1</td><td data-col="21">132</td><td data-col="22">81.70</td><td data-col="23">126.3</td><td data-col="24">160</td><td data-col="25">81.00</td><td data-col="26">141.5</td><td data-col="27">160</td><td data-col="28">80.60</td><td data-col="29">156.9</td><td data-col="30">185</td><td data-col="31">80.20</td><td data-col="32">172.0</td><td data-col="33">185</td></tr>
+<tr class="model-group-odd"><td rowspan="7" data-col="0" class="">HG-250</td><td data-col="1">4</td><td data-col="2">970</td><td data-col="3">56.10</td><td data-col="4">49.90</td><td data-col="5">12.5</td><td data-col="6">15</td><td data-col="7">47.60</td><td data-col="8">21.6</td><td data-col="9">30</td><td data-col="10">45.90</td><td data-col="11">30.9</td><td data-col="12">37</td><td data-col="13">44.60</td><td data-col="14">40.0</td><td data-col="15">45</td><td data-col="16">43.60</td><td data-col="17">49.2</td><td data-col="18">55</td><td data-col="19">42.70</td><td data-col="20">58.4</td><td data-col="21">75</td><td data-col="22">42.10</td><td data-col="23">67.5</td><td data-col="24">75</td><td data-col="25">41.50</td><td data-col="26">76.8</td><td data-col="27">90</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1250</td><td data-col="3">72.30</td><td data-col="4">66.30</td><td data-col="5">19.3</td><td data-col="6">22</td><td data-col="7">64.00</td><td data-col="8">31.0</td><td data-col="9">37</td><td data-col="10">62.40</td><td data-col="11">43.0</td><td data-col="12">55</td><td data-col="13">61.20</td><td data-col="14">54.8</td><td data-col="15">75</td><td data-col="16">60.20</td><td data-col="17">66.5</td><td data-col="18">75</td><td data-col="19">59.30</td><td data-col="20">78.3</td><td data-col="21">90</td><td data-col="22">58.70</td><td data-col="23">90.2</td><td data-col="24">110</td><td data-col="25">58.10</td><td data-col="26">102.0</td><td data-col="27">132</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">83.80</td><td data-col="4">78.00</td><td data-col="5">25.0</td><td data-col="6">30</td><td data-col="7">75.80</td><td data-col="8">38.6</td><td data-col="9">45</td><td data-col="10">74.20</td><td data-col="11">52.3</td><td data-col="12">75</td><td data-col="13">73.00</td><td data-col="14">66.1</td><td data-col="15">75</td><td data-col="16">72.00</td><td data-col="17">79.9</td><td data-col="18">90</td><td data-col="19">71.20</td><td data-col="20">93.5</td><td data-col="21">110</td><td data-col="22">70.50</td><td data-col="23">107.2</td><td data-col="24">132</td><td data-col="25">70.00</td><td data-col="26">121.0</td><td data-col="27">132</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1600</td><td data-col="3">92.50</td><td data-col="4">86.80</td><td data-col="5">30.5</td><td data-col="6">37</td><td data-col="7">84.60</td><td data-col="8">45.6</td><td data-col="9">55</td><td data-col="10">83.10</td><td data-col="11">60.7</td><td data-col="12">75</td><td data-col="13">81.90</td><td data-col="14">75.9</td><td data-col="15">90</td><td data-col="16">80.90</td><td data-col="17">91.0</td><td data-col="18">110</td><td data-col="19">80.10</td><td data-col="20">106.2</td><td data-col="21">132</td><td data-col="22">79.40</td><td data-col="23">121.2</td><td data-col="24">132</td><td data-col="25">78.90</td><td data-col="26">136.3</td><td data-col="27">160</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1750</td><td data-col="3">101.00</td><td data-col="4">95.60</td><td data-col="5">35.0</td><td data-col="6">45</td><td data-col="7">93.50</td><td data-col="8">51.5</td><td data-col="9">75</td><td data-col="10">91.90</td><td data-col="11">68.0</td><td data-col="12">75</td><td data-col="13">90.70</td><td data-col="14">84.6</td><td data-col="15">90</td><td data-col="16">89.80</td><td data-col="17">101.2</td><td data-col="18">110</td><td data-col="19">89.00</td><td data-col="20">117.9</td><td data-col="21">132</td><td data-col="22">88.30</td><td data-col="23">134.3</td><td data-col="24">160</td><td data-col="25">87.80</td><td data-col="26">150.9</td><td data-col="27">160</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1900</td><td data-col="3">110.00</td><td data-col="4">104.00</td><td data-col="5">41.8</td><td data-col="6">55</td><td data-col="7">102.10</td><td data-col="8">59.7</td><td data-col="9">75</td><td data-col="10">101.10</td><td data-col="11">77.6</td><td data-col="12">90</td><td data-col="13">99.60</td><td data-col="14">95.6</td><td data-col="15">110</td><td data-col="16">98.70</td><td data-col="17">113.5</td><td data-col="18">132</td><td data-col="19">97.90</td><td data-col="20">131.9</td><td data-col="21">160</td><td data-col="22">97.20</td><td data-col="23">150.0</td><td data-col="24">160</td><td data-col="25">96.70</td><td data-col="26">167.4</td><td data-col="27">185</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">2050</td><td data-col="3">119.00</td><td data-col="4">113.10</td><td data-col="5">50.2</td><td data-col="6">55</td><td data-col="7">111.10</td><td data-col="8">69.7</td><td data-col="9">75</td><td data-col="10">110.00</td><td data-col="11">89.0</td><td data-col="12">110</td><td data-col="13">108.10</td><td data-col="14">108.3</td><td data-col="15">132</td><td data-col="16">107.10</td><td data-col="17">127.9</td><td data-col="18">160</td><td data-col="19">106.80</td><td data-col="20">146.9</td><td data-col="21">160</td><td data-col="22">106.10</td><td data-col="23">166.5</td><td data-col="24">185</td><td data-col="25">105.60</td><td data-col="26">186.0</td><td data-col="27">200</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td rowspan="7" data-col="0" class="">HG-290</td><td data-col="1">4</td><td data-col="2">970</td><td data-col="3">97.10</td><td data-col="4">89.10</td><td data-col="5">21.8</td><td data-col="6">30</td><td data-col="7">85.70</td><td data-col="8">37.6</td><td data-col="9">45</td><td data-col="10">83.10</td><td data-col="11">53.5</td><td data-col="12">75</td><td data-col="13">80.90</td><td data-col="14">69.4</td><td data-col="15">90</td><td data-col="16">79.00</td><td data-col="17">85.2</td><td data-col="18">110</td><td data-col="19">77.20</td><td data-col="20">101.1</td><td data-col="21">132</td><td data-col="22">75.60</td><td data-col="23">117.0</td><td data-col="24">132</td><td data-col="25">74.00</td><td data-col="26">133.0</td><td data-col="27">160</td><td data-col="28">72.70</td><td data-col="29">148.9</td><td data-col="30">185</td><td data-col="31">71.20</td><td data-col="32">164.7</td><td data-col="33">200</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1100</td><td data-col="3">110.10</td><td data-col="4">102.20</td><td data-col="5">26.5</td><td data-col="6">30</td><td data-col="7">98.80</td><td data-col="8">44.5</td><td data-col="9">55</td><td data-col="10">96.20</td><td data-col="11">62.6</td><td data-col="12">75</td><td data-col="13">94.00</td><td data-col="14">80.6</td><td data-col="15">90</td><td data-col="16">92.00</td><td data-col="17">98.6</td><td data-col="18">110</td><td data-col="19">90.40</td><td data-col="20">116.6</td><td data-col="21">132</td><td data-col="22">88.60</td><td data-col="23">134.7</td><td data-col="24">160</td><td data-col="25">87.00</td><td data-col="26">152.7</td><td data-col="27">185</td><td data-col="28">85.70</td><td data-col="29">170.8</td><td data-col="30">200</td><td data-col="31">84.40</td><td data-col="32">188.6</td><td data-col="33">220</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1250</td><td data-col="3">125.10</td><td data-col="4">117.20</td><td data-col="5">32.7</td><td data-col="6">30</td><td data-col="7">113.80</td><td data-col="8">53.2</td><td data-col="9">75</td><td data-col="10">111.20</td><td data-col="11">73.5</td><td data-col="12">90</td><td data-col="13">109.00</td><td data-col="14">94.0</td><td data-col="15">110</td><td data-col="16">107.10</td><td data-col="17">114.5</td><td data-col="18">132</td><td data-col="19">105.30</td><td data-col="20">135.0</td><td data-col="21">160</td><td data-col="22">103.70</td><td data-col="23">155.4</td><td data-col="24">185</td><td data-col="25">102.20</td><td data-col="26">176.0</td><td data-col="27">200</td><td data-col="28">100.80</td><td data-col="29">196.4</td><td data-col="30">220</td><td data-col="31">99.40</td><td data-col="32">216.9</td><td data-col="33">250</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1350</td><td data-col="3">135.10</td><td data-col="4">127.10</td><td data-col="5">37.4</td><td data-col="6">45</td><td data-col="7">123.80</td><td data-col="8">59.5</td><td data-col="9">75</td><td data-col="10">121.20</td><td data-col="11">81.6</td><td data-col="12">90</td><td data-col="13">119.00</td><td data-col="14">103.9</td><td data-col="15">110</td><td data-col="16">117.10</td><td data-col="17">126.0</td><td data-col="18">160</td><td data-col="19">115.30</td><td data-col="20">148.0</td><td data-col="21">185</td><td data-col="22">113.70</td><td data-col="23">170.0</td><td data-col="24">200</td><td data-col="25">112.20</td><td data-col="26">192.2</td><td data-col="27">220</td><td data-col="28">110.80</td><td data-col="29">214.2</td><td data-col="30">250</td><td data-col="31">109.40</td><td data-col="32">236.4</td><td data-col="33">280</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">145.10</td><td data-col="4">137.30</td><td data-col="5">42.6</td><td data-col="6">55</td><td data-col="7">133.90</td><td data-col="8">66.2</td><td data-col="9">75</td><td data-col="10">131.30</td><td data-col="11">90.1</td><td data-col="12">110</td><td data-col="13">129.00</td><td data-col="14">113.9</td><td data-col="15">132</td><td data-col="16">127.10</td><td data-col="17">137.9</td><td data-col="18">160</td><td data-col="19">125.30</td><td data-col="20">161.3</td><td data-col="21">185</td><td data-col="22">123.70</td><td data-col="23">185.0</td><td data-col="24">220</td><td data-col="25">122.20</td><td data-col="26">208.9</td><td data-col="27">250</td><td data-col="28">120.80</td><td data-col="29">232.5</td><td data-col="30">280</td><td data-col="31">119.50</td><td data-col="32">256.3</td><td data-col="33">280</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1550</td><td data-col="3">155.10</td><td data-col="4">147.30</td><td data-col="5">50.0</td><td data-col="6">55</td><td data-col="7">143.90</td><td data-col="8">75.4</td><td data-col="9">90</td><td data-col="10">141.30</td><td data-col="11">100.9</td><td data-col="12">132</td><td data-col="13">139.10</td><td data-col="14">126.2</td><td data-col="15">160</td><td data-col="16">137.10</td><td data-col="17">151.5</td><td data-col="18">185</td><td data-col="19">135.50</td><td data-col="20">177.0</td><td data-col="21">200</td><td data-col="22">133.80</td><td data-col="23">202.3</td><td data-col="24">250</td><td data-col="25">132.20</td><td data-col="26">227.7</td><td data-col="27">250</td><td data-col="28">130.80</td><td data-col="29">253.1</td><td data-col="30">280</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-even"><td data-col="1">4</td><td data-col="2">1650</td><td data-col="3">165.10</td><td data-col="4">157.30</td><td data-col="5">56.2</td><td data-col="6">75</td><td data-col="7">153.90</td><td data-col="8">83.3</td><td data-col="9">110</td><td data-col="10">151.30</td><td data-col="11">110.4</td><td data-col="12">132</td><td data-col="13">149.10</td><td data-col="14">137.3</td><td data-col="15">160</td><td data-col="16">147.20</td><td data-col="17">164.3</td><td data-col="18">200</td><td data-col="19">145.40</td><td data-col="20">191.4</td><td data-col="21">220</td><td data-col="22">143.80</td><td data-col="23">218.4</td><td data-col="24">250</td><td data-col="25">142.30</td><td data-col="26">245.4</td><td data-col="27">280</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td rowspan="7" data-col="0" class="">HG-300</td><td data-col="1">4</td><td data-col="2">970</td><td data-col="3">111.40</td><td data-col="4">104.60</td><td data-col="5">27.0</td><td data-col="6">30</td><td data-col="7">100.70</td><td data-col="8">45.5</td><td data-col="9">55</td><td data-col="10">97.70</td><td data-col="11">64.2</td><td data-col="12">75</td><td data-col="13">95.20</td><td data-col="14">82.9</td><td data-col="15">110</td><td data-col="16">93.00</td><td data-col="17">101.4</td><td data-col="18">132</td><td data-col="19">91.00</td><td data-col="20">120.0</td><td data-col="21">132</td><td data-col="22">89.10</td><td data-col="23">138.6</td><td data-col="24">160</td><td data-col="25">87.40</td><td data-col="26">157.3</td><td data-col="27">185</td><td data-col="28">85.80</td><td data-col="29">176.0</td><td data-col="30">200</td><td data-col="31">84.20</td><td data-col="32">194.5</td><td data-col="33">220</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1100</td><td data-col="3">129.20</td><td data-col="4">119.90</td><td data-col="5">32.0</td><td data-col="6">37</td><td data-col="7">116.00</td><td data-col="8">53.1</td><td data-col="9">75</td><td data-col="10">113.00</td><td data-col="11">73.0</td><td data-col="12">90</td><td data-col="13">110.50</td><td data-col="14">95.4</td><td data-col="15">110</td><td data-col="16">108.30</td><td data-col="17">116.5</td><td data-col="18">132</td><td data-col="19">106.20</td><td data-col="20">137.6</td><td data-col="21">160</td><td data-col="22">104.40</td><td data-col="23">158.7</td><td data-col="24">185</td><td data-col="25">102.70</td><td data-col="26">179.9</td><td data-col="27">200</td><td data-col="28">101.00</td><td data-col="29">201.0</td><td data-col="30">220</td><td data-col="31">99.50</td><td data-col="32">222.0</td><td data-col="33">250</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1250</td><td data-col="3">146.90</td><td data-col="4">137.50</td><td data-col="5">39.0</td><td data-col="6">45</td><td data-col="7">133.30</td><td data-col="8">63.9</td><td data-col="9">75</td><td data-col="10">130.60</td><td data-col="11">87.8</td><td data-col="12">110</td><td data-col="13">128.10</td><td data-col="14">111.9</td><td data-col="15">132</td><td data-col="16">125.90</td><td data-col="17">135.9</td><td data-col="18">160</td><td data-col="19">123.90</td><td data-col="20">159.0</td><td data-col="21">185</td><td data-col="22">122.00</td><td data-col="23">183.9</td><td data-col="24">200</td><td data-col="25">120.30</td><td data-col="26">207.7</td><td data-col="27">250</td><td data-col="28">118.70</td><td data-col="29">231.7</td><td data-col="30">280</td><td data-col="31">117.10</td><td data-col="32">255.7</td><td data-col="33">280</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1350</td><td data-col="3">158.60</td><td data-col="4">149.30</td><td data-col="5">45.4</td><td data-col="6">55</td><td data-col="7">145.40</td><td data-col="8">71.3</td><td data-col="9">90</td><td data-col="10">142.40</td><td data-col="11">97.5</td><td data-col="12">110</td><td data-col="13">139.90</td><td data-col="14">123.2</td><td data-col="15">160</td><td data-col="16">137.60</td><td data-col="17">149.1</td><td data-col="18">185</td><td data-col="19">135.60</td><td data-col="20">175.0</td><td data-col="21">200</td><td data-col="22">133.80</td><td data-col="23">201.0</td><td data-col="24">250</td><td data-col="25">131.70</td><td data-col="26">226.9</td><td data-col="27">250</td><td data-col="28">130.40</td><td data-col="29">252.7</td><td data-col="30">280</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1450</td><td data-col="3">170.40</td><td data-col="4">161.00</td><td data-col="5">52.6</td><td data-col="6">75</td><td data-col="7">157.10</td><td data-col="8">80.5</td><td data-col="9">90</td><td data-col="10">154.10</td><td data-col="11">108.4</td><td data-col="12">132</td><td data-col="13">151.60</td><td data-col="14">136.0</td><td data-col="15">160</td><td data-col="16">149.40</td><td data-col="17">164.0</td><td data-col="18">185</td><td data-col="19">147.40</td><td data-col="20">191.9</td><td data-col="21">220</td><td data-col="22">145.50</td><td data-col="23">219.7</td><td data-col="24">250</td><td data-col="25">143.80</td><td data-col="26">247.5</td><td data-col="27">280</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1550</td><td data-col="3">182.10</td><td data-col="4">172.80</td><td data-col="5">60.6</td><td data-col="6">75</td><td data-col="7">168.90</td><td data-col="8">90.4</td><td data-col="9">110</td><td data-col="10">165.90</td><td data-col="11">120.1</td><td data-col="12">160</td><td data-col="13">163.30</td><td data-col="14">149.9</td><td data-col="15">185</td><td data-col="16">161.10</td><td data-col="17">179.7</td><td data-col="18">200</td><td data-col="19">159.00</td><td data-col="20">209.4</td><td data-col="21">250</td><td data-col="22">157.30</td><td data-col="23">239.1</td><td data-col="24">280</td><td data-col="25" class="">-</td><td data-col="26" class="">-</td><td data-col="27" class="">-</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+<tr class="model-group-odd"><td data-col="1">4</td><td data-col="2">1650</td><td data-col="3">193.90</td><td data-col="4">184.50</td><td data-col="5">67.5</td><td data-col="6">75</td><td data-col="7">180.60</td><td data-col="8">99.1</td><td data-col="9">110</td><td data-col="10">177.60</td><td data-col="11">130.9</td><td data-col="12">160</td><td data-col="13">174.90</td><td data-col="14">162.5</td><td data-col="15">185</td><td data-col="16">172.90</td><td data-col="17">194.2</td><td data-col="18">220</td><td data-col="19">170.90</td><td data-col="20">225.9</td><td data-col="21">250</td><td data-col="22">169.00</td><td data-col="23">257.5</td><td data-col="24">280</td><td data-col="25" class="">-</td><td data-col="26" class="">-</td><td data-col="27" class="">-</td><td data-col="28" class="">-</td><td data-col="29" class="">-</td><td data-col="30" class="">-</td><td data-col="31" class="">-</td><td data-col="32" class="">-</td><td data-col="33" class="">-</td></tr>
+</tbody>
+        </table>
+    </div>
+    <div style="margin-top: 15px; font-size: 11px; color: #64748b; font-style: italic; text-align: left;">
+        * Giriş hava debisi (Qs); 20 °C sıcaklık ve 101.325 kPa mutlak 
+ortam basıncı altındaki standart emiş şartlarında ölçülen hava akış 
+miktarını ifade eder.
+    </div>
+    <div style="margin-top: 30px; text-align: center; font-size: 11px; color: #16a085; font-family: 'Georgia', 'Times New Roman', serif; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+        SIPAHI • 2026
+    </div>
+</div>
+
+<div id="custom-tooltip" style="position: absolute; display: none; background: rgb(30, 41, 59); color: rgb(255, 255, 255); padding: 8px 12px; border-radius: 6px; font-size: 11px; font-family: &quot;Segoe UI&quot;, Tahoma, Geneva, Verdana, sans-serif; z-index: 1000; pointer-events: none; box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px; border-left: 4px solid rgb(22, 160, 133); line-height: 1.4; min-width: 180px; left: 1530px; top: 154px;">
+                <div style="font-weight: bold; font-size: 11px; color: #16a085; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 3px; letter-spacing: 0.5px;">ÖNERİLEN MOTOR GÜCÜ</div>
+                <div style="font-size: 12px; color: #ff4d4d; font-weight: bold; margin-bottom: 6px;">Po (kW): 11</div>
+                <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px dashed #334155; padding-top: 6px; margin-top: 4px;">
+                    Model: <span style="color: #cbd5e0; font-weight: 500;">HG-50</span><br>
+                    P (Kutup): <span style="color: #cbd5e0; font-weight: 500;">2</span><br>
+                    n (Devir): <span style="color: #cbd5e0; font-weight: 500;">4000 r/min</span><br>
+                    Basınç: <span style="color: #cbd5e0; font-weight: 500;">98.0 kPa</span>
+                </div>
+            </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const table = document.querySelector('table');
+    const tbody = table.querySelector('tbody');
+    const tooltip = document.getElementById('custom-tooltip');
+    let cursorTimeout;
+    
+    const getModelCellForRow = (row) => {
+        let curr = row;
+        while (curr) {
+            const modelCell = curr.querySelector('td[rowspan]');
+            if (modelCell) return modelCell;
+            curr = curr.previousElementSibling;
+        }
+        return null;
+    };
+
+    const getTooltipHTML = (cell, colIdx) => {
+        const row = cell.closest('tr');
+        if (!row) return "";
+
+        const modelCell = getModelCellForRow(row);
+        const model = modelCell ? modelCell.textContent.trim() : "-";
+        
+        const pCell = row.querySelector('td[data-col="1"]');
+        const pole = pCell ? pCell.textContent.trim() : "-";
+        
+        const nCell = row.querySelector('td[data-col="2"]');
+        const rpm = nCell ? nCell.textContent.trim() : "-";
+
+        if (colIdx === 0) {
+            return `
+                <div style="font-weight: bold; font-size: 11px; color: #16a085; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 3px; letter-spacing: 0.5px;">BLOWER MODELİ</div>
+                <div style="font-size: 12px; color: #ffffff; font-weight: bold;">Model: ${model}</div>
+            `;
+        }
+        if (colIdx === 1) {
+            return `
+                <div style="font-weight: bold; font-size: 11px; color: #16a085; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 3px; letter-spacing: 0.5px;">MOTOR KUTUP SAYISI</div>
+                <div style="font-size: 12px; color: #ffffff; font-weight: bold; margin-bottom: 6px;">P (Kutup): ${pole}</div>
+                <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px dashed #334155; padding-top: 6px; margin-top: 4px;">
+                    Model: <span style="color: #cbd5e0; font-weight: 500;">${model}</span>
+                </div>
+            `;
+        }
+        if (colIdx === 2) {
+            return `
+                <div style="font-weight: bold; font-size: 11px; color: #16a085; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 3px; letter-spacing: 0.5px;">BLOWER DÖNÜŞ HIZI</div>
+                <div style="font-size: 12px; color: #ffffff; font-weight: bold; margin-bottom: 6px;">n (r/min): ${rpm}</div>
+                <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px dashed #334155; padding-top: 6px; margin-top: 4px;">
+                    Model: <span style="color: #cbd5e0; font-weight: 500;">${model}</span><br>
+                    P (Kutup): <span style="color: #cbd5e0; font-weight: 500;">${pole}</span>
+                </div>
+            `;
+        }
+        if (colIdx === 3) {
+            return `
+                <div style="font-weight: bold; font-size: 11px; color: #16a085; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 3px; letter-spacing: 0.5px;">TEORİK HAVA DEBİSİ</div>
+                <div style="font-size: 12px; color: #ffffff; font-weight: bold; margin-bottom: 6px;">Qth (m³/min): ${cell.textContent.trim()}</div>
+                <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px dashed #334155; padding-top: 6px; margin-top: 4px;">
+                    Model: <span style="color: #cbd5e0; font-weight: 500;">${model}</span><br>
+                    P (Kutup): <span style="color: #cbd5e0; font-weight: 500;">${pole}</span><br>
+                    n (Devir): <span style="color: #cbd5e0; font-weight: 500;">${rpm} r/min</span>
+                </div>
+            `;
+        }
+        
+        if (colIdx >= 4 && colIdx <= 33) {
+            const pressures = [
+                "9.8 kPa", "19.6 kPa", "29.4 kPa", "39.2 kPa", "49.0 kPa", 
+                "58.8 kPa", "68.6 kPa", "78.4 kPa", "88.2 kPa", "98.0 kPa"
+            ];
+            const titles = [
+                "GİRİŞ HAVA DEBİSİ",
+                "BLOWER MİL GÜCÜ",
+                "ÖNERİLEN MOTOR GÜCÜ"
+            ];
+            const valLabels = [
+                "Qs (m³/min)",
+                "La (kW)",
+                "Po (kW)"
+            ];
+            const pIdx = Math.floor((colIdx - 4) / 3);
+            const sIdx = (colIdx - 4) % 3;
+            const pressure = pressures[pIdx];
+            const title = titles[sIdx];
+            const valLabel = valLabels[sIdx];
+            const val = cell.textContent.trim();
+
+            return `
+                <div style="font-weight: bold; font-size: 11px; color: #16a085; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 3px; letter-spacing: 0.5px;">${title}</div>
+                <div style="font-size: 12px; color: #ff4d4d; font-weight: bold; margin-bottom: 6px;">${valLabel}: ${val}</div>
+                <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px dashed #334155; padding-top: 6px; margin-top: 4px;">
+                    Model: <span style="color: #cbd5e0; font-weight: 500;">${model}</span><br>
+                    P (Kutup): <span style="color: #cbd5e0; font-weight: 500;">${pole}</span><br>
+                    n (Devir): <span style="color: #cbd5e0; font-weight: 500;">${rpm} r/min</span><br>
+                    Basınç: <span style="color: #cbd5e0; font-weight: 500;">${pressure}</span>
+                </div>
+            `;
+        }
+        return "";
+    };
+
+    const getHeaderTooltip = (th) => {
+        const text = th.textContent.trim();
+        let title = "";
+        let desc = "";
+
+        if (text === "Model") {
+            title = "Model";
+            desc = "Blower Modeli";
+        } else if (text === "n") {
+            title = "n";
+            desc = "Blower Dönüş Hızı (r/min, rpm)";
+        } else if (text === "Qth") {
+            title = "Qth";
+            desc = "Teorik Hava Debisi (m³/min)";
+        } else if (text === "P") {
+            title = "P";
+            desc = "Motor Kutup Sayısı";
+        } else if (text === "Qs") {
+            title = "Qs";
+            desc = "Standart Şartlardaki Giriş Hava Debisi (m³/min)";
+        } else if (text === "La") {
+            title = "La";
+            desc = "Blower Mil Gücü (kW)";
+        } else if (text === "Po") {
+            title = "Po";
+            desc = "Önerilen Motor Gücü (kW)";
+        } else if (text.includes("kPa")) {
+            title = text;
+            desc = "Blower Çalışma Basıncı";
+        }
+
+        if (!title) return "";
+
+        return `
+            <div style="font-weight: bold; font-size: 12px; color: #16a085; margin-bottom: 4px;">${title}</div>
+            <div style="font-size: 10px; color: #f1f5f9; line-height: 1.4;">
+                ${desc}
+            </div>
+        `;
+    };
+
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.forEach(row => {
+        const isFirstInGroup = row.querySelector('td[rowspan]');
+        const cells = Array.from(row.querySelectorAll('td'));
+        cells.forEach((cell, cellIdx) => {
+            let colIdx;
+            if (isFirstInGroup) {
+                colIdx = cellIdx;
+            } else {
+                colIdx = cellIdx + 1;
+            }
+            cell.dataset.col = colIdx;
+        });
+    });
+
+    table.addEventListener('mouseover', (e) => {
+        if (window.innerWidth <= 768) return;
+        const cell = e.target.closest('td, th');
+        if (!cell) return;
+
+        if (cell.tagName === 'TH') {
+            const html = getHeaderTooltip(cell);
+            if (html) {
+                tooltip.innerHTML = html;
+                tooltip.style.display = 'block';
+            }
+            return;
+        }
+
+        const colIdx = cell.dataset.col;
+        if (colIdx !== undefined) {
+            tbody.querySelectorAll(`td[data-col="${colIdx}"]`).forEach(td => {
+                td.classList.add('highlight-col');
+            });
+        }
+        
+        const row = cell.closest('tr');
+        if (row) {
+            const modelCell = getModelCellForRow(row);
+            if (modelCell) {
+                modelCell.classList.add('highlight-row-spanned');
+            }
+        }
+
+        if (colIdx !== undefined) {
+            const html = getTooltipHTML(cell, parseInt(colIdx));
+            if (html) {
+                tooltip.innerHTML = html;
+                tooltip.style.display = 'block';
+            }
+        }
+    });
+
+    table.addEventListener('mousemove', (e) => {
+        if (window.innerWidth <= 768) return;
+        
+        // Reset mobile layout if returning from resize
+        tooltip.style.position = 'absolute';
+        tooltip.style.left = '';
+        tooltip.style.right = '';
+        tooltip.style.bottom = '';
+        tooltip.style.top = '';
+        tooltip.style.width = '';
+        tooltip.style.minWidth = '180px';
+        
+        const tooltipWidth = tooltip.offsetWidth || 200;
+        const isRightHalf = e.clientX > window.innerWidth / 2;
+        
+        if (isRightHalf) {
+            tooltip.style.left = (e.pageX - tooltipWidth - 20) + 'px';
+        } else {
+            tooltip.style.left = (e.pageX + 20) + 'px';
+        }
+        tooltip.style.top = (e.pageY + 20) + 'px';
+        
+        // Hide cursor if idle for 0.2 seconds in tbody
+        const isCell = e.target.closest('td');
+        if (isCell) {
+            tbody.classList.remove('hide-cursor');
+            clearTimeout(cursorTimeout);
+            cursorTimeout = setTimeout(() => {
+                tbody.classList.add('hide-cursor');
+            }, 200);
+        } else {
+            tbody.classList.remove('hide-cursor');
+            clearTimeout(cursorTimeout);
+        }
+    });
+
+    table.addEventListener('mouseout', (e) => {
+        if (window.innerWidth <= 768) return;
+        const cell = e.target.closest('td, th');
+        if (!cell) return;
+
+        if (cell.tagName === 'TH') {
+            tooltip.style.display = 'none';
+            return;
+        }
+
+        tbody.querySelectorAll('.highlight-col').forEach(td => {
+            td.classList.remove('highlight-col');
+        });
+        
+        const row = cell.closest('tr');
+        if (row) {
+            const modelCell = getModelCellForRow(row);
+            if (modelCell) {
+                modelCell.classList.remove('highlight-row-spanned');
+            }
+        }
+
+        tooltip.style.display = 'none';
+    });
+
+    table.addEventListener('mouseleave', () => {
+        if (window.innerWidth <= 768) return;
+        tbody.classList.remove('hide-cursor');
+        clearTimeout(cursorTimeout);
+        tooltip.style.display = 'none';
+    });
+
+    // Touch click listener for mobile devices
+    table.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            const cell = e.target.closest('td, th');
+            if (!cell) return;
+
+            let html = "";
+            if (cell.tagName === 'TH') {
+                html = getHeaderTooltip(cell);
+            } else {
+                const colIdx = cell.dataset.col;
+                if (colIdx !== undefined) {
+                    // Remove previous highlights
+                    tbody.querySelectorAll('.highlight-col').forEach(td => td.classList.remove('highlight-col'));
+                    tbody.querySelectorAll('.highlight-row-spanned').forEach(td => td.classList.remove('highlight-row-spanned'));
+
+                    // Add current highlights
+                    tbody.querySelectorAll(`td[data-col="${colIdx}"]`).forEach(td => {
+                        td.classList.add('highlight-col');
+                    });
+                    const row = cell.closest('tr');
+                    if (row) {
+                        const modelCell = getModelCellForRow(row);
+                        if (modelCell) {
+                            modelCell.classList.add('highlight-row-spanned');
+                        }
+                    }
+
+                    html = getTooltipHTML(cell, parseInt(colIdx));
+                }
+            }
+
+            if (html) {
+                tooltip.innerHTML = html + `<span class="tooltip-close" style="position: absolute; right: 12px; top: 10px; font-size: 20px; cursor: pointer; color: #94a3b8; font-weight: bold; padding: 4px; line-height: 1;">&times;</span>`;
+                tooltip.style.display = 'block';
+
+                tooltip.style.position = 'fixed';
+                tooltip.style.left = '15px';
+                tooltip.style.right = '15px';
+                tooltip.style.bottom = '15px';
+                tooltip.style.top = 'auto';
+                tooltip.style.width = 'auto';
+                tooltip.style.minWidth = '0';
+            }
+        }
+    });
+
+    // Listen for close button clicks on mobile
+    tooltip.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tooltip-close')) {
+            tooltip.style.display = 'none';
+            tbody.querySelectorAll('.highlight-col').forEach(td => td.classList.remove('highlight-col'));
+            tbody.querySelectorAll('.highlight-row-spanned').forEach(td => td.classList.remove('highlight-row-spanned'));
+        }
+    });
+});
+</script>
+
+
+</body></html>
