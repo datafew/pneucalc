@@ -344,6 +344,12 @@
             scroll-margin-top: calc(var(--headH) + 32px);
         }
 
+        /* Colgroup column widths — required for Firefox/LibreWolf which does NOT
+           fall back to first-row cell widths when table-layout:fixed is set. */
+        .col-no    { width: var(--noW); }
+        .col-chem  { width: var(--chemW); }
+        .col-state { width: var(--stateW); }
+
         /* Sticky columns (match export sizing) */
         .no-col, .no-cell { width: var(--noW); min-width: var(--noW); max-width: var(--noW); }
 
