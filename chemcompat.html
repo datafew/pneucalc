@@ -57,7 +57,7 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+        html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
 
         body {
             font-family: Inter, system-ui, -apple-system, sans-serif;
@@ -250,7 +250,6 @@
 
         table {
             width: 100%;
-            min-width: max-content;
             /* border-separate + border-spacing:0 instead of collapse:
                prevents the Chrome/Safari bug where position:sticky thead
                visually floats away from the table body on scroll. */
@@ -261,8 +260,6 @@
             font-weight: 400;
             /* No outer border here: in separate mode table border stacks with
                td borders and creates double lines. The frame is rebuilt below. */
-            /* contain:style limits CSS custom property recalc scope to the table */
-            contain: style;
         }
 
         /* isolation:isolate on each row creates a stacking context, allowing
