@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sızdırmazlık Elastomerleri Kimyasal Dayanım Tablosu</title>
+    <title>Elastomer - Kimyasal Uyumluluk Rehberi</title>
     <style>
         :root {
             /* Softer palette + thin gridlines (inspired by "Chemical Compatibility Checker" export) */
@@ -32,8 +32,8 @@
             /* Sticky offsets (JS updates --headH; --noW optional) */
             --headH: 0px;
             --noW: 44px;
-            --chemW: 260px;
-            --stateW: 20px;
+            --chemW: 300px;
+            --stateW: 60px;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -57,7 +57,7 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
 
         body {
             font-family: Inter, system-ui, -apple-system, sans-serif;
@@ -67,7 +67,7 @@
         }
 
         .container {
-            max-width: 980px;
+            max-width: 1020px; /* Fits the 1004px table + padding precisely */
             margin: 0 auto;
             padding: 0 8px;
         }
@@ -93,37 +93,70 @@
         .table-toolbar {
             position: sticky;
             top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(6px);
+            /* z-index > all sticky thead/td cells so the toolbar always renders
+               on top — this hides the 2px overlap used by the thead trick below */
+            z-index: 80;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.03);
         }
 
         @media (prefers-color-scheme: dark) {
             .table-toolbar {
-                background: rgba(11, 11, 15, 0.92);
+                background: rgba(11, 11, 15, 0.94);
+                box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.25);
             }
         }
 
-        .table-toolbar .toolbar-row {
+        .table-toolbar .toolbar-inputs-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0 6px 0;
+            flex-wrap: nowrap;
+        }
+
+        .table-toolbar .toolbar-inputs-row input[type="search"] {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .table-toolbar .toolbar-inputs-row select#material {
+            flex: 1;
+            min-width: 0;
+            width: auto;
+        }
+
+        .table-toolbar .toolbar-filters-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 4px 0 10px 0;
+            flex-wrap: nowrap;
+        }
+
+        .legend-group {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 0;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-        }
-
-        .table-toolbar .toolbar-row::-webkit-scrollbar {
-            height: 6px;
+            flex: 0 0 auto;
         }
 
         .legend-inline {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: nowrap;
-            flex: 0 0 auto;
+        }
+
+        .legend-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            opacity: 0.85;
+            white-space: nowrap;
         }
 
         .legend-item {
@@ -131,14 +164,31 @@
             align-items: center;
             gap: 6px;
             white-space: nowrap;
-            color: #475569;
+            color: var(--text);
             font-size: 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: opacity 150ms ease, background-color 150ms ease, border-color 150ms ease;
+            user-select: none;
+            opacity: 0.35;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .legend-item {
-                color: #9aa0a6;
-            }
+        .legend-item.active {
+            opacity: 1;
+            background: color-mix(in oklab, var(--card) 45%, transparent);
+            border-color: var(--border);
+        }
+
+        .legend-item:hover {
+            opacity: 0.85;
+            background: color-mix(in oklab, var(--card) 60%, transparent);
+        }
+        .legend-item.active:hover {
+            opacity: 1;
+            background: color-mix(in oklab, var(--card) 80%, transparent);
         }
 
         .dot {
@@ -168,22 +218,11 @@
         }
 
         .table-toolbar input[type="search"] {
-            min-width: 170px;
-            flex: 1 1 220px;
+            min-width: 120px;
         }
 
         .table-toolbar select {
-            min-width: 108px;
-            flex: 0 0 auto;
-        }
-
-        .table-toolbar select#material {
-            width: 108px;
-        }
-
-        .table-toolbar select#rating {
-            min-width: 112px;
-            width: 112px;
+            min-width: 120px;
         }
 
         #counter {
@@ -201,37 +240,50 @@
         }
 
         .table-wrap {
-            padding: 10px 0;
+            padding-bottom: 10px; /* top padding removed: would create a gap where scrolling rows bleed through */
         }
 
         .table-container {
             overflow: visible;
-            border: 1px solid var(--border);
             background: var(--background);
         }
 
         table {
             width: 100%;
+            min-width: max-content;
+            /* border-separate + border-spacing:0 instead of collapse:
+               prevents the Chrome/Safari bug where position:sticky thead
+               visually floats away from the table body on scroll. */
             border-collapse: separate;
             border-spacing: 0;
-            border: 1px solid var(--border);
             table-layout: fixed;
             font-size: 12px;
             font-weight: 400;
+            /* No outer border here: in separate mode table border stacks with
+               td borders and creates double lines. The frame is rebuilt below. */
+            /* contain:style limits CSS custom property recalc scope to the table */
+            contain: style;
         }
+
+        /* isolation:isolate on each row creates a stacking context, allowing
+           the browser to repaint ONLY the hovered row's composite layer
+           instead of invalidating the entire table on background-color change */
+        tbody tr { isolation: isolate; }
 
         th, td {
             text-align: center;
             vertical-align: middle;
-            /* Draw only right/bottom lines to avoid "double-thick" gridlines */
+            height: 32px;
             border-right: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
         }
 
-        thead th:last-child,
-        tbody td:last-child {
-            border-right: none;
-        }
+        /* Reconstruct outer frame from cell level (no double lines) */
+        thead th:first-child, td:first-child { border-left: 1px solid var(--border); }
+        thead th { border-top: 1px solid var(--border); }
+
+        thead tr, tbody tr { height: 32px; }
+
 
         tbody tr:last-child td {
             border-bottom: none;
@@ -241,15 +293,26 @@
         thead th {
             position: -webkit-sticky;
             position: sticky;
-            top: var(--headH);
+            /* Stick 2px EARLIER than the toolbar bottom. Those top 2px slide
+               behind the toolbar (z-index 80 > 60) and are never visible.
+               This guarantees zero gap regardless of subpixel rounding on
+               any display DPI, without any JS timing dependency. */
+            top: calc(var(--headH) - 2px);
             background: #fafafa;
-            background-clip: padding-box;
             font-weight: 600;
             padding: 4px;
             font-size: 12px;
             line-height: 1.5;
             white-space: nowrap;
             z-index: 60;
+            border-bottom: none;
+            box-shadow: 0 1px 0 var(--border);
+        }
+
+        .sort-arrow {
+            margin-left: 4px;
+            opacity: 0.85;
+            display: inline-block;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -259,10 +322,8 @@
             }
         }
 
-        /* Remove sticky from first row */
-        tbody tr:first-child td {
-            border-top: none;
-        }
+        /* With border-collapse:separate the first tbody row no longer inherits
+           a shared border from thead — no extra rule needed here. */
 
         /* Keep base rows transparent; stripe sticky columns only (match export) */
 
@@ -276,6 +337,11 @@
             white-space: nowrap; /* keep single-line cells to avoid row height jumps */
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        tbody tr {
+            scroll-snap-align: start;
+            scroll-margin-top: calc(var(--headH) + 32px);
         }
 
         /* Sticky columns (match export sizing) */
@@ -353,7 +419,6 @@
         /* rating classes are applied to the TD itself so the cell is colored */
         .rating {
             padding: 0;
-            position: relative;
         }
         /* Rating fills (match "Chemical Compatibility Checker" export) */
         td.rating-5 { background-color: rgba(var(--success-rgb), 0.55); }
@@ -371,7 +436,6 @@
                 td.rating-1 { background-color: transparent; }
             }
         }
-
         .loading {
             text-align: center;
             padding: 2rem;
@@ -379,60 +443,37 @@
         }
 
         /* Mobile-only responsive styles (avoid affecting desktop window resizing) */
-        @media (max-width: 640px) {
-            :root { --noW: 40px; --chemW: 200px; --stateW: 20px; }
+        @media (max-width: 1024px) {
+            :root { --noW: 26px; --chemW: 86px; --stateW: 18px; }
             h1 {
                 font-size: 1.5rem;
                 margin-bottom: 0.75rem;
             }
 
-            /* Mobile: show filters in a compact, fully visible layout */
-            .table-toolbar .toolbar-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                overflow-x: visible;
-                padding: 10px 0 12px;
+            /* On tablets/intermediate widths, wrap toolbar elements so they fit */
+            .table-toolbar .toolbar-inputs-row {
+                gap: 10px;
+                padding: 8px 0 4px 0;
             }
 
-            .table-toolbar input[type="search"] {
-                width: 100%;
-                min-width: 0;
-                flex: none;
-            }
-
-            .table-toolbar input#search { grid-column: 1; grid-row: 1; }
-            .table-toolbar select#material { grid-column: 1; grid-row: 2; }
-            .table-toolbar select#rating { grid-column: 2; grid-row: 2; }
-
-            .table-toolbar select {
-                width: 100%;
-                min-width: 0;
-            }
-
-            .legend-inline {
-                grid-column: 1 / -1;
-                grid-row: 3;
-                width: 100%;
+            .table-toolbar .toolbar-filters-row {
                 flex-wrap: wrap;
-                gap: 8px;
+                gap: 8px 12px;
+                padding: 4px 0 8px 0;
             }
 
-            #counter {
-                grid-column: 2;
-                grid-row: 1;
-                justify-self: end;
-                align-self: center;
+            .table-toolbar .toolbar-filters-row #counter {
                 margin-left: 0;
             }
 
-            .table-toolbar input[type="search"],
-            .table-toolbar select {
-                font-size: 13px;
+            .legend-group {
+                background: color-mix(in oklab, var(--card) 60%, transparent);
+                border: 1px solid var(--border);
+                border-radius: 10px;
                 padding: 6px 10px;
             }
 
-            /* Table adjustments for mobile */
+            /* Table adjustments for mobile/tablet */
             .table-container {
                 border-radius: 0.375rem;
                 margin: 0;
@@ -442,9 +483,28 @@
                 overscroll-behavior-x: contain;
             }
 
+            /* Mobile sticky header: a separate sticky div above .table-container.
+               JS clones the thead here. */
+            .mobile-sticky-head {
+                display: none; /* shown only when JS adds body.mobile-head-active */
+                position: sticky;
+                top: calc(var(--headH) - 2px);
+                z-index: 60;
+                background: var(--background);
+            }
+            body.mobile-head-active .mobile-sticky-head { display: block; }
+            body.mobile-head-active #data-table thead   { display: none; }
+
+            .mobile-sticky-head .head-scroller {
+                overflow-x: auto;
+                overflow-y: hidden;
+                scrollbar-width: none;
+            }
+            .mobile-sticky-head .head-scroller::-webkit-scrollbar { display: none; }
+
             th.name-cell,
             td.name-cell {
-                min-width: 200px;
+                min-width: var(--chemW);
             }
 
             th.elastomer, td.elastomer { padding: 2px; }
@@ -455,105 +515,138 @@
                 line-height: 1.25;
             }
 
-            /* Mobile: dedicated sticky header (with safe fallback) */
-            .mobile-sticky-head {
-                display: none;
-                position: sticky;
-                top: var(--headH);
-                z-index: 45;
-                margin: 0;
-                background: var(--background);
-                border-bottom: 1px solid var(--border);
-            }
-
-            .mobile-head-ready .mobile-sticky-head { display: block; }
-            .mobile-head-ready #data-table thead { display: none; }
-
-            .mobile-sticky-head .head-scroller {
-                overflow-x: auto;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior-x: contain;
-            }
-
-            .mobile-sticky-head .head-scroller::-webkit-scrollbar {
-                height: 0;
-            }
-
-            .mobile-sticky-head table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0;
-                border-left: none;
-                border-right: none;
-                border-top: 1px solid var(--border);
-                border-bottom: none;
-                table-layout: fixed;
-                background: var(--background);
-            }
-
-            .mobile-sticky-head th {
-                background: #fafafa;
-                font-size: 11px;
-                padding: 3px;
-                line-height: 1.25;
-            }
-
-            @media (prefers-color-scheme: dark) {
-                .mobile-sticky-head th {
-                    background: #0f1421;
-                    color: #cbd5e1;
-                }
-            }
-
-            .mobile-sticky-head th.elastomer {
+            /* Mobile: elastomer headers go vertical to save horizontal space */
+            thead th.elastomer {
                 writing-mode: vertical-rl;
                 text-orientation: mixed;
                 font-size: 10px;
                 line-height: 1;
-                padding: 6px 0;
-                height: 64px;
+                padding: 6px 0 18px; /* Extra bottom padding for arrow space */
+                height: 80px; /* Slightly taller for clear separation */
+                position: relative;
+                top: 0; /* Reset inherited sticky top offset to prevent black overlaps */
+            }
+
+            thead th.elastomer .sort-arrow {
+                position: absolute;
+                bottom: 4px;
+                left: 0;
+                right: 0;
+                margin-left: 0;
+                text-align: center;
+                display: block;
+                writing-mode: horizontal-tb; /* Restores normal horizontal text alignment context for centering */
             }
         }
 
+        /* 480px (Mobile Phones) and smaller viewport styling */
         @media (max-width: 480px) {
-            :root { --chemW: 180px; --stateW: 16px; }
-        }
-
-        /* iPhone 11 / ~375px: reduce chemical column to avoid horizontal scroll */
-        @media (max-width: 414px) {
-            :root { --chemW: 150px; }
-            th.name-cell,
-            td.name-cell {
-                min-width: 150px;
+            .table-container {
+                overflow-x: hidden; /* Prevent horizontal scrolling entirely on phones */
             }
-        }
 
-        /* Small mobile devices */
-        @media (max-width: 360px) {
-            :root { --chemW: 160px; --stateW: 14px; }
-            th.name-cell,
-            td.name-cell {
-                min-width: 160px;
-            }
-        }
-
-        @media (max-width: 320px) {
-            :root { --noW: 36px; --chemW: 140px; --stateW: 12px; }
-
-            thead th.elastomer {
+            th.no-col,
+            td.no-cell {
                 font-size: 10px;
-                padding: 4px 0;
+                padding: 4px 2px;
+            }
+
+            th.name-cell,
+            td.name-cell {
+                min-width: var(--chemW);
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                cursor: pointer;
+                font-size: 10px;
+            }
+
+            /* Feedback on tap */
+            td.name-cell:active {
+                background: color-mix(in oklab, var(--border) 35%, transparent) !important;
+            }
+
+            .table-toolbar .toolbar-inputs-row {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 8px 0 4px 0;
+            }
+
+            .table-toolbar .toolbar-filters-row {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 4px 0 12px 0;
+            }
+
+            .table-toolbar .toolbar-inputs-row input[type="search"],
+            .table-toolbar .toolbar-inputs-row select#material {
+                width: 100% !important;
+                min-width: 0 !important;
+                flex: none;
+            }
+
+            .table-toolbar .toolbar-filters-row #counter {
+                text-align: center;
+                margin-top: 4px;
+            }
+
+            .legend-group {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+                background: color-mix(in oklab, var(--card) 60%, transparent);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 8px;
+            }
+
+            .legend-title {
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                opacity: 0.6;
+                margin-bottom: 2px;
+                text-align: center; /* Center on mobile */
+            }
+
+            .legend-inline {
+                width: 100%;
+                flex-wrap: nowrap; /* Force single line to fit */
+                gap: 4px;
+                justify-content: center; /* Center on mobile */
+            }
+
+            .legend-item {
+                font-size: 10px;
+                padding: 2px 4px;
+                gap: 4px;
+            }
+
+            .legend-item .dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            #counter {
+                align-self: flex-start;
+                margin-left: 0;
+                font-size: 11px;
             }
         }
 
         @media (hover: hover) {
-            /* Cell hover effects */
+            /* Cell highlight: inset box-shadow instead of outline.
+               outline renders OUTSIDE the box → the row below paints over its
+               bottom edge, making it invisible. inset shadow renders entirely
+               inside the cell border, never clipped by adjacent cells.
+               box-shadow has no layout cost and no transition needed. */
             td.rating:hover {
-                outline: 2px solid rgba(255, 255, 255, 0.5);
-                /* remove negative offset to avoid outline overlapping neighbours */
-                outline-offset: 0;
-                transition: outline 0.15s ease;
+                box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
             }
 
             tr:hover td { background-color: #f5f7fb; }
@@ -567,10 +660,17 @@
         }
 
         @media (hover: hover) and (prefers-color-scheme: dark) {
-            tr:hover td { background-color: inherit; }
+            /* Pre-computed hover colors replace filter:brightness(1.05).
+               filter forces a GPU composite layer per cell (11 layers/row).
+               Explicit background-color is a simple paint op — no extra layers. */
+            tr:hover td { background-color: #1a1f30; }
             tr:hover td.no-cell,
             tr:hover td.name-cell { background-color: #0b1020; }
-            tr:hover td.rating { filter: brightness(1.05); }
+            tr:hover td.rating-5 { background-color: rgba(45, 205, 115, 0.30); }
+            tr:hover td.rating-4 { background-color: rgba(63, 160, 255, 0.26); }
+            tr:hover td.rating-3 { background-color: rgba(255, 201, 74, 0.30); }
+            tr:hover td.rating-2 { background-color: rgba(255, 107, 107, 0.30); }
+            tr:hover td.rating-1 { background-color: transparent; }
         }
 
         /* Elastomer columns (match export) */
@@ -624,11 +724,11 @@
         .scroll-nav {
             position: fixed;
             right: 14px;
-            bottom: 14px;
+            bottom: 70px; /* clears the fixed .signature bar (~44px) + 14px gap */
             display: flex;
             flex-direction: column;
             gap: 8px;
-            z-index: 120;
+            z-index: 210; /* above .signature (z-index: 200) */
         }
 
         .scroll-nav button {
@@ -662,26 +762,402 @@
             .scroll-nav button { transition: none; }
         }
 
-        /* Force-desktop behaviour (avoid mobile sticky-header logic affecting desktop) */
-        @media (min-width: 641px) {
-            #mobile-sticky-head { display: none !important; }
-            #data-table thead { display: table-header-group !important; }
-            #data-table thead th { position: sticky !important; top: var(--headH) !important; }
-            .table-container { overflow: visible !important; }
+        /* Centered Details Modal Styles */
+        .bottom-sheet {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 220ms ease;
         }
+
+        .bottom-sheet.active {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        .bottom-sheet-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+        }
+
+        .bottom-sheet-content {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            max-height: 85vh;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bottom-sheet.active .bottom-sheet-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .bottom-sheet-drag-handle {
+            display: none;
+        }
+
+        .bottom-sheet-header {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 14px;
+            padding: 0 24px;
+        }
+
+        .modal-title-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .bottom-sheet-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+            line-height: 1.35;
+        }
+
+        .bottom-sheet-subtitle {
+            font-size: 11px;
+            color: color-mix(in oklab, var(--text) 55%, transparent);
+            margin: 4px 0 0 0;
+            line-height: 1.45;
+            font-weight: 400;
+        }
+
+        .bottom-sheet-close {
+            position: absolute;
+            top: -2px;
+            right: 0;
+            background: color-mix(in oklab, var(--border) 40%, transparent);
+            border: none;
+            color: var(--text);
+            font-size: 20px;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .bottom-sheet-body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 2px;
+        }
+
+        .bottom-sheet-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bottom-sheet-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: color-mix(in oklab, var(--card) 45%, var(--border));
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .sheet-elastomer-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .sheet-elastomer-full {
+            font-size: 10px;
+            color: color-mix(in oklab, var(--text) 55%, transparent);
+            margin-left: 4px;
+            font-weight: normal;
+        }
+
+        .sheet-rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+
+        .sheet-rating-badge.rating-5 { background: rgba(34, 197, 94, 0.12); color: #22c55e; }
+        .sheet-rating-badge.rating-4 { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
+        .sheet-rating-badge.rating-3 { background: rgba(234, 179, 8, 0.12); color: #eab308; }
+        .sheet-rating-badge.rating-2 { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+        .sheet-rating-badge.rating-1 { background: rgba(148, 163, 184, 0.12); color: #94a3b8; }
+
+        /* Sticky signature footer */
+        .signature {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(14,165,233,.06), rgba(34,197,94,.06), rgba(167,139,250,.06));
+            border-top: 1px solid rgba(148,163,184,.08);
+            padding: 2px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            text-align: center;
+            font-size: 9px;
+            font-weight: 500;
+            color: color-mix(in oklab, var(--text) 60%, transparent);
+            letter-spacing: 0.3px;
+            line-height: 1;
+        }
+
+        /* Page title styles inside the sticky header */
+        .header-top-row {
+            padding-top: 10px;
+            padding-bottom: 4px;
+            border-bottom: 1px dotted rgba(148, 163, 184, 0.12);
+            margin-bottom: 2px;
+        }
+        
+        .page-title {
+            font-size: 22px; /* Scaled 1.5x from 15px */
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Animated chemical beaker icon */
+        .chem-icon {
+            width: 24px; /* Scaled 1.5x from 16px */
+            height: 24px;
+            fill: none;
+            stroke: #0a84ff; /* Accent primary blue */
+            stroke-width: 2.0; /* Adjusted relative weight for size 24px */
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: inline-block;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .chem-icon {
+                stroke: #2f95ff; /* brighter blue in dark mode */
+            }
+        }
+
+        .table-toolbar:hover .chem-icon {
+            transform: rotate(-12deg) scale(1.15);
+        }
+
+        .chem-icon .liquid-line {
+            stroke-width: 1.5;
+            opacity: 0.7;
+        }
+
+        .chem-icon .bubble {
+            fill: currentColor;
+            color: #0a84ff;
+            stroke: none;
+            transform-origin: center;
+        }
+        @media (prefers-color-scheme: dark) {
+            .chem-icon .bubble {
+                color: #2f95ff;
+            }
+        }
+
+        @keyframes bubble-rise {
+            0% {
+                transform: translateY(6px) scale(0.6);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-8px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .chem-icon .bubble.b1 {
+            animation: bubble-rise 2.4s infinite linear;
+        }
+        .chem-icon .bubble.b2 {
+            animation: bubble-rise 3.0s infinite linear;
+            animation-delay: 0.8s;
+        }
+        .chem-icon .bubble.b3 {
+            animation: bubble-rise 2.7s infinite linear;
+            animation-delay: 1.6s;
+        }
+
+        body.embed .header-top-row {
+            display: none !important;
+        }
+
+        /* Mobile page title scaling */
+        @media (max-width: 980px) {
+            .header-top-row {
+                padding-top: 8px;
+                padding-bottom: 4px;
+                text-align: center;
+            }
+            .page-title {
+                font-size: 17px;
+            }
+            .chem-icon {
+                width: 18px;
+                height: 18px;
+                stroke-width: 2.2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 13px; /* Prevents wrapping to a 2nd line on all smartphones down to 320px */
+            }
+            .chem-icon {
+                width: 15px;
+                height: 15px;
+                stroke-width: 2.2;
+            }
+        }
+
+        /* Signature footer clearance */
+        body { padding-bottom: 22px; }
+        body.embed { padding-bottom: 0 !important; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Sızdırmazlık Elastomerleri Kimyasal Dayanım Tablosu</h1>
-        <p class="subtitle">
-            Bu sayfa; mühendislikte sızdırmazlık elemanı malzemesi olarak kullanılan 11 farklı elastomerin, ortamdaki kimyasal ile kullanılabilirliğini hızlıca kontrol etmek içindir. Uygulama koşulları farklılık gösterebileceğinden, üretici dokümanlarından teyit edilmelidir. Seçim/montaj/kullanım/bakım sorumluluğu kullanıcıdadır; hatalı seçimler ciddi yaralanma ve ekipman hasarına yol açabilir.
-        </p>
-    </div>
+    <script>
+      try{
+        const params = new URLSearchParams(location.search);
+        if(params.has('embed')){
+          document.documentElement.classList.add('embed');
+          document.body.classList.add('embed');
+        }
+      }catch(e){}
+    </script>
+    <style>
+      html.embed,
+      body.embed {
+        background: #020617 !important; /* slate-950 */
+        color: #e2e8f0 !important;      /* slate-200 */
+        color-scheme: dark;
+      }
 
-    <div class="table-toolbar" role="region" aria-label="Tablo filtreleri">
+      /* Keep scroll-nav visible in embed; it is useful inside iframe */
+
+      /* Embed mode: force dark surfaces to match premium.html */
+      html.embed {
+        --background: #020617; /* slate-950 */
+        --text: #e2e8f0;       /* slate-200 */
+        --border: rgba(148,163,184,.25);
+        --card: rgba(15,23,42,.55);
+        --row-odd: rgba(15,23,42,.55);
+        --row-even: rgba(2,6,23,.85);
+      }
+
+      body.embed .table-toolbar {
+        background: rgba(2, 6, 23, 0.86) !important;
+        border-bottom: 1px solid rgba(148,163,184,.20) !important;
+      }
+
+      body.embed .table-container,
+      body.embed .table-wrap {
+        background: var(--background) !important;
+      }
+
+      body.embed thead th {
+        background: #0b1220 !important;
+        color: #cbd5e1 !important;
+      }
+
+      body.embed td.no-cell,
+      body.embed td.name-cell,
+      body.embed th.no-col,
+      body.embed th.name-cell {
+        background: #0f1320 !important;
+        color: #e6e9f0 !important;
+      }
+
+      body.embed tbody tr:nth-child(even) td.no-cell,
+      body.embed tbody tr:nth-child(even) td.name-cell {
+        background: #0d111b !important;
+      }
+
+      body.embed input[type="search"],
+      body.embed select {
+        background: rgba(2, 6, 23, 0.55) !important;
+        color: #e2e8f0 !important;
+        border-color: rgba(148,163,184,.25) !important;
+      }
+
+      body.embed input::placeholder { color: rgba(148,163,184,.75) !important; }
+      body.embed #counter { color: rgba(226,232,240,.85) !important; }
+
+      /* Hide signature in embed mode; restore scroll-nav to default position */
+      body.embed .signature { display: none !important; }
+      body.embed .scroll-nav { bottom: 14px !important; }
+    </style>
+    <div class="table-toolbar" role="region" aria-label="Tablo filtreleri ve başlık">
         <div class="container">
-            <div class="toolbar-row">
+            <header class="header-top-row">
+                <h1 class="page-title">
+                    <svg class="chem-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M6 3h12" />
+                        <path d="M8 3v4.5L4.5 16.5a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L16 7.5V3" />
+                        <path d="M5.5 15h13" class="liquid-line" />
+                        <circle cx="10" cy="13" r="1.2" class="bubble b1" />
+                        <circle cx="14" cy="11" r="1" class="bubble b2" />
+                        <circle cx="12" cy="9" r="0.8" class="bubble b3" />
+                    </svg>
+                    Elastomer - Kimyasal Uyumluluk Rehberi
+                </h1>
+            </header>
+            <div class="toolbar-inputs-row">
                 <label class="sr-only" for="search">Ara</label>
                 <input type="search" id="search" placeholder="Kimyasal veya ID ara...">
 
@@ -689,23 +1165,17 @@
                 <select id="material" aria-label="Elastomer">
                     <option value="">Elastomer</option>
                 </select>
-
-                <label class="sr-only" for="rating">Dayanım</label>
-                <select id="rating" aria-label="Dayanım">
-                    <option value="">Dayanım</option>
-                    <option value="5">İyi</option>
-                    <option value="4">Orta</option>
-                    <option value="3">Zayıf</option>
-                    <option value="2">Uygun Değil</option>
-                    <option value="1">Veri Yok</option>
-                </select>
-
-                <div class="legend-inline" aria-label="Dayanım açıklaması">
-                    <span class="legend-item"><span class="dot g"></span> İyi</span>
-                    <span class="legend-item"><span class="dot f"></span> Orta</span>
-                    <span class="legend-item"><span class="dot p"></span> Zayıf</span>
-                    <span class="legend-item"><span class="dot b"></span> Uygun Değil</span>
-                    <span class="legend-item"><span class="dot n"></span> Veri Yok</span>
+            </div>
+            <div class="toolbar-filters-row">
+                <div class="legend-group" role="group" aria-labelledby="legend-group-title">
+                    <div id="legend-group-title" class="legend-title">Kimyasal Uyumluluk Derecesi</div>
+                    <div class="legend-inline" aria-label="Dayanım filtreleri">
+                        <button type="button" class="legend-item active" data-rating="5" title="İyi - Direnç yüksek, sürekli kullanıma uygun (Açıp kapatmak için tıklayın)"><span class="dot g"></span> İyi</button>
+                        <button type="button" class="legend-item active" data-rating="4" title="Orta - Sınırlı maruz kalma kabul edilebilir (Açıp kapatmak için tıklayın)"><span class="dot f"></span> Orta</button>
+                        <button type="button" class="legend-item active" data-rating="3" title="Zayıf - Sürekli kullanım için önerilmez (Açıp kapatmak için tıklayın)"><span class="dot p"></span> Zayıf</button>
+                        <button type="button" class="legend-item active" data-rating="2" title="Uygun Değil - Bu kimyasalla kullanılmamalıdır (Açıp kapatmak için tıklayın)"><span class="dot b"></span> Uygun Değil</button>
+                        <button type="button" class="legend-item active" data-rating="1" title="Veri Yok - Uygun veri bulunamadı (Açıp kapatmak için tıklayın)"><span class="dot n"></span> Veri Yok</button>
+                    </div>
                 </div>
 
                 <span id="counter" aria-live="polite">Gösterilen: - / -</span>
@@ -714,13 +1184,26 @@
     </div>
 
     <main class="container table-wrap">
+
+        <!-- Mobile-only sticky header clone; populated by setupMobileStickyHeader() -->
         <div id="mobile-sticky-head" class="mobile-sticky-head" hidden></div>
+
         <div class="table-container">
             <table id="data-table">
                 <colgroup>
                     <col class="col-no">
                     <col class="col-chem">
-                    <col class="col-state" span="11">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
+                    <col class="col-state">
                 </colgroup>
                 <thead>
                             <tr>
@@ -748,10 +1231,6 @@
         </div>
     </main>
 
-    <footer>
-        Mechanical Toolbox 2025 · sipahi
-    </footer>
-
     <div class="scroll-nav" aria-label="Sayfa gezintisi">
         <button type="button" id="scrollTopBtn" class="is-hidden" aria-label="En üste git" title="En üste git">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -765,7 +1244,32 @@
         </button>
     </div>
 
+    <div class="signature" aria-label="Sipahi imzası">
+        Mechanical Toolbox 2026 &middot; sipahi
+    </div>
+
+    <!-- Chemical Details Bottom Sheet -->
+    <div id="bottom-sheet" class="bottom-sheet" hidden>
+        <div class="bottom-sheet-backdrop"></div>
+        <div class="bottom-sheet-content" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+            <div class="bottom-sheet-drag-handle"></div>
+            <div class="bottom-sheet-header">
+                <div class="modal-title-group">
+                    <h2 id="sheet-title" class="bottom-sheet-name"></h2>
+                    <p id="sheet-subtitle" class="bottom-sheet-subtitle"></p>
+                </div>
+                <button type="button" class="bottom-sheet-close" aria-label="Kapat">&times;</button>
+            </div>
+            <div class="bottom-sheet-body">
+                <div class="bottom-sheet-grid" id="sheet-grid">
+                    <!-- JS will dynamically populate elastomer ratings here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+
     const materials = ["FFKM", "ETP", "FKM", "NBR", "HNBR", "EPDM", "TFE\\P", "VMQ", "FVMQ", "AU", "PTFE"];
     const materialFullNames = {
         "FFKM": "Perfluoroelastomer",
@@ -781,25 +1285,26 @@
         "PTFE": "Polytetrafluoroethylene (Teflon)"
     };
     const ratingLabels = {
-        5: "İyi",
-        4: "Orta",
-        3: "Zayıf",
-        2: "Uygun Değil",
-        1: "Veri Yok"
+        5: "İyi - Malzemenin kimyasal direnci iyidir",
+        4: "Orta - Sınırlı maruz kalma kabul edilebilir",
+        3: "Zayıf - Sürekli kullanım için önerilmez",
+        2: "Uygun Değil - Bu kimyasalla kullanılmamalıdır",
+        1: "Veri Yok - Uygun veri bulunamadı"
     };
     let data = [];
-    // sortState: { key: 'id'|'name'|'r0'..'r10' or null, dir: 1 (asc) or -1 (desc) }
     let sortState = { key: null, dir: 1 };
-
     let toolbarRO = null;
-    let mobileHeaderBound = false;
-    let mobileHeadScroller = null;
-    let mobileScrollSyncing = false;
+    const selectedRatings = new Set();
+    let legendButtons = [];
 
+    
     function setHeadOffset() {
         const bar = document.querySelector('.table-toolbar');
+        // Use the raw fractional value — CSS handles sub-pixel px values natively.
+        // Math.ceil was rounding UP by 1-2px, which pushed the sticky thead
+        // below the toolbar and created a gap through which scrolling rows bled.
         const height = bar ? bar.getBoundingClientRect().height : 0;
-        document.documentElement.style.setProperty('--headH', `${Math.ceil(height)}px`);
+        document.documentElement.style.setProperty('--headH', `${height}px`);
     }
 
     function startToolbarObserver() {
@@ -817,83 +1322,64 @@
     window.addEventListener('DOMContentLoaded', () => {
         syncLayoutVars();
         startToolbarObserver();
-        setupMobileStickyHeader();
         initScrollNav();
+        setupMobileStickyHeader();
+        initLegendFilters();
     });
     window.addEventListener('load', syncLayoutVars);
-    window.addEventListener('resize', () => {
-        syncLayoutVars();
-        setupMobileStickyHeader();
-    });
+    window.addEventListener('resize', () => { syncLayoutVars(); setupMobileStickyHeader(); });
 
+    // --- Mobile sticky header (JS-assisted) ---
+    // CSS-only position:sticky breaks inside overflow-x:auto containers.
+    // This minimal helper clones the thead into a sibling div that is NOT
+    // inside the overflow container, so it sticks relative to the viewport.
     function setupMobileStickyHeader() {
-        try {
-            const host = document.getElementById('mobile-sticky-head');
-            const mainTable = document.getElementById('data-table');
-            const scroller = document.querySelector('.table-container');
-            if (!host || !mainTable || !scroller) return;
+        const host      = document.getElementById('mobile-sticky-head');
+        const mainTable = document.getElementById('data-table');
+        const scroller  = document.querySelector('.table-container');
+        if (!host || !mainTable || !scroller) return;
 
-            const mql = window.matchMedia ? window.matchMedia('(max-width: 640px)') : null;
-            const isMobile = !!(mql && mql.matches);
+        const isMobile = window.innerWidth <= 1024;
 
-            if (!isMobile) {
-                document.body.classList.remove('mobile-head-ready');
-                host.hidden = true;
-                host.innerHTML = '';
-                host.dataset.ready = '0';
-                mobileHeadScroller = null;
-                return;
-            }
+        if (!isMobile) {
+            host.hidden = true;
+            host.innerHTML = '';
+            host.dataset.ready = '0';
+            document.body.classList.remove('mobile-head-active');
+            return;
+        }
 
-            host.hidden = false;
-            if (host.dataset.ready === '1') return;
+        host.hidden = false;
+        if (host.dataset.ready === '1') return; // already set up
 
-            const colgroup = mainTable.querySelector('colgroup');
-            const thead = mainTable.querySelector('thead');
-            if (!colgroup || !thead) return;
+        const colgroup = mainTable.querySelector('colgroup');
+        const thead    = mainTable.querySelector('thead');
+        if (!colgroup || !thead) return;
 
-            host.innerHTML = `
-                <div class="head-scroller">
-                    <table id="sticky-head-table" aria-hidden="false">
-                        ${colgroup.outerHTML}
-                        ${thead.outerHTML}
-                    </table>
-                </div>
-            `;
-            host.dataset.ready = '1';
-            document.body.classList.add('mobile-head-ready');
+        host.innerHTML = `<div class="head-scroller"><table id="sticky-head-table">${colgroup.outerHTML}${thead.outerHTML}</table></div>`;
+        host.dataset.ready = '1';
+        document.body.classList.add('mobile-head-active');
 
-            const headScroller = host.querySelector('.head-scroller');
-            if (!headScroller) return;
-            mobileHeadScroller = headScroller;
+        // Re-attach sort handlers (outerHTML copies attributes, not event listeners)
+        host.querySelectorAll('th[data-sort-bound]').forEach(th => delete th.dataset.sortBound);
+        attachSortHandlersFor('#sticky-head-table');
 
-            if (!mobileHeaderBound) {
-                const syncScroll = (from, to) => {
-                    if (!to) return;
-                    if (mobileScrollSyncing) return;
-                    mobileScrollSyncing = true;
-                    to.scrollLeft = from.scrollLeft;
-                    (window.requestAnimationFrame || setTimeout)(() => { mobileScrollSyncing = false; }, 0);
-                };
-
-                scroller.addEventListener('scroll', () => syncScroll(scroller, mobileHeadScroller), { passive: true });
-                mobileHeaderBound = true;
-            }
-
-            headScroller.addEventListener('scroll', () => {
-                if (mobileScrollSyncing) return;
-                mobileScrollSyncing = true;
-                scroller.scrollLeft = headScroller.scrollLeft;
-                (window.requestAnimationFrame || setTimeout)(() => { mobileScrollSyncing = false; }, 0);
-            }, { passive: true });
+        // Bidirectional horizontal scroll sync
+        const headScroller = host.querySelector('.head-scroller');
+        let syncing = false;
+        scroller.addEventListener('scroll', () => {
+            if (syncing || !headScroller) return;
+            syncing = true;
             headScroller.scrollLeft = scroller.scrollLeft;
-
-            if (mql && !mql.__pneuBound) {
-                mql.addEventListener?.('change', setupMobileStickyHeader);
-                mql.__pneuBound = true;
-            }
-        } catch (e) {
-            document.body.classList.remove('mobile-head-ready');
+            requestAnimationFrame(() => { syncing = false; });
+        }, { passive: true });
+        if (headScroller) {
+            headScroller.addEventListener('scroll', () => {
+                if (syncing) return;
+                syncing = true;
+                scroller.scrollLeft = headScroller.scrollLeft;
+                requestAnimationFrame(() => { syncing = false; });
+            }, { passive: true });
         }
     }
 
@@ -923,65 +1409,22 @@
 
         // Initialize material select
         const materialSelect = document.getElementById("material");
-
-        function restoreMaterialOptionTexts() {
-            if (!materialSelect) return;
-            for (const opt of Array.from(materialSelect.options)) {
-                if (opt.dataset.long) opt.textContent = opt.dataset.long;
-            }
-        }
-
-        function expandMaterialSelect() {
-            if (!materialSelect) return;
-            if (window.matchMedia && window.matchMedia("(max-width: 640px)").matches) return;
-            materialSelect.style.minWidth = "260px";
-            materialSelect.style.width = "260px";
-        }
-
-        function compactMaterialSelectedText() {
-            if (!materialSelect) return;
-            const opt = materialSelect.selectedOptions && materialSelect.selectedOptions[0];
-            if (opt && opt.value && opt.dataset.short) opt.textContent = opt.dataset.short;
-        }
-
-        function compactMaterialSelect() {
-            if (!materialSelect) return;
-            materialSelect.style.minWidth = "";
-            materialSelect.style.width = "";
-        }
-
         if (materialSelect) {
             materials.forEach(mat => {
                 const option = document.createElement("option");
                 option.value = mat;
-                option.dataset.short = mat;
-                option.dataset.long = `${mat} - ${materialFullNames[mat]}`;
-                option.textContent = option.dataset.long;
+                option.textContent = `${mat} - ${materialFullNames[mat]}`;
                 materialSelect.appendChild(option);
             });
-
-            restoreMaterialOptionTexts();
-            compactMaterialSelectedText();
-
-            materialSelect.addEventListener("mousedown", () => { restoreMaterialOptionTexts(); expandMaterialSelect(); });
-            materialSelect.addEventListener("touchstart", () => { restoreMaterialOptionTexts(); expandMaterialSelect(); });
-            materialSelect.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
-                    restoreMaterialOptionTexts();
-                    expandMaterialSelect();
-                }
-                if (e.key === "Escape") {
-                    setTimeout(() => { compactMaterialSelectedText(); compactMaterialSelect(); }, 0);
-                }
-            });
-            materialSelect.addEventListener("blur", () => { compactMaterialSelectedText(); compactMaterialSelect(); });
-            materialSelect.addEventListener("change", () => { compactMaterialSelectedText(); compactMaterialSelect(); });
         }
 
     // Load and parse CSV data
         async function loadData() {
             try {
                 const response = await fetch("assets/data/chemresist.txt");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const text = await response.text();
                 
                 data = text.split(/\r?\n/)
@@ -1004,7 +1447,6 @@
                 renderTable();
                 updateCounter();
                 attachSortHandlersFor('#data-table');
-                attachSortHandlersFor('#sticky-head-table');
             } catch (error) {
                 console.error("Veri yüklenirken hata:", error);
                 document.querySelector("tbody").innerHTML = 
@@ -1023,7 +1465,6 @@
         function renderTable() {
             const searchTerm = document.getElementById("search").value.toLowerCase().trim();
             const selectedMaterial = document.getElementById("material").value;
-            const selectedRating = document.getElementById("rating").value;
 
             const filtered = data.filter(item => {
                 // Text search filter
@@ -1033,16 +1474,18 @@
                     if (!idMatch && !nameMatch) return false;
                 }
                 
-                // Rating filter
-                const ratingNum = Number(selectedRating);
-                if (selectedRating) {
+                // Rating filter (selectedRatings Set)
+                if (selectedRatings.size > 0) {
                     if (selectedMaterial) {
                         // If material is selected, check only that material's rating
                         const index = materials.indexOf(selectedMaterial);
-                        if (item.ratings[index] !== ratingNum) return false;
+                        if (!selectedRatings.has(item.ratings[index])) return false;
                     } else {
-                        // If only rating is selected (no material), check all materials must match
-                        if (!item.ratings.every(r => r === ratingNum)) return false;
+                        // If only rating is selected (no material), check that every available rating (excluding N/A: 1)
+                        // matches the selected set, and there's at least one match (not all 1s).
+                        const hasMatch = item.ratings.some(r => selectedRatings.has(r));
+                        const noMismatch = item.ratings.every(r => r === 1 || selectedRatings.has(r));
+                        if (!hasMatch || !noMismatch) return false;
                     }
                 } else if (selectedMaterial) {
                     // If only material is selected (no rating), include all its ratings
@@ -1087,14 +1530,40 @@
             `).join("");
 
             updateCounter(filtered.length);
-            attachSortHandlersFor('#sticky-head-table');
             updateSortIndicators();
         }
 
         // Event listeners
         document.getElementById("search").addEventListener("input", renderTable);
         document.getElementById("material").addEventListener("change", renderTable);
-        document.getElementById("rating").addEventListener("change", renderTable);
+
+        function initLegendFilters() {
+            legendButtons = Array.from(document.querySelectorAll('.legend-inline .legend-item'));
+            legendButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const r = parseInt(btn.dataset.rating, 10);
+                    if (selectedRatings.has(r)) {
+                        selectedRatings.delete(r);
+                    } else {
+                        selectedRatings.add(r);
+                    }
+                    updateLegendButtons();
+                    renderTable();
+                });
+            });
+            updateLegendButtons();
+        }
+
+        function updateLegendButtons() {
+            legendButtons.forEach(btn => {
+                const r = parseInt(btn.dataset.rating, 10);
+                if (selectedRatings.size === 0) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.toggle('active', selectedRatings.has(r));
+                }
+            });
+        }
 
         function attachSortHandlersFor(tableSel) {
             const root = document.querySelector(tableSel);
@@ -1145,17 +1614,98 @@
                 const base = th.dataset.label || th.textContent.replace(/\s*[▲▼]$/,'');
                 th.dataset.label = base;
                 if (sortState.key === key) {
-                    th.textContent = base + (sortState.dir === -1 ? ' ▼' : ' ▲');
+                    const arrow = sortState.dir === -1 ? '▼' : '▲';
+                    th.innerHTML = `${base}<span class="sort-arrow">${arrow}</span>`;
                     th.setAttribute('aria-sort', sortState.dir === -1 ? 'descending' : 'ascending');
                 } else {
-                    th.textContent = base;
+                    th.innerHTML = base;
                     th.setAttribute('aria-sort', 'none');
                 }
                 });
             };
             apply('#data-table');
-            apply('#sticky-head-table');
+            if (document.getElementById('sticky-head-table')) apply('#sticky-head-table');
         }
+
+        // Event delegation for chemical details popup/bottom sheet
+        document.querySelector("#data-table").addEventListener("click", (e) => {
+            const nameCell = e.target.closest("td.name-cell");
+            if (nameCell) {
+                const tr = nameCell.closest("tr");
+                const id = parseInt(tr.querySelector(".no-cell").textContent, 10);
+                const item = data.find(x => x.id === id);
+                if (item) {
+                    openBottomSheet(item);
+                }
+            }
+        });
+
+        function openBottomSheet(item) {
+            const sheet = document.getElementById("bottom-sheet");
+            const title = document.getElementById("sheet-title");
+            const subtitle = document.getElementById("sheet-subtitle");
+            const grid = document.getElementById("sheet-grid");
+
+            title.textContent = item.name;
+            if (subtitle) {
+                subtitle.textContent = `Listedeki sızdırmazlık elastomerlerinin "${item.name}" akışkanına karşı kimyasal uyumluluk dereceleri:`;
+            }
+
+            const ratingNames = {
+                5: "İyi",
+                4: "Orta",
+                3: "Zayıf",
+                2: "Uygun Değil",
+                1: "Veri Yok"
+            };
+
+            grid.innerHTML = materials.map((mat, idx) => {
+                const rating = item.ratings[idx];
+                const fullName = materialFullNames[mat] || "";
+                return `
+                    <div class="bottom-sheet-item">
+                        <div class="sheet-elastomer-name">
+                            ${mat}
+                            <span class="sheet-elastomer-full">(${fullName})</span>
+                        </div>
+                        <div class="sheet-rating-badge rating-${rating}">
+                            <span class="dot ${getDotColorClass(rating)}"></span>
+                            ${ratingNames[rating]}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            sheet.classList.add("active");
+            sheet.removeAttribute("hidden");
+            document.body.style.overflow = "hidden"; // disable background scroll
+        }
+
+        function closeBottomSheet() {
+            const sheet = document.getElementById("bottom-sheet");
+            sheet.classList.remove("active");
+            sheet.setAttribute("hidden", "");
+            document.body.style.overflow = ""; // restore background scroll
+        }
+
+        function getDotColorClass(rating) {
+            switch(rating) {
+                case 5: return "g";
+                case 4: return "f";
+                case 3: return "p";
+                case 2: return "b";
+                default: return "n";
+            }
+        }
+
+        // Close events for bottom sheet
+        document.querySelector(".bottom-sheet-close").addEventListener("click", closeBottomSheet);
+        document.querySelector(".bottom-sheet-backdrop").addEventListener("click", closeBottomSheet);
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeBottomSheet();
+            }
+        });
 
         // Initial load
         loadData();
