@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="IEC 60072-1 / DIN EN 50347 standardına uygun AC motor boyut ve flanş referans tablosu. Etkileşimli SVG teknik çizim ve dinamik veri tablosu.">
+    <title>AC Motor Entegrasyon ve Boyut Referansı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+        }
+        /* Custom scrollbar for database table */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        /* SVG Dimension Line Animations (Unified Purple theme for SVG drawing) */
+        .dim-line {
+            stroke: #475569;
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+        }
+        .dim-line.active {
+            stroke: #c084fc;
+            stroke-width: 2.2;
+            stroke-dasharray: none;
+            filter: drop-shadow(0 0 4px rgba(192, 132, 252, 0.8));
+            animation: active-pulse 1.4s infinite ease-in-out;
+            will-change: opacity, filter;
+        }
+        @keyframes active-pulse {
+            0%, 100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 5px rgba(192, 132, 252, 0.9));
+            }
+            50% {
+                opacity: 0.35;
+                filter: drop-shadow(0 0 1px rgba(192, 132, 252, 0.1));
+            }
+        }
+        .dim-text {
+            fill: #94a3b8;
+            font-size: 13px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+            font-weight: 600;
+            stroke: #0f172a;
+            stroke-width: 4px;
+            paint-order: stroke fill;
+            transition: all 0.3s ease;
+        }
+        .dim-text.active {
+            fill: #c084fc;
+            animation: active-pulse 1.4s infinite ease-in-out;
+        }
+        /* Flange groups default hidden, show only if active or has value */
+        #dim-b5, #dim-b14, #dim-b14_spec {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none;
+        }
+
+        #dim-b5.has-value, #dim-b14.has-value, #dim-b14_spec.has-value {
+            opacity: 0.4;
+        }
+
+        #dim-b5.active-group, #dim-b14.active-group, #dim-b14_spec.active-group {
+            opacity: 1 !important;
+        }
+
+        /* Make text bold and cyan when active */
+        #dim-b5.active-group text, #dim-b14.active-group text, #dim-b14_spec.active-group text {
+            fill: #06b6d4;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .ref-line {
+            stroke: #334155;
+            stroke-width: 1;
+            stroke-dasharray: 2,2;
+            transition: all 0.3s ease;
+        }
+        .ref-line.active {
+            stroke: #a855f7;
+            stroke-width: 1.2;
+            stroke-dasharray: none;
+            animation: active-pulse 1.4s infinite ease-in-out;
+        }
+        #dimTooltip {
+            position: absolute;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border-left: 4px solid #06b6d4;
+            line-height: 1.4;
+            min-width: 190px;
+            max-width: 280px;
+            border-top: 1px solid #1e293b;
+            border-right: 1px solid #1e293b;
+            border-right: 1px solid #1e293b;
+            border-bottom: 1px solid #1e293b;
+        }
+        @keyframes valueUpdate {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.08); filter: brightness(1.3); text-shadow: 0 0 10px currentColor; }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        .val-update {
+            animation: valueUpdate 0.4s ease-out;
+            display: inline-block;
+        }
+        /* Sticky Table Headers configuration */
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+        thead th {
+            background-color: #020617 !important;
+        }
+        thead th.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 40;
+        }
+        /* Interactive cell cursor */
+        #dimensionsBody td {
+            cursor: pointer;
+        }
+        /* Sticky signature footer */
+        .signature {
+            flex-shrink: 0;
+            border-top: 1px solid rgba(30, 41, 59, 0.4);
+            padding: 6px 4px 2px 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: #475569;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        /* Custom range slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #1e293b;
+            border-radius: 8px;
+            height: 8px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2.5px solid #0f172a;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2.5px solid #0f172a;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.25);
+        }
+        @media (max-width: 768px) {
+            #diagPanelWrapper {
+                max-height: 500px;
+                opacity: 1;
+                transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+                overflow: hidden;
+            }
+            #diagPanelWrapper.collapsed {
+                min-height: 0 !important;
+                height: 30px !important;
+                overflow: hidden !important;
+                padding-top: 6px !important;
+                padding-bottom: 6px !important;
+                justify-content: center !important;
+            }
+            #diagPanelWrapper.collapsed > :not(.panel-title-container) {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-[900px]:h-[100dvh] h-auto min-h-screen w-full flex flex-col overflow-y-auto overflow-x-hidden min-[900px]:overflow-hidden selection:bg-cyan-500/30">
+
+    <!-- Header (Premium Edition) -->
+    <header class="flex-shrink-0 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 shadow-[0_4px_30px_rgba(0,0,0,0.5)] h-20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+            <div class="flex items-center gap-4 group cursor-default">
+                
+                <!-- Premium 3D Animated Logo -->
+                <div id="headerLogoContainer" class="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900 border border-slate-700 shadow-[0_0_15px_rgba(6,182,212,0.4)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.7)] transition-all duration-500">
+                    <!-- Rotating Stator ring with dotted slots -->
+                    <svg id="headerLogoRing" class="absolute w-11 h-11 sm:w-12 sm:h-12 text-cyan-500 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)] animate-[spin_10s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" stroke-dasharray="3 3" class="opacity-80"/>
+                    </svg>
+                    <!-- Lightning bolt for electricity (High contrast Amber/Yellow scaled and centered) -->
+                    <svg class="absolute w-6 h-6 sm:w-7 sm:h-7 text-amber-400 animate-pulse drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                </div>
+
+                <!-- Striking Title -->
+                <h1 class="text-xs sm:text-sm md:text-base lg:text-lg font-extrabold bg-gradient-to-r from-amber-300 via-orange-400 to-rose-400 bg-clip-text text-transparent tracking-wide drop-shadow-md">
+                    IEC Asenkron Motor Boyut & Elektrik Teşhis Sihirbazı
+                </h1>
+
+            </div>
+
+            <!-- User Section -->
+            <div id="headerUserSection" class="hidden items-center gap-2 text-[10px] sm:text-xs text-slate-400 bg-slate-900/60 border border-slate-800 rounded-full px-3 py-1.5 hover:bg-slate-900 transition-all duration-300">
+                <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span id="headerUsername" class="font-semibold text-slate-200">-</span>
+                <button id="logoutBtn" class="ml-1 text-slate-500 hover:text-red-400 transition-colors" title="Çıkış Yap">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container (Fits screen height, layout sections do not scroll, only table rows scroll) -->
+    <main class="flex-1 min-[900px]:min-h-0 max-w-5xl w-full mx-auto px-4 py-4 flex flex-col space-y-4 min-[900px]:overflow-hidden">
+        
+        <!-- Top Section: SVG & Diagnostics Grid -->
+        <div id="topGridWrapper" class="flex-shrink-0 flex flex-col min-[900px]:flex-row gap-4 min-h-0">
+            <!-- Left: Vector Blueprint Diagram -->
+            <div class="min-[900px]:w-[55%] bg-slate-900/40 border border-slate-800 rounded-xl p-2 relative flex flex-col h-auto min-[900px]:min-h-[300px] shadow-xl group">
+                <div class="flex-shrink-0 mb-2 text-center flex flex-col items-center">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Motor Boyut Şeması (B3 Ayaklı)</span>
+                    <span id="svgMotorSubtitle" class="text-[11px] font-bold mt-2 h-3.5 leading-none transition-opacity duration-300"></span>
+                </div>
+                
+                <div class="flex-1 flex items-center justify-center">
+                    <svg id="motorSvg" viewBox="45 -15 580 290" class="w-full h-auto">
+                    <!-- ==================== FRONT/END VIEW (LEFT) ==================== -->
+                    <!-- Ground line -->
+                    <line x1="60" y1="200" x2="300" y2="200" stroke="#334155" stroke-width="2"/>
+    
+                    <!-- Left foot - industrial blocky style with base plate -->
+                    <path d="M 98,200 L 98,184 L 107,166 L 118,166 L 127,184 L 127,200 Z" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                    <rect x="95" y="196" width="35" height="4" rx="1" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+                    <line x1="112.5" y1="162" x2="112.5" y2="210" stroke="#a855f7" stroke-dasharray="4,2,1,2" stroke-width="1" class="opacity-60"/>
+    
+                    <!-- Right foot - mirror of left -->
+                    <path d="M 233,200 L 233,184 L 242,166 L 253,166 L 262,184 L 262,200 Z" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                    <rect x="230" y="196" width="35" height="4" rx="1" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+                    <line x1="247.5" y1="162" x2="247.5" y2="210" stroke="#a855f7" stroke-dasharray="4,2,1,2" stroke-width="1" class="opacity-60"/>
+    
+                    <!-- Motor housing outer rim (casing edge visible behind end shield) -->
+                    <circle cx="180" cy="120" r="74" fill="#0f172a" stroke="#475569" stroke-width="2.5"/>
+                    <!-- End shield face -->
+                    <circle cx="180" cy="120" r="70" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+                    
+                    <!-- B5 (FF) Pitch Circle -->
+                    <g id="dim-b5">
+                        <circle cx="180" cy="120" r="88" fill="none" stroke="#475569" stroke-width="1.2" stroke-dasharray="3,3" class="dim-line"/>
+                        <circle cx="118" cy="58" r="3.5" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="1.5,1.5" class="dim-line"/>
+                        <circle cx="242" cy="58" r="3.5" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="1.5,1.5" class="dim-line"/>
+                        <circle cx="118" cy="182" r="3.5" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="1.5,1.5" class="dim-line"/>
+                        <circle cx="242" cy="182" r="3.5" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="1.5,1.5" class="dim-line"/>
+                        <text x="180" y="-4" class="dim-text" text-anchor="middle">FF (B5)</text>
+                    </g>
+    
+                    <!-- B14 (FT) Pitch Circle -->
+                    <g id="dim-b14">
+                        <circle cx="180" cy="120" r="54" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="2,2" class="dim-line"/>
+                        <circle cx="142" cy="82" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <circle cx="218" cy="82" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <circle cx="142" cy="158" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <circle cx="218" cy="158" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <text x="180" y="24" class="dim-text" text-anchor="middle">FT (B14)</text>
+                    </g>
+                    
+                    <!-- B14 Special (FT Special) Pitch Circle -->
+                    <g id="dim-b14_spec">
+                        <circle cx="180" cy="120" r="64" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="2,2" class="dim-line"/>
+                        <circle cx="135" cy="75" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <circle cx="225" cy="75" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <circle cx="135" cy="165" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <circle cx="225" cy="165" r="2.5" fill="none" stroke="#475569" stroke-width="0.8" stroke-dasharray="1,1" class="dim-line"/>
+                        <text x="180" y="10" class="dim-text" text-anchor="middle">FT (B14 Özel)</text>
+                    </g>
+    
+                    <!-- Terminal box (Top) -->
+                    <rect x="156" y="32" width="48" height="18" rx="2" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="168" y1="36" x2="168" y2="46" stroke="#475569" stroke-width="1"/>
+                    <line x1="180" y1="36" x2="180" y2="46" stroke="#475569" stroke-width="1"/>
+                    <line x1="192" y1="36" x2="192" y2="46" stroke="#475569" stroke-width="1"/>
+                    <!-- Cable gland on right side of terminal box -->
+                    <rect x="204" y="37" width="4" height="8" fill="#475569" stroke="#334155" stroke-width="1"/>
+                    <polygon points="208,35 212,36 212,46 208,47" fill="#64748b" stroke="#334155" stroke-width="1"/>
+                    <!-- Cable tail pointing down-right -->
+                    <path d="M 212,41 Q 220,41 225,55" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+    
+                    <!-- Center lines -->
+                    <line x1="180" y1="25" x2="180" y2="215" stroke="#a855f7" stroke-dasharray="8,3,2,3" stroke-width="1" class="opacity-40"/>
+                    <line x1="45" y1="120" x2="315" y2="120" stroke="#a855f7" stroke-dasharray="8,3,2,3" stroke-width="1" class="opacity-40"/>
+    
+                    <!-- Rotor shaft end center circle -->
+                    <circle cx="180" cy="120" r="22" fill="#0f172a" stroke="#475569" stroke-width="1.2"/>
+    
+                    <!-- Shaft end face -->
+                    <circle cx="180" cy="120" r="10" fill="#64748b" stroke="#475569" stroke-width="1.5"/>
+                    <!-- Keyway notch on shaft -->
+                    <rect x="177" y="104" width="6" height="7" fill="#64748b" stroke="#475569" stroke-width="1"/>
+    
+                    <g id="dim-h">
+                        <line x1="180" y1="120" x2="55" y2="120" class="ref-line"/>
+                        <line x1="100" y1="200" x2="55" y2="200" class="ref-line"/>
+                        <line x1="60" y1="120" x2="60" y2="152" class="dim-line"/>
+                        <line x1="60" y1="168" x2="60" y2="200" class="dim-line"/>
+                        <line x1="55" y1="120" x2="65" y2="120" stroke="#475569" stroke-width="1"/>
+                        <line x1="55" y1="200" x2="65" y2="200" stroke="#475569" stroke-width="1"/>
+                        <text x="60" y="164" class="dim-text" text-anchor="middle">H</text>
+                    </g>
+    
+                    <g id="dim-a">
+                        <line x1="112.5" y1="195" x2="112.5" y2="245" class="ref-line"/>
+                        <line x1="247.5" y1="195" x2="247.5" y2="245" class="ref-line"/>
+                        <line x1="112.5" y1="240" x2="247.5" y2="240" class="dim-line"/>
+                        <line x1="112.5" y1="235" x2="112.5" y2="245" stroke="#475569" stroke-width="1"/>
+                        <line x1="247.5" y1="235" x2="247.5" y2="245" stroke="#475569" stroke-width="1"/>
+                        <text x="180" y="255" class="dim-text" text-anchor="middle">A</text>
+                    </g>
+    
+                    <!-- ==================== SIDE VIEW (RIGHT) ==================== -->
+                    <!-- Ground line -->
+                    <line x1="335" y1="200" x2="660" y2="200" stroke="#334155" stroke-width="2"/>
+    
+                    <!-- Feet - wider industrial style -->
+                    <rect x="421" y="185" width="33" height="15" rx="1" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                    <rect x="541" y="185" width="53" height="15" rx="1" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                    
+                    <!-- Guides for slots -->
+                    <line x1="437.5" y1="160" x2="437.5" y2="210" stroke="#a855f7" stroke-dasharray="4,2,1,2" stroke-width="1" class="opacity-60"/>
+                    <line x1="557.5" y1="160" x2="557.5" y2="210" stroke="#a855f7" stroke-dasharray="4,2,1,2" stroke-width="1" class="opacity-60"/>
+                    <line id="bPrimeAxis" x1="577.5" y1="160" x2="577.5" y2="210" stroke="#a855f7" stroke-dasharray="4,2,1,2" stroke-width="1" class="opacity-60 transition-opacity duration-300"/>
+    
+                    <!-- Motor body main cylinder block (ribbed industrial style) -->
+                    <rect x="410" y="44" width="180" height="142" rx="3" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+                    <!-- Stator cooling fins (horizontal ribs on the body) -->
+                    <line x1="412" y1="56" x2="588" y2="56" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="68" x2="588" y2="68" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="80" x2="588" y2="80" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="92" x2="588" y2="92" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="104" x2="588" y2="104" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="116" x2="588" y2="116" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="128" x2="588" y2="128" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="140" x2="588" y2="140" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="152" x2="588" y2="152" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="164" x2="588" y2="164" stroke="#334155" stroke-width="2.5"/>
+                    <line x1="412" y1="176" x2="588" y2="176" stroke="#334155" stroke-width="2.5"/>
+    
+                    <!-- N-end fan cover (housing back dome) -->
+                    <path d="M 590,48 L 610,54 L 618,70 L 618,160 L 610,176 L 590,182 Z" fill="#0f172a" stroke="#475569" stroke-width="2"/>
+                    <!-- Fan vents on back cover -->
+                    <line x1="604" y1="68" x2="604" y2="162" stroke="#334155" stroke-width="3" stroke-dasharray="8,4"/>
+                    <line x1="610" y1="80" x2="610" y2="150" stroke="#334155" stroke-width="3" stroke-dasharray="6,4"/>
+    
+                    <!-- Motor shaft center line (extended to both ends) -->
+                    <line x1="330" y1="120" x2="635" y2="120" stroke="#a855f7" stroke-dasharray="8,3,2,3" stroke-width="1" class="opacity-40"/>
+    
+                    <!-- Terminal box (taller, with cable gland holes) -->
+                    <rect x="462" y="26" width="76" height="32" rx="2" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                    <!-- Cable gland hex nuts (Front face in Side View) -->
+                    <polygon points="486,31 492,34 492,42 486,45 480,42 480,34" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+                    <circle cx="486" cy="38" r="3.5" fill="#0f172a"/>
+                    
+                    <polygon points="514,31 520,34 520,42 514,45 508,42 508,34" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+                    <circle cx="514" cy="38" r="3.5" fill="#0f172a"/>
+    
+                    <!-- Bearing end shield (DE side plate) -->
+                    <rect x="398" y="66" width="14" height="118" rx="1" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+    
+                    <!-- Shaft bearing housing (stepped wider block) -->
+                    <rect x="382" y="97" width="18" height="46" rx="1" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+    
+                    <!-- Shaft (DE side) -->
+                    <rect x="345" y="110" width="39" height="20" fill="#64748b" stroke="#475569" stroke-width="1.5"/>
+                    <!-- Keyway on shaft top -->
+                    <rect x="348" y="107" width="30" height="3" fill="#94a3b8" stroke="#475569" stroke-width="1"/>
+    
+                    <g id="dim-e">
+                        <line x1="345" y1="110" x2="345" y2="70" class="ref-line"/>
+                        <line x1="382" y1="97" x2="382" y2="70" class="ref-line"/>
+                        <line x1="345" y1="75" x2="382" y2="75" class="dim-line"/>
+                        <line x1="345" y1="70" x2="345" y2="80" stroke="#475569" stroke-width="1"/>
+                        <line x1="382" y1="70" x2="382" y2="80" stroke="#475569" stroke-width="1"/>
+                        <text x="363.5" y="67" class="dim-text" text-anchor="middle">E</text>
+                    </g>
+    
+                    <g id="dim-b">
+                        <line x1="437.5" y1="195" x2="437.5" y2="240" class="ref-line"/>
+                        <line x1="557.5" y1="195" x2="557.5" y2="240" class="ref-line"/>
+                        
+                        <line x1="437.5" y1="230" x2="557.5" y2="230" class="dim-line"/>
+                        <line x1="437.5" y1="225" x2="437.5" y2="235" stroke="#475569" stroke-width="1"/>
+                        <line x1="557.5" y1="225" x2="557.5" y2="235" stroke="#475569" stroke-width="1"/>
+                        <text x="497.5" y="222" class="dim-text" text-anchor="middle">B</text>
+                    </g>
+    
+                    <g id="dim-b_prime">
+                        <line x1="437.5" y1="195" x2="437.5" y2="265" class="ref-line"/>
+                        <line x1="577.5" y1="195" x2="577.5" y2="265" class="ref-line"/>
+                        
+                        <line x1="437.5" y1="255" x2="577.5" y2="255" class="dim-line"/>
+                        <line x1="437.5" y1="250" x2="437.5" y2="260" stroke="#475569" stroke-width="1"/>
+                        <line x1="577.5" y1="250" x2="577.5" y2="260" stroke="#475569" stroke-width="1"/>
+                        <text x="507.5" y="247" class="dim-text" text-anchor="middle">B'</text>
+                    </g>
+    
+                    <g id="dim-d">
+                        <line x1="360" y1="110" x2="325" y2="110" class="ref-line"/>
+                        <line x1="360" y1="130" x2="325" y2="130" class="ref-line"/>
+                        <line x1="330" y1="110" x2="330" y2="130" class="dim-line"/>
+                        <line x1="325" y1="110" x2="335" y2="110" stroke="#475569" stroke-width="1"/>
+                        <line x1="325" y1="130" x2="335" y2="130" stroke="#475569" stroke-width="1"/>
+                        <text x="318" y="124" class="dim-text" text-anchor="end">ØD</text>
+                    </g>
+                </svg>
+                </div>
+            </div>
+            
+            <div id="diagPanelWrapper" class="min-[900px]:w-[45%] bg-slate-900/40 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between text-xs min-h-[280px]">
+                <div class="flex-shrink-0 text-center mb-1 panel-title-container cursor-pointer select-none hover:text-cyan-400 transition-colors">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-center gap-1">
+                        Akım & Güç Teşhis Paneli
+                        <span class="mobile-arrow text-[8px] min-[900px]:hidden">▼</span>
+                    </span>
+                </div>
+                
+                <!-- Section 1: Motor Info & Settings Row -->
+                <!-- Section 1: Motor Info & Settings Row -->
+                <div class="flex justify-between items-center border-b border-slate-800/60 pb-2">
+                    <!-- Left: Motor Details Badges -->
+                    <div class="flex items-baseline gap-1.5 min-w-0">
+                        <span id="diagPowerLabel" class="text-sm font-bold text-cyan-400 border-b border-dashed border-cyan-400/30 hover:border-cyan-400/80 cursor-help transition-all flex-shrink-0 leading-none pb-0.5">- kW</span>
+                        <span id="diagRpmLabel" class="text-[10px] font-bold text-slate-300 font-mono border-b border-dashed border-slate-600/30 hover:border-slate-500/80 cursor-help transition-all flex-shrink-0 ml-1.5 leading-none pb-0.5">- min⁻¹</span>
+                    </div>
+                    <!-- Right: Frekans Segmented Pills -->
+                    <div class="flex items-center gap-1.5">
+                        <span id="diagFreqLabel" class="px-1.5 py-0.5 rounded text-[8px] font-bold bg-slate-950/80 border border-slate-800 text-slate-400 cursor-help hover:text-cyan-400 hover:border-cyan-500/30 transition-all uppercase tracking-wider">Frekans</span>
+                        <div class="inline-flex bg-slate-950 border border-slate-800 rounded-md p-0.5" role="group">
+                            <button id="freqBtn50" type="button" class="px-2 py-0.5 rounded text-[8px] font-bold transition-all bg-cyan-500 text-slate-950 focus:outline-none" data-val="50">50 Hz</button>
+                            <button id="freqBtn60" type="button" class="px-2 py-0.5 rounded text-[8px] font-bold transition-all text-slate-400 hover:text-slate-200 focus:outline-none" data-val="60">60 Hz</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 1.5: Gerilim Slider -->
+                <div class="py-1 border-b border-slate-800/60 pb-2">
+                    <div class="flex items-center gap-3">
+                        <span id="diagVoltLabel" class="w-14 text-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-slate-950/80 border border-slate-800 text-slate-400 cursor-help hover:text-cyan-400 hover:border-cyan-500/30 transition-all uppercase tracking-wider flex-shrink-0">Gerilim</span>
+                        <input type="range" id="diagVoltSlider" min="0" max="5" step="1" value="1" class="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer outline-none bg-slate-800" style="background: linear-gradient(to right, #475569 0%, #475569 100%);">
+                        <span class="w-10 text-right font-mono font-bold text-cyan-400 text-xs flex-shrink-0" id="diagVoltVal">400 V</span>
+                    </div>
+                    <div id="diagVoltInfoText" class="text-[7.5px] text-slate-500 font-sans leading-none mt-1.5 pl-18">Türkiye, Avrupa Birliği (AB) ve genel dünya standardı</div>
+                </div>
+                
+                <!-- Section 2: Slider (Side-by-side with badge on right) -->
+                <div class="flex items-center gap-3 py-1.5 border-b border-slate-800/60 pb-2">
+                    <span id="diagCurrentLabel" class="w-14 text-center px-1.5 py-0.5 rounded text-[8px] font-bold bg-slate-950/80 border border-slate-800 text-slate-400 cursor-help hover:text-cyan-400 hover:border-cyan-500/30 transition-all uppercase tracking-wider flex-shrink-0">Akım</span>
+                    <input type="range" id="diagMeasuredCurrentSlider" min="0" max="60" step="0.1" value="0" class="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer outline-none bg-slate-800" style="background: linear-gradient(to right, #3b82f6 0%, #3b82f6 16.7%, #10b981 16.7%, #10b981 56.7%, #f59e0b 56.7%, #f59e0b 70%, #ef4444 70%, #ef4444 100%);">
+                    <div class="flex items-center gap-1.5 flex-shrink-0 min-w-[120px] justify-end">
+                        <span class="font-mono font-bold text-cyan-400 text-xs" id="diagMeasuredCurrentVal">0.0 A</span>
+                        <span id="diagStatusBadge" class="inline-block text-[7px] font-bold bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700/50 cursor-help hover:underline transition-all duration-300 whitespace-nowrap">Akım Giriniz</span>
+                    </div>
+                </div>
+
+                <!-- Section 2.5: Instantaneous Power -->
+                <div class="flex justify-between items-center py-1.5 border-b border-slate-800/60 pb-2 text-[9px] w-full">
+                    <div id="diagInstSLabel" class="flex items-center justify-between w-1/2 pr-3 border-r border-slate-800/60 cursor-help hover:bg-slate-900/40 rounded px-1 transition-colors group">
+                        <span class="text-slate-500 uppercase font-bold tracking-wider leading-none group-hover:text-cyan-400 transition-colors">Görünür Güç (S)</span>
+                        <span id="diagInstApparent" class="font-mono font-bold text-emerald-400 text-[10px]">0.00 kVA</span>
+                    </div>
+                    <div id="diagInstPLabel" class="flex items-center justify-between w-1/2 pl-3 cursor-help hover:bg-slate-900/40 rounded px-1 transition-colors group">
+                        <span class="text-slate-500 uppercase font-bold tracking-wider leading-none group-hover:text-amber-400 transition-colors">Aktif Güç (P)</span>
+                        <span id="diagInstActive" class="font-mono font-bold text-amber-400 text-[10px]">0.00 kW</span>
+                    </div>
+                </div>
+                
+                <!-- Unified Data Grid (Compact Table) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 mt-2">
+                    <div id="diagInWrapper" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Tam Yük Akımı (I<sub>n</sub>)</span>
+                        <span id="diagCalculatedIn" class="text-[11px] font-bold text-slate-100 font-mono">- A</span>
+                    </div>
+                    
+                    <div id="diagTorqueRow" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Nominal Tork (M<sub>n</sub>)</span>
+                        <span id="diagTorqueVal" class="text-[11px] font-bold text-fuchsia-400 font-mono">- Nm</span>
+                    </div>
+                    
+                    <div id="diagCosPhiWrapper" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Güç Faktörü (cosφ)</span>
+                        <span id="diagCosPhiVal" class="text-[11px] font-bold text-slate-100 font-mono">-</span>
+                    </div>
+                    
+                    <div id="diagStartCurrentRow" class="flex justify-between items-center border-b border-slate-800/40 py-1 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Kalkış Akımı</span>
+                        <div class="flex flex-col items-end justify-center">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[7px] text-slate-500">DOL</span>
+                                <span id="diagStartCurrentVal" class="text-[11px] font-bold text-rose-400 font-mono whitespace-nowrap">- A</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[7px] text-slate-500">Y/Δ</span>
+                                <span id="diagStartCurrentValYD" class="text-[11px] font-bold text-emerald-400 font-mono whitespace-nowrap">- A</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="diagEffWrapper" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Motor Verimi (η)</span>
+                        <span id="diagEffVal" class="text-[11px] font-bold text-slate-100 font-mono">-%</span>
+                    </div>
+                    
+                    <div id="diagMpcbRow" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Sigorta (aM Tipi)</span>
+                        <span id="diagMpcbVal" class="text-[11px] font-bold text-amber-300 font-mono">-</span>
+                    </div>
+                    
+                    <div id="diagKvarWrapper" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Lokal Kompanzasyon</span>
+                        <span id="diagKvarVal" class="text-[11px] font-bold text-indigo-400 font-mono">- kVAr</span>
+                    </div>
+                    
+                    <div id="diagContactorRow" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Ana Kontaktör (AC-3)</span>
+                        <span id="diagContactorVal" class="text-[11px] font-bold text-amber-300 font-mono">-</span>
+                    </div>
+                    
+                    <div id="diagCableSecRow" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Kablo Kesiti</span>
+                        <span id="diagCableSection" class="text-[11px] font-bold text-cyan-300 font-mono">-</span>
+                    </div>
+                    
+                    <div id="diagThermalRow" class="flex justify-between items-center border-b border-slate-800/40 py-1 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Termik Şalter</span>
+                        <div class="flex flex-col items-end justify-center">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[7px] text-slate-500">Hat</span>
+                                <span id="diagThermalVal" class="text-[11px] font-bold text-amber-300 font-mono whitespace-nowrap">-</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[7px] text-slate-500">Faz</span>
+                                <span id="diagThermalValYD" class="text-[11px] font-bold text-amber-300 font-mono whitespace-nowrap">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="diagCableDiamRow" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Kablo Dış Çapı</span>
+                        <span id="diagCableDiameter" class="text-[11px] font-bold text-cyan-300 font-mono">-</span>
+                    </div>
+                    
+                    <div id="diagGlandRow" class="flex justify-between items-center border-b border-slate-800/40 py-1.5 cursor-help hover:bg-slate-900/40 rounded transition-colors px-1">
+                        <span class="text-[9px] text-slate-400 uppercase">Kablo Rakoru</span>
+                        <span id="diagGlandsCombined" class="text-[11px] font-bold text-slate-200 font-mono">-</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Main Dimensions Table (Fills remaining height, scrolls y-axis, has sticky header) -->
+        <div class="flex-1 min-h-[150px] min-[900px]:min-h-0 bg-slate-900/20 border border-slate-800 rounded-xl overflow-hidden shadow-xl flex flex-col mb-4 min-[900px]:mb-0">
+            <div class="table-container overflow-x-auto min-[900px]:overflow-y-auto max-[900px]:overflow-y-visible flex-1 max-w-full">
+                <table class="border-collapse text-left text-xs text-slate-300 w-full">
+                    <thead>
+                        <tr class="bg-slate-950 border-b border-slate-800 font-semibold text-slate-400 align-bottom">
+                            <th class="sticky-col bg-slate-950 px-3 py-1.5 text-center border-r border-slate-800 w-32" data-dim="kW">
+                                <div>Anma Gücü</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(kW)</div>
+                            </th>
+                            <th class="px-3 py-1.5 text-center border-r border-slate-800 w-12" data-dim="poles">
+                                <div>Kutup</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">-</div>
+                            </th>
+                            <th class="px-3 py-1.5 text-center border-r border-slate-800 w-16" data-dim="frame">
+                                <div>H</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(mm)</div>
+                            </th>
+                            <th class="px-2 py-1.5 text-center border-r border-slate-800/40 w-16" data-dim="D">
+                                <div>ØD</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(mm)</div>
+                            </th>
+                            <th class="px-2 py-1.5 text-center border-r border-slate-800/40 w-16" data-dim="E">
+                                <div>E</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(mm)</div>
+                            </th>
+                            <th class="px-2 py-1.5 text-center border-r border-slate-800/40 w-16" data-dim="A">
+                                <div>A</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(mm)</div>
+                            </th>
+                            <th class="px-2 py-1.5 text-center border-r border-slate-800/40 w-16" data-dim="B">
+                                <div>B</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(mm)</div>
+                            </th>
+                            <th class="px-2 py-1.5 text-center border-r border-slate-800 w-16" data-dim="B_prime">
+                                <div>B'</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">(mm)</div>
+                            </th>
+                            <th class="px-3 py-1.5 text-center border-r border-slate-800 bg-slate-900/40 w-24" data-dim="B5">
+                                <div>B5</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">Standart</div>
+                            </th>
+                            <th class="px-3 py-1.5 text-center border-r border-slate-800 w-24" data-dim="B14">
+                                <div>B14</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">Standart</div>
+                            </th>
+                            <th class="px-3 py-1.5 text-center w-24" data-dim="B14_spec">
+                                <div>B14</div>
+                                <div class="text-[9px] font-normal text-slate-500 mt-0.5">Özel</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="dimensionsBody" class="divide-y divide-slate-800/60 font-mono text-center">
+                        <!-- Populated dynamically by parsed MD -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Standards Reference Legend -->
+        <details id="legendDetails" open class="w-full mt-1 pt-2 border-t border-slate-800/40 text-[9.5px] text-slate-400 font-mono leading-tight px-4 max-w-6xl mx-auto flex-shrink-0 group mb-1">
+            <summary class="cursor-pointer text-slate-500 font-bold uppercase tracking-wider flex items-center justify-between outline-none select-none hover:text-cyan-400 transition-colors list-none [&::-webkit-details-marker]:hidden mb-1">
+                <span class="flex items-center gap-2">
+                    <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Uluslararası Standartlar ve Fizik Yasaları
+                </span>
+                <svg class="w-3.5 h-3.5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            
+            <div id="legendContentWrapper" class="flex flex-col md:flex-row gap-4 md:gap-8 pb-1 pt-2 border-t border-slate-800/40">
+                <!-- Left Column: Standards -->
+                <div class="flex-1 flex flex-col gap-1.5">
+                    <div class="text-slate-500 font-bold uppercase tracking-wider mb-0.5 border-b border-slate-800/40 pb-1">
+                        Uluslararası Standartlar
+                    </div>
+                    <div class="flex flex-col gap-y-1 pb-1">
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-cyan-400 font-bold lg:min-w-[170px]">IEC 60072-1 & DIN EN 50347</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Motor fiziksel boyutları, mil ölçüleri ve flanş yapı biçimleri (B5, B14).</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-cyan-400 font-bold lg:min-w-[170px]">IEC 60034-1 & 60034-30-1</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Anma güçleri (kW) ve IE3 enerji verimlilik (η) eğrilerinin simülasyonu.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-cyan-400 font-bold lg:min-w-[170px]">IEC 60364-5-52 & EN 62444</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Akım taşıma kapasitesine göre bakır kablo kesiti ve rakor seçimi.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-cyan-400 font-bold lg:min-w-[170px]">IEC 60050 & IEEE 1459</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Görünür güç (S), aktif güç (P) ve güç faktörü (cosφ) algoritması.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-cyan-400 font-bold lg:min-w-[170px]">IEC 60947-4-1</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">AC-3 kullanım sınıfı kontaktör ve motor koruma şalteri (Termik) amperaj referans sınırları.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Physics Laws -->
+                <div class="flex-1 flex flex-col gap-1.5 md:border-l md:border-slate-800/40 md:pl-8">
+                    <div class="text-slate-500 font-bold uppercase tracking-wider mb-0.5 border-b border-slate-800/40 pb-1 mt-1.5 md:mt-0 flex items-center justify-between">
+                        <span>Temel Fizik Yasaları</span>
+                    </div>
+                    <div class="flex flex-col gap-y-1 pb-1">
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-fuchsia-400 font-bold lg:min-w-[170px]">Faraday İndüksiyon Yasası</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Motorun manyetik alan uyarımı ve elektriksel gücün mekanik güce dönüşüm prensibi.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-fuchsia-400 font-bold lg:min-w-[170px]">Ohm Yasası (V = I * Z)</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Kablo empedansları, gerilim/akım ilişkisi ve akım taşıma kapasitelerinin temeli.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-fuchsia-400 font-bold lg:min-w-[170px]">Watt Yasası (P = V * I)</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Gerilim ve akımın gücü oluşturduğu temel prensibin, üç fazlı AC sistemlere (P = √3·V·I·cosφ) uygulanması.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-fuchsia-400 font-bold lg:min-w-[170px]">Kirchhoff Yasaları (AC)</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Üç fazlı (3-Faz) AC sistemlerde akım dengesi (√3 çarpanı) ve aktif/reaktif güç vektörleri.</span>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-baseline gap-0.5 lg:gap-2 hover:bg-slate-900/40 px-1 py-0.5 rounded transition-colors">
+                            <span class="text-fuchsia-400 font-bold lg:min-w-[170px]">Newton Mekaniği (Tork)</span>
+                            <span class="text-[8.5px] text-slate-500 flex-1">Açısal hız ve gücün dönme kuvvetine çevrimi. T = 9550 * (P / n) formülüyle mekanik şaft torkunun (Nm) hesabı.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- Signature footer (Flow element inside main) -->
+        <div class="signature" aria-label="Sipahi imzası">
+            Mechanical Toolbox 2026 &middot; sipahi
+        </div>
+    </main>
+
+    <!-- Custom Tooltip Display -->
+    <div id="dimTooltip" class="opacity-0 invisible scale-95 transition-all duration-300 transform origin-top-left tooltip-diag"></div>
+
+    <!-- Scripting for interactivity -->
+    <script>
+        // Flange specifications database for Tooltip (populated dynamically from markdown)
+        let FLANGE_TOOLTIPS = {};
+        let cableReferences = []; // Global array to store cable and gland references
+
+        const DIM_DESCS = {
+            "kW": "Motorun anma çıkış gücü (kW).",
+            "poles": "Motor kutup sayısı ve anma devri (2, 4, 6, 8 Kutup).",
+            "frame": "IEC Gövde boyutu (Frame size) ve mil eksen yüksekliği H (mm).",
+            "H": "Mil eksen yüksekliği: Motor taban sacı basma yüzeyinden mil eksenine olan dikey mesafe (mm).",
+            "D": "Mil tahrik ucu çapı (DE Shaft Diameter) (mm).",
+            "E": "Kullanılabilir mil ucu uzunluğu (DE Shaft Length) (mm).",
+            "A": "Ayak cıvata montaj delik eksen aralığı (enine, motor önünden bakışta) (mm).",
+            "B": "Ayak cıvata montaj delik eksen aralığı (boyuna, mil eksenine paralel) (mm).",
+            "B_prime": "Çift delikli ayaklarda ikincil boyuna delik eksen aralığı B' (mm).",
+            "B5": "IM B5, IM B35, IM V1, IM V3 yapı biçimleri için FF flanş standardı.",
+            "B14": "IM B14, IM B34, IM V18, IM V19 standart FT flanş standardı.",
+            "B14_spec": "IM B14, IM B34, IM V18, IM V19 özel büyük FT flanş standardı."
+        };
+
+        let motorData = [];
+        let selectedCell = null;
+
+        // Fetch and parse Markdown data
+        async function loadMotorData() {
+            try {
+                const response = await fetch('ac_motor_data.md');
+                const text = await response.text();
+                parseMarkdownData(text);
+                renderTable();
+                resetSvgDimensions();
+                if (motorData.length > 0) {
+                    updateDiagnostics(motorData[0]);
+                }
+            } catch (error) {
+                console.error("Markdown veritabanı yüklenirken hata:", error);
+            }
+        }
+
+        // Parse external markdown dynamically populating a unified table array
+        function parseMarkdownData(text) {
+            const lines = text.split(/\r?\n/);
+            let currentPole = null;
+            let parsingFlanges = false;
+            let parsingCables = false;
+            motorData = [];
+            FLANGE_TOOLTIPS = {};
+            cableReferences = [];
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('## ')) {
+                    if (line.includes('Flanş Boyut Referansları')) {
+                        parsingFlanges = true;
+                        parsingCables = false;
+                        currentPole = null;
+                    } else if (line.includes('Kablo ve Rakor Seçim Referansları')) {
+                        parsingCables = true;
+                        parsingFlanges = false;
+                        currentPole = null;
+                    } else {
+                        parsingFlanges = false;
+                        parsingCables = false;
+                        const match = line.match(/\((\d+)-Kutup\)/);
+                        if (match) {
+                            currentPole = parseInt(match[1]);
+                        }
+                    }
+                } else if (line.startsWith('|')) {
+                    const parts = line.split('|').map(p => p.trim());
+                    if (parts.length > 2) {
+                        if (parsingFlanges) {
+                            const code = parts[1];
+                            const title = parts[2];
+                            const desc = parts[3];
+                            if (code && code !== 'Flanş Kodu' && !code.startsWith('---')) {
+                                FLANGE_TOOLTIPS[code] = `${title} | ${desc}`;
+                            }
+                        } else if (parsingCables) {
+                            const currentLimit = parseFloat(parts[1]);
+                            const section = parts[2];
+                            const diameter = parts[3];
+                            const pgGland = parts[4];
+                            const metricGland = parts[5];
+                            if (!isNaN(currentLimit) && currentLimit > 0) {
+                                cableReferences.push({
+                                    limit: currentLimit,
+                                    section: section,
+                                    diameter: diameter,
+                                    pg: pgGland,
+                                    metric: metricGland
+                                });
+                            }
+                        } else if (currentPole) {
+                            const kw = parts[1];
+                            const frame = parts[2];
+                            if (kw && frame && kw !== 'Güç (kW)' && !kw.startsWith('---')) {
+                                // Calculate B' and ensure B represents the inner/shorter hole and B' the outer/longer hole.
+                                let b_prime = "-";
+                                let displayB = parts[7]; // default B
+                                const fClean = frame.replace(/[a-zA-Z]/g, '').trim(); // e.g. 132
+                                const bVal = parseInt(parts[7]);
+                                if (!isNaN(bVal)) {
+                                    if (fClean === "132") {
+                                        displayB = "140";
+                                        b_prime = "178";
+                                    } else if (fClean === "160") {
+                                        displayB = "210";
+                                        b_prime = "254";
+                                    } else if (fClean === "180") {
+                                        displayB = "241";
+                                        b_prime = "279";
+                                    } else if (fClean === "225") {
+                                        displayB = "286";
+                                        b_prime = "311";
+                                    } else if (fClean === "280") {
+                                        displayB = "368";
+                                        b_prime = "419";
+                                    } else if (fClean === "315") {
+                                        if (bVal === 406 || bVal === 457) {
+                                            displayB = "406";
+                                            b_prime = "457";
+                                        } else {
+                                            displayB = "508";
+                                            b_prime = "-";
+                                        }
+                                    }
+                                }
+
+                                motorData.push({
+                                    poles: currentPole,
+                                    kw: kw,
+                                    frame: frame,
+                                    H: parts[3],
+                                    D: parts[4],
+                                    E: parts[5],
+                                    A: parts[6],
+                                    B: displayB,
+                                    B_prime: b_prime,
+                                    activeB: bVal, // Store the active mounting dimension
+                                    B5: parts[8],
+                                    B14: parts[9],
+                                    B14_spec: parts[10]
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render unified dimension rows with intelligent rowspans (grouped by kW and merged common values)
+        function renderTable() {
+            const body = document.getElementById("dimensionsBody");
+            body.innerHTML = "";
+            const fragment = document.createDocumentFragment();
+
+            // Group by kW
+            const kwGroups = {};
+            motorData.forEach(row => {
+                if (!kwGroups[row.kw]) {
+                    kwGroups[row.kw] = [];
+                }
+                kwGroups[row.kw].push(row);
+            });
+
+            // Sort kW numerically
+            const sortedKws = Object.keys(kwGroups).sort((a, b) => parseFloat(a) - parseFloat(b));
+
+            sortedKws.forEach(kw => {
+                const groupRows = kwGroups[kw];
+                // Sort group rows by poles (2, 4, 6, 8)
+                groupRows.sort((a, b) => a.poles - b.poles);
+
+                const columns = ["frame", "D", "E", "A", "B", "B_prime", "B5", "B14", "B14_spec"];
+                
+                // kW spans the entire group
+                groupRows[0].spans = { kW: groupRows.length };
+                for (let k = 1; k < groupRows.length; k++) {
+                    groupRows[k].spans = { kW: 0 };
+                }
+
+                // Poles always spans 1 (no merge)
+                groupRows.forEach(r => {
+                    r.spans.poles = 1;
+                });
+
+                // Other columns merge if consecutive values are identical within the group
+                columns.forEach(col => {
+                    let i = 0;
+                    while (i < groupRows.length) {
+                        let span = 1;
+                        while (i + span < groupRows.length && groupRows[i][col] === groupRows[i + span][col]) {
+                            span++;
+                        }
+                        groupRows[i].spans[col] = span;
+                        for (let k = 1; k < span; k++) {
+                            groupRows[i + k].spans[col] = 0;
+                        }
+                        i += span;
+                    }
+                });
+
+                groupRows.forEach((row, index) => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-800/40 transition-colors";
+                    tr.rowObj = row;
+                    
+                    function getCellHtml(colName, classes, extraAttrs = "", content = (colName === "kW" ? row.kw : row[colName])) {
+                        const span = row.spans[colName];
+                        if (span === 0) return "";
+                        const rowspanAttr = span > 1 ? ` rowspan="${span}"` : "";
+                        
+                        if (colName === "B" || colName === "B_prime") {
+                             const isBActive = (colName === "B" && row.activeB === parseInt(row.B)) ||
+                                               (colName === "B_prime" && row.activeB === parseInt(row.B_prime));
+                             if (isBActive) {
+                                 classes += " font-semibold text-emerald-400";
+                             } else if (content !== "-") {
+                                 classes += " text-slate-500";
+                             }
+                        }
+
+                        return `<td class="${classes}" data-col="${colName}"${rowspanAttr} ${extraAttrs}>${content}</td>`;
+                    }
+
+                    let rowHtml = "";
+                    rowHtml += getCellHtml("kW", "sticky-col bg-slate-900 px-2 py-0.5 font-medium border-r border-slate-800 text-cyan-400");
+                    rowHtml += getCellHtml("poles", "px-2 py-0.5 font-medium text-slate-400 border-r border-slate-800", "", `${row.poles}`);
+                    rowHtml += getCellHtml("frame", "px-2 py-0.5 font-medium text-slate-100 border-r border-slate-800");
+                    rowHtml += getCellHtml("D", "px-1.5 py-0.5 hover:bg-cyan-500/10 transition-colors font-semibold text-emerald-400 border-r border-slate-800/40");
+                    rowHtml += getCellHtml("E", "px-1.5 py-0.5 hover:bg-cyan-500/10 transition-colors border-r border-slate-800/40");
+                    rowHtml += getCellHtml("A", "px-1.5 py-0.5 hover:bg-cyan-500/10 transition-colors border-r border-slate-800/40");
+                    rowHtml += getCellHtml("B", "px-1.5 py-0.5 hover:bg-cyan-500/10 transition-colors border-r border-slate-800/40");
+                    rowHtml += getCellHtml("B_prime", "px-1.5 py-0.5 hover:bg-cyan-500/10 transition-colors border-r border-slate-800");
+                    rowHtml += getCellHtml("B5", "px-2.5 py-0.5 text-center hover:bg-slate-800 border-r border-slate-800 font-medium text-slate-300 bg-slate-900/10 w-24", `data-code="${row.B5}"`);
+                    rowHtml += getCellHtml("B14", "px-2.5 py-0.5 text-center hover:bg-slate-800 border-r border-slate-800 font-medium text-slate-400 w-24", `data-code="${row.B14}"`);
+                    rowHtml += getCellHtml("B14_spec", "px-2.5 py-0.5 text-center hover:bg-slate-800 font-medium text-slate-400 w-24", `data-code="${row.B14_spec}"`);
+
+                    tr.innerHTML = rowHtml;
+                    fragment.appendChild(tr);
+                });
+            });
+            body.appendChild(fragment);
+        }
+
+        // Helper to highlight whole row and column of the selected cell (Cyan UI Theme)
+        function applyHighlights(cell, activate) {
+            if (!cell) return;
+            const colType = cell.getAttribute("data-col");
+            const row = cell.closest("tr");
+            
+            // Highlight row
+            if (row) {
+                if (activate) {
+                    row.classList.add("bg-cyan-500/[0.04]");
+                    const kwCell = row.querySelector('td[data-col="kW"]');
+                    if (kwCell && kwCell !== cell) {
+                        kwCell.classList.add("!bg-cyan-950", "!text-cyan-400", "font-bold", "border-l-2", "border-l-cyan-500");
+                    }
+                } else {
+                    row.classList.remove("bg-cyan-500/[0.04]");
+                    const kwCell = row.querySelector('td[data-col="kW"]');
+                    if (kwCell) {
+                        kwCell.classList.remove("!bg-cyan-950", "!text-cyan-400", "font-bold", "border-l-2", "border-l-cyan-500");
+                    }
+                }
+            }
+            
+            // Highlight column cells
+            const allColCells = document.querySelectorAll(`#dimensionsBody td[data-col="${colType}"]`);
+            allColCells.forEach(c => {
+                if (c !== cell) {
+                    if (activate) {
+                        c.classList.add("bg-cyan-500/[0.03]");
+                    } else {
+                        c.classList.remove("bg-cyan-500/[0.03]");
+                    }
+                }
+            });
+
+            // Highlight header text
+            const header = document.querySelector(`thead th[data-dim="${colType}"]`);
+            if (header) {
+                if (activate) {
+                    header.classList.add("text-cyan-400");
+                } else {
+                    header.classList.remove("text-cyan-400");
+                }
+            }
+        }
+
+        // Tooltip display logic
+        const tooltip = document.getElementById("dimTooltip");
+        function showTooltip(e, title, value, desc) {
+            let borderColor = "#06b6d4"; // cyan
+            let titleColor = "#38bdf8"; // light cyan
+            
+            tooltip.style.borderLeftColor = borderColor;
+            
+            tooltip.innerHTML = `
+                <div style="font-weight: bold; font-size: 10px; color: ${titleColor}; margin-bottom: 5px; border-bottom: 1px solid #1e293b; padding-bottom: 3px; letter-spacing: 0.5px;">${title}</div>
+                <div class="val-update" style="font-size: 13px; color: #ffffff; font-weight: bold; margin-bottom: 4px; font-family: monospace;">${value}</div>
+                <div style="font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px dashed #1e293b; padding-top: 5px; margin-top: 4px;">
+                    ${desc}
+                </div>
+            `;
+            tooltip.classList.remove("opacity-0", "invisible", "scale-95");
+            tooltip.classList.add("opacity-100", "scale-100");
+
+            const tw = tooltip.offsetWidth;
+            const th = tooltip.offsetHeight;
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            
+            let pageX = e.pageX;
+            let pageY = e.pageY;
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                pageX = e.changedTouches[0].pageX;
+                pageY = e.changedTouches[0].pageY;
+                clientX = e.changedTouches[0].clientX;
+                clientY = e.changedTouches[0].clientY;
+            } else if (e.touches && e.touches.length > 0) {
+                pageX = e.touches[0].pageX;
+                pageY = e.touches[0].pageY;
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+            
+            if (pageX === undefined || pageX === null) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                clientX = rect.left + rect.width / 2;
+                clientY = rect.top - 10;
+                pageX = clientX + window.scrollX;
+                pageY = clientY + window.scrollY;
+            }
+            
+            let x = pageX + 15;
+            let y = pageY + 15;
+            
+            if (clientX + 15 + tw > vw - 8) x = pageX - tw - 10;
+            if (clientY + 15 + th > vh - 8) y = pageY - th - 10;
+            
+            if (x < 4 + window.scrollX) x = 4 + window.scrollX;
+            if (y < 4 + window.scrollY) y = 4 + window.scrollY;
+            
+            tooltip.style.left = x + "px";
+            tooltip.style.top = y + "px";
+        }
+        function hideTooltip() {
+            tooltip.classList.remove("opacity-100", "scale-100");
+            tooltip.classList.add("opacity-0", "invisible", "scale-95");
+        }
+
+        // Highlight dimension in SVG
+        function highlightSvgDim(dim, activate) {
+            if (dim.toLowerCase() === "frame") {
+                highlightSvgDim("h", activate);
+                return;
+            }
+            const dimId = "dim-" + dim.toLowerCase();
+            const group = document.getElementById(dimId);
+            if (group) {
+                const lines = group.querySelectorAll(".dim-line");
+                const text = group.querySelector(".dim-text");
+                const refLines = group.querySelectorAll(".ref-line");
+                
+                if (activate) {
+                    group.classList.add("active-group");
+                    document.getElementById("motorSvg").classList.add("hovering-dim");
+                } else {
+                    group.classList.remove("active-group");
+                    document.getElementById("motorSvg").classList.remove("hovering-dim");
+                }
+                
+                lines.forEach(line => {
+                    if (activate) line.classList.add("active");
+                    else line.classList.remove("active");
+                });
+                if (text) {
+                    if (activate) text.classList.add("active");
+                    else text.classList.remove("active");
+                }
+                refLines.forEach(rl => {
+                    if (activate) rl.classList.add("active");
+                    else rl.classList.remove("active");
+                });
+            }
+        }
+        
+        // Reset SVG back to default letters
+        function resetSvgDimensions() {
+            const subtitle = document.getElementById("svgMotorSubtitle");
+            if (subtitle) subtitle.innerHTML = "";
+            
+            const resetText = (groupId, defaultLabel) => {
+                const group = document.getElementById(groupId);
+                if (group) {
+                    group.classList.remove("has-value");
+                    const textEl = group.querySelector(".dim-text");
+                    if (textEl) {
+                        textEl.textContent = defaultLabel;
+                    }
+                }
+            };
+            
+            resetText("dim-h", "H");
+            resetText("dim-a", "A");
+            resetText("dim-b", "B");
+            resetText("dim-b_prime", "B'");
+            resetText("dim-e", "E");
+            resetText("dim-d", "ØD");
+            resetText("dim-b5", "FF (B5)");
+            resetText("dim-b14", "FT (B14)");
+            resetText("dim-b14_spec", "FT (B14 Özel)");
+            
+            const bPrimeGroup = document.getElementById("dim-b_prime");
+            const bPrimeAxis = document.getElementById("bPrimeAxis");
+            if (bPrimeGroup) bPrimeGroup.style.display = "";
+            if (bPrimeAxis) bPrimeAxis.style.display = "";
+            
+            const bX = 557.5; 
+            const bPrimeX = 577.5;
+            const resetCoords = (dimId, x) => {
+                const dim = document.getElementById(dimId);
+                if (dim) {
+                    const refLines = dim.querySelectorAll(".ref-line");
+                    if (refLines[1]) {
+                        refLines[1].setAttribute("x1", x);
+                        refLines[1].setAttribute("x2", x);
+                    }
+                    const dimLine = dim.querySelector(".dim-line");
+                    if (dimLine) dimLine.setAttribute("x2", x);
+                    const ticks = dim.querySelectorAll("line[stroke='#475569']");
+                    if (ticks[1]) {
+                        ticks[1].setAttribute("x1", x);
+                        ticks[1].setAttribute("x2", x);
+                    }
+                    const text = dim.querySelector(".dim-text");
+                    if (text) text.setAttribute("x", (437.5 + x) / 2);
+                }
+            };
+            resetCoords("dim-b", bX);
+            resetCoords("dim-b_prime", bPrimeX);
+        }
+
+        // Preview a single dimension text on hover
+        function previewDimensionText(dim, rowObj) {
+            if (!dim || !rowObj) return;
+            const dimId = "dim-" + dim.toLowerCase();
+            const group = document.getElementById(dimId);
+            if (!group) return;
+            const textEl = group.querySelector(".dim-text");
+            if (!textEl) return;
+            
+            let val = rowObj[dim];
+            let prefix = dim === "D" ? "Ø" : "";
+            if (dim === "B5") { 
+                val = val !== "-" ? val.replace("FF", "").trim() : "-"; 
+                prefix = "FF "; 
+            } else if (dim === "B14" || dim === "B14_spec") { 
+                val = val !== "-" ? val.replace("FT", "").trim() : "-"; 
+                prefix = "FT "; 
+            }
+            
+            if (val && val !== "-" && val !== "") {
+                textEl.textContent = prefix + val;
+                group.classList.add("has-value");
+            } else {
+                textEl.textContent = "-";
+                group.classList.remove("has-value");
+            }
+        }
+
+        // Dynamically adjust SVG B' visibility and keep guide lines at static positions (B=inner, B'=outer)
+        function updateSvgDimensionsForMotor(row) {
+            if (!row) return;
+            
+            // Helper to update SVG text contents
+            const updateDimText = (groupId, val, prefix = "", defaultLabel = "") => {
+                const group = document.getElementById(groupId);
+                if (group) {
+                    const textEl = group.querySelector(".dim-text");
+                    if (textEl) {
+                        if (val && val !== "-" && val !== "") {
+                            textEl.textContent = prefix + val;
+                            group.classList.add("has-value");
+                        } else {
+                            textEl.textContent = defaultLabel;
+                            group.classList.remove("has-value");
+                        }
+                    }
+                }
+            };
+            
+            // Update the subtitle
+            const subtitle = document.getElementById("svgMotorSubtitle");
+            if (subtitle) {
+                const rpm = row.poles == 2 ? 3000 : row.poles == 4 ? 1500 : row.poles == 6 ? 1000 : row.poles == 8 ? 750 : "-";
+                subtitle.innerHTML = `<span class="text-emerald-400 drop-shadow-[0_0_2px_rgba(52,211,153,0.8)]">${row.kw} kW</span> <span class="text-slate-500 mx-1">|</span> <span class="text-rose-400 drop-shadow-[0_0_2px_rgba(251,113,133,0.8)]">${rpm} d/d (${row.poles} Kutup)</span> <span class="text-slate-500 mx-1">|</span> <span class="text-amber-400 drop-shadow-[0_0_2px_rgba(251,191,36,0.8)]">Gövde: ${row.frame}</span>`;
+            }
+            
+            // Update text values
+            updateDimText("dim-h", row.H, "", "H");
+            updateDimText("dim-a", row.A, "", "A");
+            updateDimText("dim-b", row.B, "", "B");
+            updateDimText("dim-b_prime", row.B_prime, "", "B'");
+            updateDimText("dim-e", row.E, "", "E");
+            updateDimText("dim-d", row.D, "Ø", "ØD");
+            
+            // Flanges (remove 'FF ' or 'FT ' if present, or just display as is)
+            const b5Val = row.B5 && row.B5 !== "-" ? row.B5.replace("FF", "").trim() : "";
+            const b14Val = row.B14 && row.B14 !== "-" ? row.B14.replace("FT", "").trim() : "";
+            const b14sVal = row.B14_spec && row.B14_spec !== "-" ? row.B14_spec.replace("FT", "").trim() : "";
+            
+            updateDimText("dim-b5", b5Val, "FF ", "FF (B5)");
+            updateDimText("dim-b14", b14Val, "FT ", "FT (B14)");
+            updateDimText("dim-b14_spec", b14sVal, "FT ", "FT (Özel)");
+
+            const bPrimeVal = parseInt(row.B_prime);
+            
+            // Standard static positions: B is always the left/inner hole, B' is always the right/outer hole
+            const bX = 557.5; 
+            const bPrimeX = 577.5;
+            
+            // Ensure both B and B' dimension groups and axis guide lines are visible/hidden appropriately
+            const bPrimeGroup = document.getElementById("dim-b_prime");
+            const bPrimeAxis = document.getElementById("bPrimeAxis");
+            
+            if (isNaN(bPrimeVal) || row.B_prime === "-") {
+                if (bPrimeGroup) bPrimeGroup.style.display = "none";
+                if (bPrimeAxis) bPrimeAxis.style.display = "none";
+            } else {
+                if (bPrimeGroup) bPrimeGroup.style.display = "";
+                if (bPrimeAxis) bPrimeAxis.style.display = "";
+            }
+            
+            // Update B elements coordinates (always inner hole)
+            const dimB = document.getElementById("dim-b");
+            if (dimB) {
+                const refLines = dimB.querySelectorAll(".ref-line");
+                if (refLines[1]) {
+                    refLines[1].setAttribute("x1", bX);
+                    refLines[1].setAttribute("x2", bX);
+                }
+                const dimLine = dimB.querySelector(".dim-line");
+                if (dimLine) {
+                    dimLine.setAttribute("x2", bX);
+                }
+                const ticks = dimB.querySelectorAll("line[stroke='#475569']");
+                if (ticks[1]) {
+                    ticks[1].setAttribute("x1", bX);
+                    ticks[1].setAttribute("x2", bX);
+                }
+                const text = dimB.querySelector(".dim-text");
+                if (text) {
+                    text.setAttribute("x", (437.5 + bX) / 2);
+                }
+            }
+            
+            // Update B' elements coordinates (always outer hole)
+            const dimBPrime = document.getElementById("dim-b_prime");
+            if (dimBPrime) {
+                const refLines = dimBPrime.querySelectorAll(".ref-line");
+                if (refLines[1]) {
+                    refLines[1].setAttribute("x1", bPrimeX);
+                    refLines[1].setAttribute("x2", bPrimeX);
+                }
+                const dimLine = dimBPrime.querySelector(".dim-line");
+                if (dimLine) {
+                    dimLine.setAttribute("x2", bPrimeX);
+                }
+                const ticks = dimBPrime.querySelectorAll("line[stroke='#475569']");
+                if (ticks[1]) {
+                    ticks[1].setAttribute("x1", bPrimeX);
+                    ticks[1].setAttribute("x2", bPrimeX);
+                }
+                const text = dimBPrime.querySelector(".dim-text");
+                if (text) {
+                    text.setAttribute("x", (437.5 + bPrimeX) / 2);
+                }
+            }
+        }
+
+        // Electrical diagnostics helper functions
+        let activeDiagMotor = null;
+        let currentFreq = 50;
+        let currentVolt = 400;
+        const VOLT_STEPS = [380, 400, 415, 440, 460, 480];
+        const VOLT_INFOS = {
+            380: "Rusya, Çin, Orta Doğu ve eski tip yerel şebekeler",
+            400: "Türkiye, Avrupa Birliği (AB) ve genel dünya standardı",
+            415: "İngiltere, Singapur, Malezya, Avustralya şebekeleri",
+            440: "Denizcilik (Gemi elektrik sistemleri) ve ağır sanayi",
+            460: "ABD, Kanada, Meksika endüstriyel motor gerilimi",
+            480: "ABD, Kanada, Meksika şebeke dağıtım standardı"
+        };
+        
+        function updateVoltDisplay(V) {
+            currentVolt = V;
+            const voltVal = document.getElementById("diagVoltVal");
+            const voltInfo = document.getElementById("diagVoltInfoText");
+            if (voltVal) voltVal.textContent = `${V} V`;
+            if (voltInfo) voltInfo.textContent = VOLT_INFOS[V] || "";
+        }
+
+        function estimateIE3Params(kw, poles) {
+            let eff = 0.85;
+            let cosPhi = 0.80;
+            
+            // Estimate Efficiency based on kW and poles (IE3 typical curves)
+            if (kw <= 0.12) {
+                eff = poles === 2 ? 0.60 : (poles === 4 ? 0.58 : 0.50);
+            } else if (kw <= 0.37) {
+                eff = poles === 2 ? 0.72 : (poles === 4 ? 0.70 : 0.64);
+            } else if (kw <= 0.75) {
+                eff = poles === 2 ? 0.807 : (poles === 4 ? 0.825 : 0.789);
+            } else if (kw <= 2.2) {
+                eff = poles === 2 ? 0.856 : (poles === 4 ? 0.867 : 0.843);
+            } else if (kw <= 7.5) {
+                eff = poles === 2 ? 0.881 : (poles === 4 ? 0.904 : 0.872);
+            } else if (kw <= 22) {
+                eff = poles === 2 ? 0.917 : (poles === 4 ? 0.930 : 0.917);
+            } else if (kw <= 90) {
+                eff = poles === 2 ? 0.950 : (poles === 4 ? 0.956 : 0.950);
+            } else {
+                eff = poles === 2 ? 0.958 : (poles === 4 ? 0.960 : 0.958);
+            }
+            if (poles === 8) eff -= 0.03;
+
+            // Estimate Power Factor (cos phi) based on kW and poles
+            if (poles === 2) {
+                cosPhi = kw < 1.5 ? 0.81 : (kw < 11 ? 0.86 : 0.89);
+            } else if (poles === 4) {
+                cosPhi = kw < 1.5 ? 0.75 : (kw < 11 ? 0.82 : 0.86);
+            } else if (poles === 6) {
+                cosPhi = kw < 1.5 ? 0.70 : (kw < 11 ? 0.76 : 0.81);
+            } else if (poles === 8) {
+                cosPhi = kw < 1.5 ? 0.61 : (kw < 11 ? 0.68 : 0.74);
+            }
+            
+            return { eff, cosPhi };
+        }
+
+        let lastV = null;
+        let lastFreq = null;
+
+        function animateValue(el) {
+            if (!el) return;
+            el.classList.remove("val-update");
+            void el.offsetWidth; // trigger reflow
+            el.classList.add("val-update");
+        }
+
+        function updateDiagnostics(motor) {
+            if (!motor) return;
+            
+            const V = currentVolt;
+            const freq = currentFreq;
+            
+            // Check if motor identity or operating conditions (V, Hz) changed
+            const isSameMotor = activeDiagMotor && 
+                                activeDiagMotor.kw === motor.kw && 
+                                activeDiagMotor.poles === motor.poles;
+            const conditionsChanged = !isSameMotor || lastV !== V || lastFreq !== freq;
+            
+            activeDiagMotor = motor;
+            lastV = V;
+            lastFreq = freq;
+            
+            const kw = parseFloat(motor.kw);
+            const poles = parseInt(motor.poles);
+            
+            const rpms = { 2: "3000", 4: "1500", 6: "1000", 8: "750" };
+            const pLabel = document.getElementById("diagPowerLabel");
+            const rLabel = document.getElementById("diagRpmLabel");
+            if (pLabel) pLabel.textContent = `${motor.kw} kW`;
+            if (rLabel) rLabel.textContent = `${rpms[poles] || ""} min⁻¹`;
+            
+            const params = estimateIE3Params(kw, poles);
+            
+            // Formula: I_N = P_mech * 1000 / (sqrt(3) * V * eff * cosPhi)
+            const eff = params.eff;
+            const cosPhi = params.cosPhi;
+            const In = (kw * 1000) / (Math.sqrt(3) * V * eff * cosPhi);
+            
+            const decimals = In < 10 ? 2 : 1;
+            const inEl = document.getElementById("diagCalculatedIn");
+            const cosEl = document.getElementById("diagCosPhiVal");
+            const effEl = document.getElementById("diagEffVal");
+            
+            inEl.textContent = `${In.toFixed(decimals)} A`;
+            cosEl.textContent = cosPhi.toFixed(2);
+            effEl.textContent = `%${(eff*100).toFixed(1)}`;
+            
+            if (conditionsChanged) {
+                animateValue(inEl);
+                animateValue(cosEl);
+                animateValue(effEl);
+                if (document.getElementById("diagKvarVal")) animateValue(document.getElementById("diagKvarVal"));
+                animateValue(document.getElementById("diagInstApparent"));
+                animateValue(document.getElementById("diagInstActive"));
+                animateValue(document.getElementById("diagTorqueVal"));
+                animateValue(document.getElementById("diagStartCurrentVal"));
+                if (document.getElementById("diagStartCurrentValYD")) animateValue(document.getElementById("diagStartCurrentValYD"));
+                animateValue(document.getElementById("diagThermalVal"));
+                if (document.getElementById("diagThermalValYD")) animateValue(document.getElementById("diagThermalValYD"));
+                if (document.getElementById("diagMpcbVal")) animateValue(document.getElementById("diagMpcbVal"));
+                animateValue(document.getElementById("diagContactorVal"));
+            }
+            
+            // Mechanical & Protection Calculations
+            const rpmVal = parseInt(rpms[poles]);
+            let torque = 0;
+            if (rpmVal) {
+                torque = 9550 * (kw / rpmVal);
+            }
+            document.getElementById("diagTorqueVal").textContent = torque > 0 ? `${torque.toFixed(1)} Nm` : "- Nm";
+            
+            const Istart = In * 7;
+            const IstartYD = Istart / 3;
+            document.getElementById("diagStartCurrentVal").textContent = `~ ${Istart.toFixed(0)} A`;
+            if (document.getElementById("diagStartCurrentValYD")) {
+                document.getElementById("diagStartCurrentValYD").textContent = `~ ${IstartYD.toFixed(0)} A`;
+            }
+
+            const thMin = (In * 0.9).toFixed(1);
+            const thMax = (In * 1.1).toFixed(1);
+            document.getElementById("diagThermalVal").textContent = `${thMin} - ${thMax} A`;
+            
+            // For Star-Delta (Y/Delta), the thermal relay is on the phase winding so it sees In / sqrt(3) ≈ 0.58 * In
+            const thMinYD = (In * 0.58 * 0.9).toFixed(1);
+            const thMaxYD = (In * 0.58 * 1.1).toFixed(1);
+            if (document.getElementById("diagThermalValYD")) {
+                document.getElementById("diagThermalValYD").textContent = `${thMinYD} - ${thMaxYD} A`;
+            }
+            
+            const contactorRatings = [9, 12, 18, 25, 32, 40, 50, 65, 80, 95, 115, 150, 185, 225, 265, 330, 400, 500, 630];
+            let contactor = contactorRatings[contactorRatings.length - 1];
+            for (let r of contactorRatings) {
+                if (r >= In * 1.1) { 
+                    contactor = r;
+                    break;
+                }
+            }
+            document.getElementById("diagContactorVal").textContent = `${contactor} A`;
+            
+            // aM Fuses typically sized at 1.15 to 1.25x In
+            const amRatings = [2, 4, 6, 8, 10, 12, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630];
+            let mpcb = amRatings[amRatings.length - 1];
+            for (let r of amRatings) {
+                if (r >= In * 1.15) { 
+                    mpcb = r;
+                    break;
+                }
+            }
+            if (document.getElementById("diagMpcbVal")) {
+                document.getElementById("diagMpcbVal").textContent = `${mpcb} A`;
+            }
+            
+            // Local Compensation (kVAR) to reach cosPhi = 0.99
+            const P_in = (Math.sqrt(3) * currentVolt * In * cosPhi) / 1000;
+            const tanPhi1 = Math.sqrt(1 - Math.pow(cosPhi, 2)) / cosPhi;
+            const tanPhi2 = 0.1425; // tan(acos(0.99))
+            let kvar = P_in * (tanPhi1 - tanPhi2);
+            if (kvar < 0) kvar = 0;
+            if (document.getElementById("diagKvarVal")) {
+                document.getElementById("diagKvarVal").textContent = kvar > 0 ? `${kvar.toFixed(1)} kVAr` : "- kVAr";
+            }
+            
+            // Adjust slider max and value dynamically based on calculated In (using 2 decimals for small currents)
+            const maxVal = In < 10 ? Math.round((In * 1.5) * 100) / 100 : Math.round((In * 1.5) * 10) / 10;
+            const slider = document.getElementById("diagMeasuredCurrentSlider");
+            slider.max = maxVal;
+            slider.step = In < 10 ? "0.01" : "0.1";
+            
+            // Auto update slider to the new optimum nominal current In if any conditions changed
+            if (conditionsChanged) {
+                slider.value = In;
+                document.getElementById("diagMeasuredCurrentVal").textContent = `${In.toFixed(decimals)} A`;
+            }
+            
+            evaluateMeasuredCurrent(In, cosPhi);
+        }
+
+        function evaluateMeasuredCurrent(In, nominalCosPhi) {
+            const slider = document.getElementById("diagMeasuredCurrentSlider");
+            const val = parseFloat(slider.value);
+            const valText = document.getElementById("diagMeasuredCurrentVal");
+            const badge = document.getElementById("diagStatusBadge");
+            const apparentVal = document.getElementById("diagInstApparent");
+            const activeVal = document.getElementById("diagInstActive");
+            
+            const decimals = In < 10 ? 2 : 1;
+            valText.textContent = `${val.toFixed(decimals)} A`;
+            
+            // Calculate Apparent Power (S = sqrt(3) * V * I) in kVA
+            const apparentPower = (Math.sqrt(3) * currentVolt * val) / 1000;
+            
+            if (val === 0) {
+                badge.textContent = "Akım Giriniz";
+                badge.className = "inline-block text-[7px] font-bold bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700/50 cursor-help hover:underline transition-all duration-300 whitespace-nowrap";
+                if (apparentVal) apparentVal.textContent = "0.00 kVA";
+                if (activeVal) activeVal.textContent = "0.00 kW";
+                updateHeaderLogo("slate", 10);
+                return;
+            }
+            
+            const ratio = val / In;
+            
+            // Estimate partial load power factor
+            let estimatedCosPhi = 0.15;
+            if (nominalCosPhi) {
+                if (ratio >= 1.0) {
+                    estimatedCosPhi = nominalCosPhi;
+                } else if (ratio > 0.05) {
+                    estimatedCosPhi = nominalCosPhi * Math.pow(ratio, 0.3); // Curve fit for partial load cosPhi
+                }
+            }
+            
+            // Calculate Estimated Active Power (P = S * cosPhi) in kW
+            const activePower = apparentPower * estimatedCosPhi;
+            
+            if (apparentVal) apparentVal.textContent = `${apparentPower.toFixed(2)} kVA`;
+            if (activeVal) activeVal.textContent = `${activePower.toFixed(2)} kW`;
+            
+            
+            if (ratio < 0.25) {
+                badge.textContent = "Boşta / Düşük Yük";
+                badge.className = "inline-block text-[7px] font-bold bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30 cursor-help hover:underline transition-all duration-300 whitespace-nowrap";
+                updateHeaderLogo("blue", 10);
+            } else if (ratio <= 0.85) {
+                badge.textContent = "Güvenli (Kısmi Yük)";
+                badge.className = "inline-block text-[7px] font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/30 cursor-help hover:underline transition-all duration-300 whitespace-nowrap";
+                updateHeaderLogo("emerald", 7);
+            } else if (ratio <= 1.02) {
+                badge.textContent = "Tam Yük (Nominal)";
+                badge.className = "inline-block text-[7px] font-bold bg-emerald-600/30 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/40 cursor-help hover:underline transition-all duration-300 whitespace-nowrap";
+                updateHeaderLogo("cyan", 5);
+            } else if (ratio <= 1.05) {
+                badge.textContent = "Tam Yük (Sınırda)";
+                badge.className = "inline-block text-[7px] font-bold bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/30 animate-pulse cursor-help hover:underline transition-all duration-300 whitespace-nowrap";
+                updateHeaderLogo("amber", 2);
+            } else {
+                badge.textContent = "AŞIRI YÜK / TEHLİKE";
+                badge.className = "inline-block text-[7px] font-bold bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/50 animate-pulse cursor-help hover:underline transition-all duration-300 whitespace-nowrap";
+                updateHeaderLogo("red", 0.5); // Spin extremely fast on danger
+            }
+            
+            // Dynamic update of Cable & Gland Recommendation
+            updateCableRecommendation(val || In);
+        }
+        
+        function updateHeaderLogo(colorType, spinSeconds) {
+            const container = document.getElementById("headerLogoContainer");
+            const ring = document.getElementById("headerLogoRing");
+            if (!container || !ring) return;
+            
+            // Base classes that don't change
+            const containerBase = "relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900 border border-slate-700 transition-all duration-500";
+            const ringBase = `absolute w-11 h-11 sm:w-12 sm:h-12 animate-[spin_${spinSeconds}s_linear_infinite] transition-colors duration-500`;
+            
+            let containerShadows = "";
+            let ringColors = "";
+            
+            switch(colorType) {
+                case "blue":
+                    containerShadows = "shadow-[0_0_15px_rgba(59,130,246,0.4)] group-hover:shadow-[0_0_25px_rgba(59,130,246,0.7)]";
+                    ringColors = "text-blue-500 drop-shadow-[0_0_5px_rgba(59,130,246,0.8)]";
+                    break;
+                case "emerald":
+                    containerShadows = "shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.7)]";
+                    ringColors = "text-emerald-500 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)]";
+                    break;
+                case "cyan":
+                    containerShadows = "shadow-[0_0_15px_rgba(6,182,212,0.4)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.7)]";
+                    ringColors = "text-cyan-500 drop-shadow-[0_0_5px_rgba(6,182,212,0.8)]";
+                    break;
+                case "amber":
+                    containerShadows = "shadow-[0_0_15px_rgba(245,158,11,0.4)] group-hover:shadow-[0_0_25px_rgba(245,158,11,0.7)]";
+                    ringColors = "text-amber-500 drop-shadow-[0_0_5px_rgba(245,158,11,0.8)]";
+                    break;
+                case "red":
+                    containerShadows = "shadow-[0_0_15px_rgba(239,68,68,0.6)] group-hover:shadow-[0_0_25px_rgba(239,68,68,0.9)]";
+                    ringColors = "text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.9)]";
+                    break;
+                case "slate":
+                default:
+                    containerShadows = "shadow-[0_0_15px_rgba(148,163,184,0.3)] group-hover:shadow-[0_0_25px_rgba(148,163,184,0.5)]";
+                    ringColors = "text-slate-500 drop-shadow-[0_0_5px_rgba(148,163,184,0.5)]";
+                    break;
+            }
+            
+            container.className = `${containerBase} ${containerShadows}`;
+            ring.className = `${ringBase} ${ringColors}`;
+        }
+
+        function updateCableRecommendation(current) {
+            if (!cableReferences || cableReferences.length === 0) return;
+            
+            // Find the first cable that has a limit >= current
+            let recommended = cableReferences[cableReferences.length - 1]; // fallback to largest
+            for (let ref of cableReferences) {
+                if (ref.limit >= current) {
+                    recommended = ref;
+                    break;
+                }
+            }
+            
+            document.getElementById("diagCableSection").textContent = recommended.section !== "-" ? `${recommended.section} mm²` : "-";
+            document.getElementById("diagCableDiameter").textContent = recommended.diameter !== "-" ? `Ø ${recommended.diameter} mm` : "-";
+            
+            // Combined glands output
+            const metricG = recommended.metric !== "-" ? recommended.metric : "";
+            const pgG = recommended.pg !== "-" ? recommended.pg : "";
+            let glandsText = "-";
+            if (metricG && pgG) {
+                glandsText = `${metricG} / ${pgG}`;
+            } else if (metricG || pgG) {
+                glandsText = metricG || pgG;
+            }
+            document.getElementById("diagGlandsCombined").textContent = glandsText;
+        }
+
+        // Initialize on load
+        document.addEventListener("DOMContentLoaded", () => {
+            loadMotorData();
+            updateVoltDisplay(currentVolt);
+            
+            // Handle legend details state based on screen size
+            const legendDetails = document.getElementById("legendDetails");
+            if (legendDetails && window.innerWidth >= 768) {
+                legendDetails.open = true;
+            }
+
+            // Event Delegation for Table Cells (Performance Optimization)
+            const tableBody = document.getElementById("dimensionsBody");
+            
+            tableBody.addEventListener("mouseover", (e) => {
+                const td = e.target.closest("td");
+                if (!td) return;
+                const tr = td.closest("tr");
+                if (!tr || !tr.rowObj) return;
+                
+                const colType = td.getAttribute("data-col");
+                previewDimensionText(colType, tr.rowObj);
+                updateDiagnostics(tr.rowObj);
+                highlightSvgDim(colType, true);
+                
+                const fCode = td.getAttribute("data-code");
+                if (fCode && FLANGE_TOOLTIPS[fCode]) {
+                    const parts = FLANGE_TOOLTIPS[fCode].split(" | ");
+                    let titleText = colType === "B5" ? "B5 / B35 / V1 / V3 FLANŞ" : (colType === "B14" ? "B14 / B34 / V18 / V19 STANDART" : "B14 / B34 / V18 / V19 ÖZEL");
+                    showTooltip(e, titleText, parts[0], parts[1]);
+                }
+            });
+
+            tableBody.addEventListener("mouseout", (e) => {
+                const td = e.target.closest("td");
+                if (!td) return;
+                const colType = td.getAttribute("data-col");
+                
+                const fCode = td.getAttribute("data-code");
+                if (fCode) hideTooltip();
+
+                if (!selectedCell || selectedCell.getAttribute("data-col") !== colType) {
+                    highlightSvgDim(colType, false);
+                }
+                if (selectedCell) {
+                    const rowObj = selectedCell.closest("tr").rowObj;
+                    // Restore to selected motor's data
+                    updateSvgDimensionsForMotor(rowObj);
+                    updateDiagnostics(rowObj);
+                } else {
+                    // Reset to default letters
+                    resetSvgDimensions();
+                    if (motorData.length > 0) {
+                        updateDiagnostics(motorData[0]);
+                    }
+                }
+            });
+
+            tableBody.addEventListener("click", (e) => {
+                const td = e.target.closest("td");
+                if (!td) return;
+                const tr = td.closest("tr");
+                if (!tr || !tr.rowObj) return;
+                
+                e.stopPropagation();
+                const colType = td.getAttribute("data-col");
+                updateSvgDimensionsForMotor(tr.rowObj);
+                updateDiagnostics(tr.rowObj);
+                const isSame = (selectedCell === td);
+                
+                if (selectedCell) {
+                    applyHighlights(selectedCell, false);
+                    selectedCell.classList.remove("bg-cyan-500/20", "ring-1", "ring-cyan-500", "font-bold");
+                    const prevCol = selectedCell.getAttribute("data-col");
+                    highlightSvgDim(prevCol, false);
+                    selectedCell = null;
+                }
+                
+                if (!isSame) {
+                    selectedCell = td;
+                    selectedCell.classList.add("bg-cyan-500/20", "ring-1", "ring-cyan-500", "font-bold");
+                    document.getElementById("motorSvg").classList.add("row-selected");
+                    highlightSvgDim(colType, true);
+                    applyHighlights(selectedCell, true);
+                    
+                    const fCode = td.getAttribute("data-code");
+                    if (fCode && FLANGE_TOOLTIPS[fCode]) {
+                        const parts = FLANGE_TOOLTIPS[fCode].split(" | ");
+                        let titleText = colType === "B5" ? "B5 / B35 / V1 / V3 FLANŞ" : (colType === "B14" ? "B14 / B34 / V18 / V19 STANDART" : "B14 / B34 / V18 / V19 ÖZEL");
+                        showTooltip(e, titleText, parts[0], parts[1]);
+                    }
+                } else {
+                    const fCode = td.getAttribute("data-code");
+                    if (fCode) hideTooltip();
+                }
+            });
+            const diagTooltips = {
+                "diagContactorRow": {
+                    title: "ANA KONTAKTÖR SEÇİMİ",
+                    val: "AC-3 Kullanım Sınıfı",
+                    desc: "Motoru devreye alıp çıkarmak için gereken güç kontaktörünün minimum AC-3 amperaj değeridir. Genellikle In akımından %10-20 daha yüksek seçilir."
+                },
+                "diagPowerLabel": {
+                    title: "MOTOR ANMA GÜCÜ (P)",
+                    val: "Mekanik Mil Gücü",
+                    desc: "Motor milinden alınan nominal mekanik anma gücüdür. Elektriksel güç hesabı yapılırken bu değer motor verimine bölünerek şebekeden çekilen güç bulunur."
+                },
+                "diagRpmLabel": {
+                    title: "MOTOR ANMA DEVİRİ (n)",
+                    val: "Dakikadaki Devir Sayısı (min⁻¹)",
+                    desc: "Motor milinin dakikadaki dönüş hızıdır. Kutup sayısı ve şebeke frekansı ile doğrudan ilişkilidir (n = 120 * f / kutup - kayma)."
+                },
+                "diagFreqLabel": {
+                    title: "ŞEBEKE FREKANSI (Hz)",
+                    val: "Alternatif Akım Periyodu",
+                    desc: "• <b>50 Hz (Saniyede 50 devir):</b> Türkiye, Avrupa, Asya, Afrika, Rusya, Avustralya ve Güney Amerika'nın çoğunda kullanılır (Dünyanın %85'i).<br/>• <b>60 Hz (Saniyede 60 devir):</b> Kuzey Amerika (ABD, Kanada, Meksika), Güney Kore, Tayvan, Suudi Arabistan, Filipinler ve Japonya'nın batısında kullanılır."
+                },
+                "diagVoltLabel": {
+                    title: "ÇALIŞMA GERİLİMİ (V)",
+                    val: "Üç Faz Fazlar Arası Gerilim",
+                    desc: "Motorun şebekeden beslendiği nominal çalışma voltajıdır. Şebeke gerilimi değiştikçe anma akımı ters orantılı olarak değişir."
+                },
+                "diagCurrentLabel": {
+                    title: "ÖLÇÜLEN AKIM (I_ölçülen)",
+                    val: "Pensampermetre Akım Ölçümü",
+                    desc: "Motorun çalışırken şebekeden çektiği anlık akımdır. Bu sürgüyü kaydırarak motorun yük oranını ve teşhis durumunu analiz edebilirsiniz."
+                },
+                "diagInstSLabel": {
+                    title: "ANLIK GÖRÜNÜR GÜÇ (S)",
+                    val: "Şebekeden Çekilen Toplam Kapasite (kVA)",
+                    desc: "S = √3 * V * I_ölçülen formülüyle hesaplanan, motorun çalışırken şebekeden çektiği görünür (toplam) güçtür. Trafoların ve şebeke altyapısının yüklenmesini belirler. Hesaplanması %100 doğrudur. <br/><span class='text-emerald-400 font-bold'>Standart: IEC 60050 / IEEE 1459</span>"
+                },
+                "diagInstPLabel": {
+                    title: "ANLIK AKTİF GÜÇ TAHMİNİ (P)",
+                    val: "İşe Dönüşen Gerçek Güç (kW)",
+                    desc: "P = S * cosφ_anlık formülüyle hesaplanır. Motor yükü azaldıkça güç faktörünün (cosφ) düşeceği hesaba katılarak, matematiksel bir eğri algoritmasıyla tahmini olarak hesaplanan şebeke çekişidir. <br/><span class='text-amber-400 font-bold'>Standart: IEC 60050 / IEEE 1459</span>"
+                },
+                "diagInWrapper": {
+                    title: "ÜÇ FAZLI MOTOR AKIM HESABI",
+                    val: "In = P * 1000 / (√3 * V * η * cosφ)",
+                    desc: "• <b>P:</b> Mekanik anma gücü (kW)<br/>• <b>V:</b> Çalışma gerilimi (Volt)<br/>• <b>η (Verim):</b> Motorun verimi (IE3 standartlarındadır)<br/>• <b>cosφ:</b> Güç faktörü"
+                },
+                "diagCosPhiWrapper": {
+                    title: "GÜÇ FAKTÖRÜ (cosφ)",
+                    val: "Alternatif Akım Güç Faktörü",
+                    desc: "Motorun şebekeden çektiği görünür gücün ne kadarını aktif güce (işe) dönüştürdüğünü gösterir. Yüksek güç faktörü şebeke için idealdir."
+                },
+                "diagEffWrapper": {
+                    title: "MOTOR VERİMİ (η)",
+                    val: "IE3 (IEC 60034-30-1) Standardı",
+                    desc: "Elektriksel gücün mekanik güce dönüşüm verimidir. Seçili motor gücü ve kutup sayısına göre IE3 verim eğrisi simüle edilir."
+                },
+                "diagKvarWrapper": {
+                    title: "LOKAL KOMPANZASYON (kVAr)",
+                    val: "Hedef Güç Faktörü (cosφ): 0.99",
+                    desc: "Motorun şebekeden çektiği reaktif yükü sıfırlamak (kompanze etmek) için motor besleme ucuna bağlanması tavsiye edilen kondansatör gücüdür. Reaktif güç cezasını önler."
+                },
+                "diagCableSecRow": {
+                    title: "BAKIR KABLO SEÇİMİ (NYY)",
+                    val: "IEC 60364-5-52 / VDE 0298-4 Standardı",
+                    desc: "Seçili motor akımına (veya pensampermetrede ölçülen akıma) göre, ısınma limitleri dahilinde güvenle akım taşıyabilecek bakır NYY kablo kesitidir."
+                },
+                "diagCableDiamRow": {
+                    title: "KABLO DIŞ ÇAPI (Ø)",
+                    val: "Yaklaşık Dış Çap Referansı",
+                    desc: "NYY kablonun dış kılıf dahil toplam dış çapıdır. Kablo geçiş kanalı çapı ve rakor boyutu seçimlerinde temel alınır."
+                },
+                "diagGlandRow": {
+                    title: "KABLO GİRİŞ RAKORU",
+                    val: "EN 62444 (Metrik) / DIN 46255 (PG)",
+                    desc: "Kablo dış çapına göre motor klemens kutusu girişine takılması gereken Metrik (M) veya PG rakor ölçüleridir.<br/>• Metrik rakorlar güncel EN 62444 standardına uygundur.<br/>• PG rakorlar DIN 46255 standartlarına uygundur.<br/>• Yüksek güçlerde (>160 kW) kablo çapları nedeniyle PG standardı bulunmadığından sadece Metrik rakorlar önerilir."
+                },
+                "diagStatusBadge": {
+                    title: "MOTOR TEŞHİS YÜK SINIRLARI",
+                    val: "Akım Yük Oranı (I_ölçülen / In)",
+                    desc: "• <b><%25 Yük:</b> Boşta / Çok Düşük Yük (Mavi)<br/>• <b>%25 - %85 Yük:</b> Güvenli Kısmi Yük Çalışması (Yeşil)<br/>• <b>%85 - %102 Yük:</b> Tam Yük Nominal (Koyu Yeşil)<br/>• <b>%102 - %105 Yük:</b> Tam Yük Sınırda (Sarı)<br/>• <b>>%105 Yük:</b> AŞIRI YÜK / ZORLANMA (Kırmızı)"
+                },
+                "diagTorqueRow": {
+                    title: "NOMİNAL TORK (Mn)",
+                    val: "Mekanik Döndürme Momenti",
+                    desc: "T = 9550 * (P / n) formülüyle hesaplanır. Motorun milinden elde edilecek net çevirme kuvvetidir. Redüktör veya pompa seçiminde bu değere bakılır."
+                },
+                "diagStartCurrentRow": {
+                    title: "KALKIŞ (DEMERAJ) AKIMI",
+                    val: "Motor Yol Verme Metotları",
+                    desc: "• <b>Direkt (DOL):</b> Motor şebekeye direkt bağlanırsa nominal akımın (In) ortalama 7 katı demeraj akımı çeker.<br/>• <b>Y/Δ (Yıldız-Üçgen):</b> Yol verme sırasında akım Direkt (DOL) yönteme kıyasla 3'te 1 (yaklaşık 2.3 katı) seviyesine düşer, şebekeyi rahatlatır."
+                },
+                "diagMpcbRow": {
+                    title: "KISA DEVRE KORUMASI",
+                    val: "aM (Motor Tip) Sigorta / MKŞ",
+                    desc: "Kalkış anındaki yüksek demeraj (başlangıç) akımlarında devreyi açmayan, ancak gerçek bir kısa devre durumunda hemen atan motor koruma şalteri/sigortası referansıdır. Genelde nominal akımın %115-125'i üzerindeki ilk standart değere seçilir."
+                },
+                "diagThermalRow": {
+                    title: "TERMİK AŞIRI YÜK ŞALTERİ (Ayar)",
+                    val: "Motor Isı/Akım Koruması",
+                    desc: "Motoru aşırı yüke karşı korur.<br/>• <b>Hat (DOL):</b> Ana hat üzerine takılırsa direkt nominal akım (In) ile kurulur.<br/>• <b>Faz (Y/Δ):</b> Yıldız-üçgen pano sargılarının çıkış faz hattına bağlanıyorsa akım 0.58 (In / √3) kat sayısıyla çarpılarak hesaplanır."
+                }
+            };
+            
+            Object.keys(diagTooltips).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener("mouseenter", (e) => {
+                        const data = diagTooltips[id];
+                        showTooltip(e, data.title, data.val, data.desc);
+                    });
+                    el.addEventListener("mouseleave", () => {
+                        hideTooltip();
+                    });
+                    el.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const data = diagTooltips[id];
+                        if (tooltip.classList.contains("invisible")) {
+                            showTooltip(e, data.title, data.val, data.desc);
+                        } else {
+                            hideTooltip();
+                        }
+                    });
+                }
+            });
+            
+            // Bind tooltips for table headers B5, B14, B14_spec (IEC 60034-7 configurations)
+            const headerTooltips = {
+                "B5": {
+                    title: "B5 FLANŞ MONTAJ BİÇİMLERİ (IEC 60034-7)",
+                    val: "B5 / B35 / V1 / V3 Yapı Biçimleri",
+                    desc: "• <b>IM B5:</b> Yatay montaj, büyük flanşlı (FF), ayaksız (mil şanzıman veya makineye flanşla bağlanır).<br/>• <b>IM B35:</b> Yatay montaj, büyük flanşlı (FF) ve ayaklı (hem ayakla yere basar hem flanşla bağlanır).<br/>• <b>IM V1:</b> Dikey montaj, büyük flanşlı (FF), ayaksız, mil dikey aşağı bakar (en yaygın dikey tip).<br/>• <b>IM V3:</b> Dikey montaj, büyük flanşlı (FF), ayaksız, mil dikey yukarı bakar."
+                },
+                "B14": {
+                    title: "B14 STANDART MONTAJ BİÇİMLERİ (IEC 60034-7)",
+                    val: "B14 / B34 / V18 / V19 Standart Yapı Biçimleri",
+                    desc: "• <b>IM B14 (FT):</b> Yatay montaj, standart küçük flanşlı, ayaksız (vida delikleri flanşın gövdesindedir).<br/>• <b>IM B34:</b> Yatay montaj, standart küçük flanşlı ve ayaklı.<br/>• <b>IM V18:</b> Dikey montaj, küçük flanşlı, ayaksız, mil dikey aşağı bakar.<br/>• <b>IM V19:</b> Dikey montaj, küçük flanşlı, ayaksız, mil dikey yukarı bakar."
+                },
+                "B14_spec": {
+                    title: "B14 ÖZEL BÜYÜK FLANŞ MONTAJ BİÇİMLERİ",
+                    val: "B14 / B34 / V18 / V19 Özel Büyük Yapı Biçimleri",
+                    desc: "Standart B14 flanş ölçülerinden daha büyük dairesel ve eksenel ölçülere sahip, özel imalat veya belirli markalara özgü büyük yüzey flanş (FT) standardıdır. Montaj tipleri standart B14 ile aynıdır (B14, B34, V18, V19)."
+                }
+            };
+
+            const headerThs = document.querySelectorAll("thead th[data-dim]");
+            headerThs.forEach(th => {
+                const dim = th.getAttribute("data-dim");
+                let data = headerTooltips[dim];
+                
+                if (!data && DIM_DESCS[dim]) {
+                    let titleText = dim === "D" ? "ØD" : (dim === "B_prime" ? "B'" : dim.toUpperCase());
+                    if (dim === "kW") titleText = "ANMA GÜCÜ";
+                    if (dim === "poles") titleText = "KUTUP SAYISI";
+                    if (dim === "frame") titleText = "IEC GÖVDE";
+                    
+                    data = {
+                        title: titleText,
+                        val: "Tablo Sütun Bilgisi",
+                        desc: DIM_DESCS[dim]
+                    };
+                }
+                
+                if (data) {
+                    th.classList.add("cursor-help", "hover:text-cyan-400", "transition-colors");
+                    th.addEventListener("mouseenter", (e) => {
+                        showTooltip(e, data.title, data.val, data.desc);
+                    });
+                    th.addEventListener("mouseleave", () => {
+                        hideTooltip();
+                    });
+                    th.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        if (tooltip.classList.contains("hidden")) {
+                            showTooltip(e, data.title, data.val, data.desc);
+                        } else {
+                            hideTooltip();
+                        }
+                    });
+                }
+            });
+            
+            // Diagnostic Panel Event Listeners
+            // Frequency buttons segmented pills listeners
+            const btn50 = document.getElementById("freqBtn50");
+            const btn60 = document.getElementById("freqBtn60");
+            const voltSlider = document.getElementById("diagVoltSlider");
+            
+            function setFreq(hz) {
+                currentFreq = hz;
+                if (hz === 50) {
+                    btn50.className = "px-2 py-0.5 rounded text-[8px] font-bold transition-all bg-cyan-500 text-slate-950 focus:outline-none";
+                    btn60.className = "px-2 py-0.5 rounded text-[8px] font-bold transition-all text-slate-400 hover:text-slate-200 focus:outline-none";
+                    updateVoltDisplay(400);
+                    if (voltSlider) voltSlider.value = 1;
+                } else {
+                    btn60.className = "px-2 py-0.5 rounded text-[8px] font-bold transition-all bg-cyan-500 text-slate-950 focus:outline-none";
+                    btn50.className = "px-2 py-0.5 rounded text-[8px] font-bold transition-all text-slate-400 hover:text-slate-200 focus:outline-none";
+                    updateVoltDisplay(460);
+                    if (voltSlider) voltSlider.value = 4;
+                }
+                if (activeDiagMotor) {
+                    updateDiagnostics(activeDiagMotor);
+                }
+            }
+            
+            if (btn50) btn50.addEventListener("click", () => setFreq(50));
+            if (btn60) btn60.addEventListener("click", () => setFreq(60));
+            
+            // Voltage slider listener
+            if (voltSlider) {
+                voltSlider.addEventListener("input", (e) => {
+                    const idx = parseInt(e.target.value);
+                    updateVoltDisplay(VOLT_STEPS[idx]);
+                    if (activeDiagMotor) {
+                        updateDiagnostics(activeDiagMotor);
+                    }
+                });
+            }
+            
+            // Measured current slider listener
+            document.getElementById("diagMeasuredCurrentSlider").addEventListener("input", () => {
+                if (activeDiagMotor) {
+                    const kw = parseFloat(activeDiagMotor.kw);
+                    const poles = parseInt(activeDiagMotor.poles);
+                    const params = estimateIE3Params(kw, poles);
+                    const V = currentVolt;
+                    const In = (kw * 1000) / (Math.sqrt(3) * V * params.eff * params.cosPhi);
+                    evaluateMeasuredCurrent(In, params.cosPhi);
+                }
+            });
+
+            
+            // Toggle diagnostics panel collapse on mobile
+            const diagPanel = document.getElementById("diagPanelWrapper");
+            if (diagPanel) {
+                const titleCont = diagPanel.querySelector(".panel-title-container");
+                const arrow = diagPanel.querySelector(".mobile-arrow");
+                if (window.innerWidth <= 768) {
+                    diagPanel.classList.add("collapsed");
+                }
+                if (titleCont) {
+                    titleCont.addEventListener("click", () => {
+                        if (window.innerWidth <= 768) {
+                            const isCollapsed = diagPanel.classList.toggle("collapsed");
+                            if (arrow) {
+                                arrow.textContent = isCollapsed ? "▼" : "▲";
+                            }
+                        }
+                    });
+                }
+            }
+            document.addEventListener("click", (e) => {
+                // Hide tooltip if clicked outside the interactive tooltips, cells or table headers
+                if (!e.target.closest("td") && 
+                    !e.target.closest("thead th") && 
+                    !e.target.closest("#diagInWrapper") && 
+                    !e.target.closest("#diagCosPhiWrapper") && 
+                    !e.target.closest("#diagEffWrapper") && 
+                    !e.target.closest("#diagCableSecRow") && 
+                    !e.target.closest("#diagCableDiamRow") && 
+                    !e.target.closest("#diagGlandRow") && 
+                    !e.target.closest("#diagFreqLabel") && 
+                    !e.target.closest("#diagVoltLabel") && 
+                    !e.target.closest("#diagCurrentLabel") && 
+                    !e.target.closest("#diagPowerLabel") && 
+                    !e.target.closest("#diagRpmLabel") && 
+                    !e.target.closest("#diagStatusBadge")) {
+                    hideTooltip();
+                }
+                
+                if (e.target.closest("td") || e.target.closest("thead th") || e.target.closest("#diagMeasuredCurrentSlider") || e.target.closest("select") || e.target.closest("#diagPanelWrapper")) {
+                    return;
+                }
+                if (selectedCell) {
+                    applyHighlights(selectedCell, false);
+                    selectedCell.classList.remove("bg-cyan-500/20", "ring-1", "ring-cyan-500", "font-bold");
+                    const prevCol = selectedCell.getAttribute("data-col");
+                    highlightSvgDim(prevCol, false);
+                    document.getElementById("motorSvg").classList.remove("row-selected");
+                    selectedCell = null;
+                    
+                    // Revert to letter labels
+                    resetSvgDimensions();
+                    
+                    if (motorData.length > 0) {
+                        updateDiagnostics(motorData[0]);
+                    }
+                }
+            });
+            
+            // Animated details for legend
+            const animLegendDetails = document.getElementById("legendDetails");
+            const animLegendSummary = animLegendDetails ? animLegendDetails.querySelector("summary") : null;
+            const animLegendContent = document.getElementById("legendContentWrapper");
+            let isLegendAnimating = false;
+            
+            if (animLegendDetails && animLegendSummary && animLegendContent) {
+                animLegendSummary.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    if (isLegendAnimating) return;
+                    
+                    isLegendAnimating = true;
+                    if (animLegendDetails.open) {
+                        // Close animation
+                        animLegendDetails.style.height = animLegendDetails.offsetHeight + "px";
+                        animLegendDetails.style.overflow = "hidden";
+                        // force reflow
+                        void animLegendDetails.offsetWidth;
+                        animLegendDetails.style.transition = "height 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+                        animLegendDetails.style.height = animLegendSummary.offsetHeight + "px";
+                        
+                        setTimeout(() => {
+                            animLegendDetails.open = false;
+                            animLegendDetails.style = "";
+                            isLegendAnimating = false;
+                        }, 400);
+                    } else {
+                        // Open animation
+                        animLegendDetails.open = true;
+                        // wait a tick so it renders
+                        requestAnimationFrame(() => {
+                            const startHeight = animLegendSummary.offsetHeight;
+                            const endHeight = animLegendSummary.offsetHeight + animLegendContent.offsetHeight;
+                            
+                            animLegendDetails.style.height = startHeight + "px";
+                            animLegendDetails.style.overflow = "hidden";
+                            animLegendDetails.style.transition = "height 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+                            
+                            // force reflow
+                            void animLegendDetails.offsetWidth;
+                            animLegendDetails.style.height = endHeight + "px";
+                            
+                            setTimeout(() => {
+                                animLegendDetails.style = "";
+                                isLegendAnimating = false;
+                            }, 400);
+                        });
+                    }
+                });
+                
+                // Auto close after 4 seconds to make room
+                setTimeout(() => {
+                    if (animLegendDetails.open && !isLegendAnimating) {
+                        animLegendSummary.click();
+                    }
+                }, 4000);
+            }
+
+            // Auth Logic
+            const loginOverlay = document.getElementById("loginOverlay");
+            const usernameInput = document.getElementById("usernameInput");
+            const loginBtn = document.getElementById("loginBtn");
+            const loginError = document.getElementById("loginError");
+            const headerUserSection = document.getElementById("headerUserSection");
+            const headerUsername = document.getElementById("headerUsername");
+            const logoutBtn = document.getElementById("logoutBtn");
+
+            function initAuth() {
+                const savedUser = localStorage.getItem("app_username");
+                if (savedUser && savedUser.trim().toLowerCase() === "sipahi") {
+                    showApp(savedUser);
+                } else {
+                    localStorage.removeItem("app_username");
+                    showLogin();
+                }
+            }
+
+            function showLogin() {
+                loginOverlay.classList.remove("pointer-events-none", "opacity-0");
+                loginOverlay.classList.add("opacity-100");
+                const card = loginOverlay.querySelector("div");
+                card.classList.remove("scale-95");
+                card.classList.add("scale-100");
+                usernameInput.focus();
+            }
+
+            function showApp(username) {
+                loginOverlay.classList.add("pointer-events-none", "opacity-0");
+                loginOverlay.classList.remove("opacity-100");
+                const card = loginOverlay.querySelector("div");
+                card.classList.add("scale-95");
+                card.classList.remove("scale-100");
+                
+                headerUsername.textContent = username;
+                headerUserSection.classList.remove("hidden");
+                headerUserSection.classList.add("flex");
+            }
+
+            function handleLogin() {
+                const val = usernameInput.value.trim();
+                if (!val) {
+                    loginError.textContent = "Kullanıcı adı boş bırakılamaz!";
+                    loginError.classList.remove("hidden");
+                    usernameInput.classList.add("border-red-500/50", "ring-2", "ring-red-500/10");
+                    return;
+                }
+                if (val.toLowerCase() !== "sipahi") {
+                    loginError.textContent = "Geçersiz kullanıcı adı!";
+                    loginError.classList.remove("hidden");
+                    usernameInput.classList.add("border-red-500/50", "ring-2", "ring-red-500/10");
+                    return;
+                }
+                localStorage.setItem("app_username", val);
+                showApp(val);
+            }
+
+            if (loginBtn && usernameInput) {
+                loginBtn.addEventListener("click", handleLogin);
+                usernameInput.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") handleLogin();
+                });
+                usernameInput.addEventListener("input", () => {
+                    loginError.classList.add("hidden");
+                    usernameInput.classList.remove("border-red-500/50", "ring-2", "ring-red-500/10");
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", () => {
+                    localStorage.removeItem("app_username");
+                    headerUserSection.classList.add("hidden");
+                    headerUserSection.classList.remove("flex");
+                    usernameInput.value = "";
+                    showLogin();
+                });
+            }
+
+            initAuth();
+        });
+    </script>
+
+    <!-- Premium Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl transition-all duration-500 opacity-0 pointer-events-none">
+        <div class="w-full max-w-sm bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-[0_0_50px_rgba(6,182,212,0.15)] transform scale-95 transition-transform duration-500 flex flex-col items-center">
+            <!-- Icon -->
+            <div class="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-4 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)] animate-pulse">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+            </div>
+            
+            <h2 class="text-lg font-extrabold text-slate-100 tracking-wide mb-1">Hoş Geldiniz</h2>
+            <p class="text-xs text-slate-500 mb-6 text-center">Devam etmek için lütfen bir kullanıcı adı belirleyin.</p>
+            
+            <!-- Input -->
+            <div class="w-full mb-4">
+                <input type="text" id="usernameInput" placeholder="Kullanıcı Adı" autocomplete="off"
+                    class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 placeholder-slate-600 transition-all duration-300">
+                <div id="loginError" class="text-red-500 text-[10px] mt-1.5 hidden">Kullanıcı adı boş bırakılamaz!</div>
+            </div>
+            
+            <!-- Button -->
+            <button id="loginBtn" class="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-bold text-sm rounded-xl shadow-[0_4px_20px_rgba(6,182,212,0.3)] transition-all duration-300 active:scale-[0.98]">
+                Giriş Yap
+            </button>
+        </div>
+    </div>
+</body>
+</html>
